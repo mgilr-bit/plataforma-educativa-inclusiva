@@ -72,7 +72,20 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | GET | `/api/users/:id` | Administrador o el propio usuario |
 | PATCH | `/api/users/:id` | Administrador o el propio usuario |
 | DELETE | `/api/users/:id` | Administrador (baja lógica) |
+| GET | `/api/contents` | Autenticado (filtrado por rol) |
+| GET | `/api/contents/:id` | Autenticado (filtrado por rol) |
+| POST | `/api/contents` | Administrador o docente titular |
+| PATCH | `/api/contents/:id` | Administrador o docente titular |
+| DELETE | `/api/contents/:id` | Administrador o docente titular (baja lógica) |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 
 La baja de usuarios es **lógica** (`estado = false`), no física: siete tablas referencian a `usuario`, y un borrado real rompería cursos, inscripciones y progreso.
+
+### Visibilidad de los contenidos
+
+| Rol | Qué ve |
+|---|---|
+| Administrador | Todos los contenidos. |
+| Docente | Los de los cursos que imparte, activos y retirados. |
+| Estudiante | Los contenidos activos de los cursos en los que está inscrito. |
