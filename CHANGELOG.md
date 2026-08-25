@@ -2,6 +2,15 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.5.0] — 2026-08-25
+### Agregado
+- CRUD de usuarios en `/api/users` con paginación, filtros por rol y estado, y búsqueda por nombre o correo.
+- Baja lógica de usuarios (`estado = false`) para preservar la integridad referencial.
+- `src/utils/validators.js` con las validaciones compartidas entre controladores.
+
+### Cambiado
+- El alta de usuarios se unifica en `POST /api/users`; se retira `POST /api/auth/register`.
+
 ## [0.4.0] — 2026-08-25
 ### Agregado
 - Autenticación con JSON Web Tokens y contraseñas cifradas con bcrypt.

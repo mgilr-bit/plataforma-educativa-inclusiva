@@ -1,12 +1,11 @@
 // Rutas de autenticacion.
 const { Router } = require('express');
-const { register, login, profile } = require('../controllers/authController');
-const { authenticate, authorize } = require('../middleware/auth');
+const { login, profile } = require('../controllers/authController');
+const { authenticate } = require('../middleware/auth');
 
 const router = Router();
 
-// El alta de usuarios queda reservada al administrador.
-router.post('/auth/register', authenticate, authorize('administrador'), register);
+// El alta de usuarios vive en POST /api/users, restringida al administrador.
 router.post('/auth/login', login);
 router.get('/auth/me', authenticate, profile);
 

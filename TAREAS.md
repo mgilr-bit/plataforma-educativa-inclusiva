@@ -23,7 +23,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Inicializar proyecto y estructura de carpetas — 2026-08-24
 - [x] Conexión a PostgreSQL — 2026-08-24
 - [x] Autenticación y roles (estudiante, docente, administrador) — 2026-08-25
-- [ ] CRUD de usuarios
+- [x] CRUD de usuarios — 2026-08-25 — Issue #18
 - [ ] CRUD de contenidos educativos
 - [ ] Endpoint de transcripción con Whisper API
 - [ ] Endpoint de asistente educativo con Claude API
