@@ -2,6 +2,14 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.4.0] — 2026-08-25
+### Agregado
+- Autenticación con JSON Web Tokens y contraseñas cifradas con bcrypt.
+- `POST /api/auth/login`, `POST /api/auth/register` (solo administrador) y `GET /api/auth/me`.
+- Middlewares `authenticate` y `authorize` para restringir rutas por rol.
+- Script `npm run crear-admin` para dar de alta al primer administrador.
+- Variables `JWT_SECRET` y `JWT_EXPIRES_IN` en `backend/.env.example`.
+
 ## [0.3.0] — 2026-08-24
 ### Agregado
 - Backend Express inicial con estructura `src/` (config, routes).

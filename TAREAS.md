@@ -20,7 +20,7 @@ Formato: `- [x] Tarea — YYYY-MM-DD — PR #N`
 ## Fase 2 — Backend (Node.js / Express)
 - [x] Inicializar proyecto y estructura de carpetas — 2026-08-24
 - [x] Conexión a PostgreSQL — 2026-08-24
-- [ ] Autenticación y roles (estudiante, docente, administrador)
+- [x] Autenticación y roles (estudiante, docente, administrador) — 2026-08-25
 - [ ] CRUD de usuarios
 - [ ] CRUD de contenidos educativos
 - [ ] Endpoint de transcripción con Whisper API
