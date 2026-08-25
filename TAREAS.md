@@ -3,26 +3,28 @@
 Marcar cada tarea al completarla e indicar la fecha y el PR o commit asociado.
 Formato: `- [x] Tarea — YYYY-MM-DD — PR #N`
 
+Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-0` a `fase-5`).
+
 ## Fase 0 — Configuración del proyecto
-- [ ] Crear repositorio en GitHub y primer push
-- [ ] Configurar ramas `main` y `develop`
-- [ ] Crear tablero de Proyecto (Kanban) en GitHub
-- [ ] Definir Issues iniciales por fase
-- [ ] Configurar Antigravity con Claude Code
+- [x] Crear repositorio en GitHub y primer push — 2026-08-24 — Issue #6
+- [x] Configurar ramas `main` y `develop` — 2026-08-24 — Issue #7
+- [x] Crear tablero de Proyecto (Kanban) en GitHub — 2026-08-25 — Issue #8
+- [x] Definir Issues iniciales por fase — 2026-08-25 — Issue #9
+- [x] Configurar Antigravity con Claude Code — 2026-08-25 — Issue #10
 
 ## Fase 1 — Base de datos
 - [ ] Revisar y ajustar el diagrama ER final
-- [ ] Ejecutar DDL inicial en PostgreSQL (local)
-- [ ] Crear migraciones versionadas
-- [ ] Cargar datos semilla de prueba
+- [x] Ejecutar DDL inicial en PostgreSQL (local) — 2026-08-24
+- [x] Crear migraciones versionadas — 2026-08-24
+- [x] Cargar datos semilla de prueba — 2026-08-24
 - [ ] Desplegar instancia PostgreSQL en Railway
 
 ## Fase 2 — Backend (Node.js / Express)
-- [ ] Inicializar proyecto y estructura de carpetas
-- [ ] Conexión a PostgreSQL
-- [ ] Autenticación y roles (estudiante, docente, administrador)
-- [ ] CRUD de usuarios
-- [ ] CRUD de contenidos educativos
+- [x] Inicializar proyecto y estructura de carpetas — 2026-08-24
+- [x] Conexión a PostgreSQL — 2026-08-24
+- [x] Autenticación y roles (estudiante, docente, administrador) — 2026-08-25
+- [x] CRUD de usuarios — 2026-08-25 — Issue #18
+- [x] CRUD de contenidos educativos — 2026-08-25 — Issue #19
 - [ ] Endpoint de transcripción con Whisper API
 - [ ] Endpoint de asistente educativo con Claude API
 - [ ] Manejo de errores y validaciones

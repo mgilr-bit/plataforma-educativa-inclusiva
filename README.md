@@ -48,3 +48,44 @@ cd frontend && npm install && npm run dev
 ```
 
 Las variables de entorno se documentan en `backend/.env.example` y `frontend/.env.example`.
+
+## Primer administrador
+
+El alta de usuarios está reservada al rol `administrador`, por lo que el primero se crea desde la línea de comandos:
+
+```bash
+cd backend
+npm run crear-admin -- "Nombre Completo" correo@dominio.com "contrasena"
+```
+
+A partir de ahí, ese administrador puede registrar docentes y estudiantes mediante `POST /api/auth/register`.
+
+## Endpoints disponibles
+
+| Método | Ruta | Acceso |
+|---|---|---|
+| GET | `/api/health` | Público |
+| POST | `/api/auth/login` | Público |
+| GET | `/api/auth/me` | Autenticado |
+| GET | `/api/users` | Administrador |
+| POST | `/api/users` | Administrador |
+| GET | `/api/users/:id` | Administrador o el propio usuario |
+| PATCH | `/api/users/:id` | Administrador o el propio usuario |
+| DELETE | `/api/users/:id` | Administrador (baja lógica) |
+| GET | `/api/contents` | Autenticado (filtrado por rol) |
+| GET | `/api/contents/:id` | Autenticado (filtrado por rol) |
+| POST | `/api/contents` | Administrador o docente titular |
+| PATCH | `/api/contents/:id` | Administrador o docente titular |
+| DELETE | `/api/contents/:id` | Administrador o docente titular (baja lógica) |
+
+El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
+
+La baja de usuarios es **lógica** (`estado = false`), no física: siete tablas referencian a `usuario`, y un borrado real rompería cursos, inscripciones y progreso.
+
+### Visibilidad de los contenidos
+
+| Rol | Qué ve |
+|---|---|
+| Administrador | Todos los contenidos. |
+| Docente | Los de los cursos que imparte, activos y retirados. |
+| Estudiante | Los contenidos activos de los cursos en los que está inscrito. |
