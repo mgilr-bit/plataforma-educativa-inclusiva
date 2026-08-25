@@ -12,9 +12,9 @@ Formato: `- [x] Tarea — YYYY-MM-DD — PR #N`
 
 ## Fase 1 — Base de datos
 - [ ] Revisar y ajustar el diagrama ER final
-- [ ] Ejecutar DDL inicial en PostgreSQL (local)
-- [ ] Crear migraciones versionadas
-- [ ] Cargar datos semilla de prueba
+- [x] Ejecutar DDL inicial en PostgreSQL (local) — 2026-08-24
+- [x] Crear migraciones versionadas — 2026-08-24
+- [x] Cargar datos semilla de prueba — 2026-08-24
 - [ ] Desplegar instancia PostgreSQL en Railway
 
 ## Fase 2 — Backend (Node.js / Express)
