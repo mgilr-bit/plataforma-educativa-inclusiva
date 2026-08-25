@@ -2,6 +2,13 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.3.0] — 2026-08-24
+### Agregado
+- Backend Express inicial con estructura `src/` (config, routes).
+- Pool de conexiones a PostgreSQL mediante `DATABASE_URL`.
+- Endpoint `GET /api/health` que verifica la conexión y reporta los roles registrados.
+- Archivo `backend/.env.example` con las variables requeridas.
+
 ## [0.2.0] — 2026-08-24
 ### Agregado
 - Migración inicial `001_esquema_inicial.sql` con las 16 tablas del modelo.
