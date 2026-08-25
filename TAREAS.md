@@ -18,8 +18,8 @@ Formato: `- [x] Tarea — YYYY-MM-DD — PR #N`
 - [ ] Desplegar instancia PostgreSQL en Railway
 
 ## Fase 2 — Backend (Node.js / Express)
-- [ ] Inicializar proyecto y estructura de carpetas
-- [ ] Conexión a PostgreSQL
+- [x] Inicializar proyecto y estructura de carpetas — 2026-08-24
+- [x] Conexión a PostgreSQL — 2026-08-24
 - [ ] Autenticación y roles (estudiante, docente, administrador)
 - [ ] CRUD de usuarios
 - [ ] CRUD de contenidos educativos
