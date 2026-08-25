@@ -2,6 +2,12 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.7.0] — 2026-08-25
+### Agregado
+- CRUD de cursos en `/api/courses`, con filtros por docente, grado y ciclo escolar, y conteo de inscritos y contenidos.
+- Gestión de inscripciones: alta, baja y listado de estudiantes por curso.
+- Validación de roles al asignar docentes e inscribir estudiantes.
+
 ## [0.6.0] — 2026-08-25
 ### Agregado
 - CRUD de contenidos educativos en `/api/contents`, con paginación, filtros por curso y tipo, y búsqueda por título.

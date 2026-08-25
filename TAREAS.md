@@ -25,6 +25,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Autenticación y roles (estudiante, docente, administrador) — 2026-08-25
 - [x] CRUD de usuarios — 2026-08-25 — Issue #18
 - [x] CRUD de contenidos educativos — 2026-08-25 — Issue #19
+- [x] CRUD de cursos e inscripciones — 2026-08-25 — Issue #46
 - [ ] Endpoint de transcripción con Whisper API
 - [ ] Endpoint de asistente educativo con Claude API
 - [ ] Manejo de errores y validaciones
