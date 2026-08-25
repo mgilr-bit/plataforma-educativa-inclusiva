@@ -2,6 +2,11 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.5.1] — 2026-08-25
+### Cambiado
+- Se cierra la Fase 0: tablero Kanban en GitHub Projects y entorno de desarrollo configurados.
+- Las 37 tareas de `TAREAS.md` quedan registradas como issues etiquetados por fase y sincronizados con el tablero.
+
 ## [0.5.0] — 2026-08-25
 ### Agregado
 - CRUD de usuarios en `/api/users` con paginación, filtros por rol y estado, y búsqueda por nombre o correo.
