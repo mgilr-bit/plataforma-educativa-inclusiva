@@ -8,9 +8,9 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 ## Fase 0 — Configuración del proyecto
 - [x] Crear repositorio en GitHub y primer push — 2026-08-24 — Issue #6
 - [x] Configurar ramas `main` y `develop` — 2026-08-24 — Issue #7
-- [ ] Crear tablero de Proyecto (Kanban) en GitHub
+- [x] Crear tablero de Proyecto (Kanban) en GitHub — 2026-08-25 — Issue #8
 - [x] Definir Issues iniciales por fase — 2026-08-25 — Issue #9
-- [ ] Configurar Antigravity con Claude Code
+- [x] Configurar Antigravity con Claude Code — 2026-08-25 — Issue #10
 
 ## Fase 1 — Base de datos
 - [ ] Revisar y ajustar el diagrama ER final
