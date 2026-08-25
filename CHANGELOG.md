@@ -2,6 +2,12 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.6.0] — 2026-08-25
+### Agregado
+- CRUD de contenidos educativos en `/api/contents`, con paginación, filtros por curso y tipo, y búsqueda por título.
+- Visibilidad por rol: el docente ve los cursos que imparte y el estudiante solo aquellos en los que está inscrito.
+- Migración `002_contenido_estado.sql`: columna `estado` en `contenido` para la baja lógica.
+
 ## [0.5.1] — 2026-08-25
 ### Cambiado
 - Se cierra la Fase 0: tablero Kanban en GitHub Projects y entorno de desarrollo configurados.

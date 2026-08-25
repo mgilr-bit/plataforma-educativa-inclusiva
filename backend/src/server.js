@@ -6,6 +6,7 @@ const cors = require('cors');
 const healthRoutes = require('./routes/health');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
+const contentsRoutes = require('./routes/contents');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api', healthRoutes);
 app.use('/api', authRoutes);
 app.use('/api', usersRoutes);
+app.use('/api', contentsRoutes);
 
 // Recurso no encontrado
 app.use((req, res) => {
