@@ -3,11 +3,13 @@
 Marcar cada tarea al completarla e indicar la fecha y el PR o commit asociado.
 Formato: `- [x] Tarea — YYYY-MM-DD — PR #N`
 
+Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-0` a `fase-5`).
+
 ## Fase 0 — Configuración del proyecto
-- [ ] Crear repositorio en GitHub y primer push
-- [ ] Configurar ramas `main` y `develop`
+- [x] Crear repositorio en GitHub y primer push — 2026-08-24 — Issue #6
+- [x] Configurar ramas `main` y `develop` — 2026-08-24 — Issue #7
 - [ ] Crear tablero de Proyecto (Kanban) en GitHub
-- [ ] Definir Issues iniciales por fase
+- [x] Definir Issues iniciales por fase — 2026-08-25 — Issue #9
 - [ ] Configurar Antigravity con Claude Code
 
 ## Fase 1 — Base de datos
