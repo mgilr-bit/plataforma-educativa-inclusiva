@@ -67,4 +67,12 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | GET | `/api/health` | Público |
 | POST | `/api/auth/login` | Público |
 | GET | `/api/auth/me` | Autenticado |
-| POST | `/api/auth/register` | Administrador |
+| GET | `/api/users` | Administrador |
+| POST | `/api/users` | Administrador |
+| GET | `/api/users/:id` | Administrador o el propio usuario |
+| PATCH | `/api/users/:id` | Administrador o el propio usuario |
+| DELETE | `/api/users/:id` | Administrador (baja lógica) |
+
+El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
+
+La baja de usuarios es **lógica** (`estado = false`), no física: siete tablas referencian a `usuario`, y un borrado real rompería cursos, inscripciones y progreso.
