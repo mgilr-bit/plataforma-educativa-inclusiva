@@ -38,7 +38,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Implementar wireframes: pantalla de inicio de sesión — 2026-09-05 — Issue #26
 - [x] Implementar panel del estudiante — 2026-09-05 — Issue #27
 - [x] Implementar panel del docente — 2026-09-05 — Issue #28
-- [ ] Componente de transcripción en tiempo real (subtítulos)
+- [x] Componente de transcripción en tiempo real (subtítulos) — 2026-09-05 — Issue #29
 - [ ] Componente de chat con asistente educativo
 - [ ] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado
 - [ ] Consumo de la API del backend
