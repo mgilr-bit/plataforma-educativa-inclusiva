@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.13.0] — 2026-09-05
+### Agregado
+- Límite de intentos en `/api/auth/login`: 10 fallidos cada 15 minutos por dirección IP, sin consumir cuota los inicios correctos.
+- Límite general de 300 peticiones por ventana en el resto de la API.
+- Variable `DATABASE_SSL` para decidir si la conexión a la base usa TLS.
+
+### Cambiado
+- El TLS de la base deja de deducirse de `NODE_ENV`. Esa deducción impedía poner `NODE_ENV=production` en Railway, porque la conexión interna no ofrece TLS.
+- La aplicación declara `trust proxy = 1`, necesario para que el límite de peticiones distinga las direcciones reales detrás del proxy.
+
 ## [0.12.0] — 2026-09-05
 ### Agregado
 - Script `scripts/hash-password.js` para restablecer contraseñas en un entorno donde no se puede ejecutar el backend.
