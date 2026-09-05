@@ -2,6 +2,14 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.9.0] — 2026-09-05
+### Agregado
+- Asistente educativo con la Claude API: `POST /api/tutor/ask`.
+- La transcripción de la clase se adjunta como contexto y se marca para caché, de modo que varias preguntas sobre el mismo contenido reutilizan el prefijo.
+- Continuidad de conversación con los últimos intercambios sobre el mismo contenido.
+- Historial de consultas en `GET /api/tutor/consultations`, con alcance por rol.
+- Variables `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`, `TUTOR_MODEL` y `TUTOR_EFFORT` en `backend/.env.example`.
+
 ## [0.8.0] — 2026-09-05
 ### Agregado
 - Transcripción de audio con la Whisper API: `POST /api/contents/:id/transcription`.
