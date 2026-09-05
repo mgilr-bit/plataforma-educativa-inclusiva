@@ -29,7 +29,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Endpoint de transcripción con Whisper API — 2026-09-05 — Issue #20
 - [x] Endpoint de asistente educativo con Claude API — 2026-09-05 — Issue #21
 - [ ] Manejo de errores y validaciones
-- [ ] Pruebas unitarias básicas
+- [x] Pruebas unitarias básicas — 2026-09-05 — Issue #23
 - [ ] Despliegue en Railway
 
 ## Fase 3 — Frontend (React)

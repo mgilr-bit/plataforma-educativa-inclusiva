@@ -151,3 +151,26 @@ curl -X POST http://localhost:4000/api/tutor/ask \
 | Administrador | Todas. |
 | Docente | Las asociadas a contenidos de los cursos que imparte. |
 | Estudiante | Solo las suyas. |
+
+## Pruebas
+
+```bash
+cd backend
+npm run test:preparar   # una sola vez: crea la base de pruebas y aplica migraciones
+npm test
+```
+
+Las pruebas corren contra `plataforma_educativa_test`, una base aparte, de modo que **nunca tocan los datos de desarrollo**. Cada archivo vacía las tablas y siembra su propio escenario, así que el orden de ejecución no altera los resultados.
+
+`--test-concurrency=1` es obligatorio: los archivos comparten la base, y en paralelo un `TRUNCATE` borraría los datos que otro está usando.
+
+| Conjunto | Qué cubre |
+|---|---|
+| `tests/unit/validators.test.js` | Validaciones de correo, contraseña, nombre e identificadores. |
+| `tests/unit/auth-middleware.test.js` | Verificación de token: válido, ausente, manipulado, vencido y firmado con otra clave. |
+| `tests/unit/whisper-service.test.js` | Cliente de Whisper con `fetch` sustituido; nunca llama al servicio real. |
+| `tests/unit/tutor-service.test.js` | Que las instrucciones del asistente conserven los requisitos de accesibilidad. |
+| `tests/integration/auth.test.js` | Inicio de sesión, cuentas desactivadas y respuestas uniformes ante credenciales inválidas. |
+| `tests/integration/autorizacion.test.js` | Quién ve y modifica qué, por rol. |
+
+`tests/test.env` se versiona a propósito: no contiene secretos. La clave JWT es de usar y tirar y las claves de IA quedan vacías para que las pruebas jamás llamen a servicios externos.

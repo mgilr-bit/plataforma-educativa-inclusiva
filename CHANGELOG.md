@@ -2,6 +2,15 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.10.0] — 2026-09-05
+### Agregado
+- Suite de 58 pruebas con el ejecutor propio de Node, sin dependencias de framework.
+- Base de datos de pruebas separada (`plataforma_educativa_test`) y script `npm run test:preparar`.
+- Pruebas de integración del control de acceso por rol y pruebas unitarias de validaciones, middleware y servicios de IA.
+
+### Cambiado
+- La aplicación Express se separa en `src/app.js`; `src/server.js` solo la pone a escuchar, para poder montarla en pruebas sin abrir un puerto.
+
 ## [0.9.0] — 2026-09-05
 ### Agregado
 - Asistente educativo con la Claude API: `POST /api/tutor/ask`.
