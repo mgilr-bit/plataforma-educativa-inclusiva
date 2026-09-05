@@ -189,6 +189,17 @@ Comprobación rápida:
 curl https://plataforma-educativa-inclusiva-production.up.railway.app/api/health
 ```
 
+### Restablecer una contraseña en producción
+
+Cuando el usuario ya existe y no se puede ejecutar el backend contra esa base:
+
+```bash
+cd backend
+node scripts/hash-password.js "correo@dominio.gt" "LaNuevaContrasena"
+```
+
+Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La contraseña nunca sale de la máquina: solo viaja el hash, que el script verifica antes de entregarlo.
+
 ### Notas de operación
 
 - El backend requiere `DATABASE_URL` y `JWT_SECRET`; sin la segunda no arranca, a propósito.
