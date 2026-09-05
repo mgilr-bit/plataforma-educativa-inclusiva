@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.16.0] — 2026-09-05
+### Agregado
+- Panel del estudiante con sus cursos, y pantalla de materiales de un curso.
+- Estructura común de las pantallas con sesión: cabecera, navegación con la página activa marcada y cierre de sesión.
+- Estados de carga, error y listado vacío anunciados con `aria-live`, con opción de reintentar.
+- 6 pruebas del panel del estudiante.
+
+### Corregido
+- La cabecera se caía si el usuario aún no había cargado, dejando la pantalla en blanco.
+
 ## [0.15.0] — 2026-09-05
 ### Agregado
 - Pantalla de inicio de sesión con validación en el cliente y mensajes en lenguaje sencillo.

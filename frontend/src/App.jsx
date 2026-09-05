@@ -6,7 +6,8 @@ import AccessibilityBar from './components/AccessibilityBar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import StudentPanel from './pages/StudentPanel';
+import CourseDetail from './pages/CourseDetail';
 import './styles/global.css';
 import './App.css';
 
@@ -31,7 +32,15 @@ export default function App() {
                 path="/panel"
                 element={(
                   <ProtectedRoute>
-                    <Dashboard />
+                    <StudentPanel />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/cursos/:id"
+                element={(
+                  <ProtectedRoute>
+                    <CourseDetail />
                   </ProtectedRoute>
                 )}
               />
