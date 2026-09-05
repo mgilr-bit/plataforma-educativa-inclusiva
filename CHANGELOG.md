@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.8.0] — 2026-09-05
+### Agregado
+- Transcripción de audio con la Whisper API: `POST /api/contents/:id/transcription`.
+- Los segmentos devueltos por Whisper se guardan como subtítulos con sus marcas de tiempo.
+- Revisión docente de la transcripción y corrección de subtítulos individuales.
+- Variables `OPENAI_API_KEY`, `OPENAI_BASE_URL` y `WHISPER_MODEL` en `backend/.env.example`.
+
+### Corregido
+- Se actualiza `qs` para resolver una vulnerabilidad moderada reportada por `npm audit`.
+
 ## [0.7.0] — 2026-08-25
 ### Agregado
 - CRUD de cursos en `/api/courses`, con filtros por docente, grado y ciclo escolar, y conteo de inscritos y contenidos.
