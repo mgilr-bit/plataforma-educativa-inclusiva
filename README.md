@@ -174,3 +174,35 @@ Las pruebas corren contra `plataforma_educativa_test`, una base aparte, de modo 
 | `tests/integration/autorizacion.test.js` | Quién ve y modifica qué, por rol. |
 
 `tests/test.env` se versiona a propósito: no contiene secretos. La clave JWT es de usar y tirar y las claves de IA quedan vacías para que las pruebas jamás llamen a servicios externos.
+
+## Despliegue
+
+| Componente | Dónde | Estado |
+|---|---|---|
+| Base de datos | Railway (PostgreSQL 18) | Esquema y roles aplicados |
+| Backend | Railway | https://plataforma-educativa-inclusiva-production.up.railway.app |
+| Frontend | Vercel | Pendiente (Fase 3) |
+
+Comprobación rápida:
+
+```bash
+curl https://plataforma-educativa-inclusiva-production.up.railway.app/api/health
+```
+
+### Restablecer una contraseña en producción
+
+Cuando el usuario ya existe y no se puede ejecutar el backend contra esa base:
+
+```bash
+cd backend
+node scripts/hash-password.js "correo@dominio.gt" "LaNuevaContrasena"
+```
+
+Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La contraseña nunca sale de la máquina: solo viaja el hash, que el script verifica antes de entregarlo.
+
+### Notas de operación
+
+- El backend requiere `DATABASE_URL` y `JWT_SECRET`; sin la segunda no arranca, a propósito.
+- `DATABASE_URL` se define como referencia (`${{Postgres.DATABASE_URL}}`) y viaja por la red privada de Railway.
+- El proxy TCP público de PostgreSQL se habilita solo para aplicar migraciones desde fuera, y **se cierra después**: mientras está activo, la base queda expuesta a internet protegida únicamente por contraseña.
+- Alternativa sin abrir el proxy: `railway connect Postgres`.

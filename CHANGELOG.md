@@ -2,6 +2,12 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.12.0] — 2026-09-05
+### Agregado
+- Script `scripts/hash-password.js` para restablecer contraseñas en un entorno donde no se puede ejecutar el backend.
+- Despliegue en Railway: instancia de PostgreSQL con el esquema y los datos semilla aplicados, y backend publicado con dominio propio.
+- `GET /api/health` responde correctamente en producción.
+
 ## [0.10.0] — 2026-09-05
 ### Agregado
 - Suite de 58 pruebas con el ejecutor propio de Node, sin dependencias de framework.
