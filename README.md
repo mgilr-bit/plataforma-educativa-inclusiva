@@ -232,6 +232,10 @@ Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La con
 
 ### Notas de operación
 
+- **`DATABASE_SSL`** decide si la conexión a la base usa TLS. Antes se deducía de `NODE_ENV`, lo que mezclaba dos cosas independientes: estar en producción y que la base pida cifrado. En Railway la conexión interna va por red privada y no ofrece TLS, así que ahí va en `false`.
+- **`/api/auth/login` admite 10 intentos fallidos cada 15 minutos** por dirección IP; los inicios de sesión correctos no consumen cuota. El resto de la API tiene un límite general de 300 peticiones por ventana. Al superarlos se responde `429` con `Retry-After`.
+- La aplicación declara `trust proxy = 1` porque Railway la sirve tras un proxy. Sin eso, todos los clientes compartirían la misma IP aparente y el límite los trataría como uno solo.
+
 - El backend requiere `DATABASE_URL` y `JWT_SECRET`; sin la segunda no arranca, a propósito.
 - `DATABASE_URL` se define como referencia (`${{Postgres.DATABASE_URL}}`) y viaja por la red privada de Railway.
 - El proxy TCP público de PostgreSQL se habilita solo para aplicar migraciones desde fuera, y **se cierra después**: mientras está activo, la base queda expuesta a internet protegida únicamente por contraseña.

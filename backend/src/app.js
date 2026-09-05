@@ -12,12 +12,20 @@ const coursesRoutes = require('./routes/courses');
 const transcriptionsRoutes = require('./routes/transcriptions');
 const tutorRoutes = require('./routes/tutor');
 const { notFound, errorHandler } = require('./middleware/errors');
+const { loginLimiter, apiLimiter } = require('./middleware/rateLimit');
 
 // Limite del cuerpo JSON. Las peticiones de la plataforma son pequenas; el
 // audio de las transcripciones no pasa por aqui, sino por multipart.
 const LIMITE_CUERPO = '100kb';
 
 const app = express();
+
+// Railway sirve la aplicacion detras de un proxy. Sin esto, req.ip seria
+// siempre la del proxy y el limite de peticiones se aplicaria a todos los
+// clientes como si fueran uno solo. El 1 indica un unico salto de confianza:
+// poner true aceptaria cualquier cabecera X-Forwarded-For enviada por el
+// cliente, que es justo lo que un atacante falsificaria para saltarse el limite.
+app.set('trust proxy', 1);
 
 // Origenes permitidos. En desarrollo se admite cualquiera; en produccion solo
 // los declarados en CORS_ORIGINS, separados por comas.
@@ -38,6 +46,10 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: LIMITE_CUERPO }));
+
+// El limite estricto va antes que el general y solo sobre el inicio de sesion.
+app.use('/api/auth/login', loginLimiter);
+app.use('/api', apiLimiter);
 
 // Rutas de la API
 app.use('/api', healthRoutes);
