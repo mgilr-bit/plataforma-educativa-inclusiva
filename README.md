@@ -234,7 +234,15 @@ Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La con
 
 - **`DATABASE_SSL`** decide si la conexión a la base usa TLS. Antes se deducía de `NODE_ENV`, lo que mezclaba dos cosas independientes: estar en producción y que la base pida cifrado. En Railway la conexión interna va por red privada y no ofrece TLS, así que ahí va en `false`.
 - **`/api/auth/login` admite 10 intentos fallidos cada 15 minutos** por dirección IP; los inicios de sesión correctos no consumen cuota. El resto de la API tiene un límite general de 300 peticiones por ventana. Al superarlos se responde `429` con `Retry-After`.
-- La aplicación declara `trust proxy = 1` porque Railway la sirve tras un proxy. Sin eso, todos los clientes compartirían la misma IP aparente y el límite los trataría como uno solo.
+- **`TRUST_PROXY_HOPS` debe valer `2` en Railway** y `1` en local. Determina cuál entrada de `X-Forwarded-For` se toma como dirección del cliente. Con el valor equivocado, la aplicación identifica a todos los clientes por la dirección del proxy y el límite de intentos los trata como uno solo: **un atacante bloquearía a todos los usuarios**.
+
+  El síntoma es traicionero, porque es indistinguible de un límite que funciona: peticiones rechazadas con `429`. Compruébelo con:
+
+  ```bash
+  curl https://<dominio>/api/health/red
+  ```
+
+  `direccionDetectada` debe ser la dirección pública de quien consulta, no la del proveedor. Verifíquelo tras cualquier cambio de proveedor o al añadir un CDN, porque el número de saltos cambia con la infraestructura y el fallo es silencioso.
 
 - El backend requiere `DATABASE_URL` y `JWT_SECRET`; sin la segunda no arranca, a propósito.
 - `DATABASE_URL` se define como referencia (`${{Postgres.DATABASE_URL}}`) y viaja por la red privada de Railway.
