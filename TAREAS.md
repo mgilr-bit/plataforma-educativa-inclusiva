@@ -34,7 +34,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Despliegue en Railway — 2026-09-05 — Issue #24
 
 ## Fase 3 — Frontend (React)
-- [ ] Inicializar proyecto React
+- [x] Inicializar proyecto React — 2026-09-05 — Issue #25
 - [ ] Implementar wireframes: pantalla de inicio de sesión
 - [ ] Implementar panel del estudiante
 - [ ] Implementar panel del docente

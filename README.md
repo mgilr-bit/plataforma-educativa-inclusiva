@@ -47,6 +47,8 @@ cd backend && npm install && npm run dev
 cd frontend && npm install && npm run dev
 ```
 
+El frontend corre en `http://localhost:5173` y espera la API en `VITE_API_URL`.
+
 Las variables de entorno se documentan en `backend/.env.example` y `frontend/.env.example`.
 
 ## Primer administrador
@@ -248,3 +250,33 @@ Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La con
 - `DATABASE_URL` se define como referencia (`${{Postgres.DATABASE_URL}}`) y viaja por la red privada de Railway.
 - El proxy TCP público de PostgreSQL se habilita solo para aplicar migraciones desde fuera, y **se cierra después**: mientras está activo, la base queda expuesta a internet protegida únicamente por contraseña.
 - Alternativa sin abrir el proxy: `railway connect Postgres`.
+
+## Accesibilidad del frontend
+
+No es una capa que se añada al final: está en la base del sistema de estilos.
+
+### Tokens con contraste medido
+
+Todo el color, el tamaño de letra y el espaciado viven en `src/styles/tokens.css`. Los contrastes están **calculados contra WCAG 2.1**, no supuestos:
+
+| Par | Tema normal | Alto contraste |
+|---|---|---|
+| Texto sobre fondo | 16.91:1 | 21.00:1 |
+| Texto suave sobre fondo | 6.59:1 | — |
+| Primario sobre fondo | 8.00:1 | 15.18:1 |
+| Error sobre fondo | 7.66:1 | 9.20:1 |
+| Borde sobre fondo | 4.12:1 | — |
+
+El mínimo AA es 4.5:1 para texto y 3:1 para bordes y controles; el tema de alto contraste supera 7:1, que es AAA.
+
+Como todo deriva de esas variables, **el alto contraste y el escalado de fuente son un cambio de tokens, no de cada componente**.
+
+### Decisiones incorporadas desde el inicio
+
+- **Enlace para saltar al contenido**, primer elemento enfocable de cada página.
+- **Indicador de foco visible** con `:focus-visible`, nunca eliminado sin sustituirlo.
+- **Área mínima de 44×44 px** en controles, por WCAG 2.5.5: importa en tabletas, que es como se usará en el aula.
+- **Interlineado de 1.6 y renglones de 70 caracteres**, que reducen el esfuerzo de lectura en una segunda lengua.
+- **`prefers-reduced-motion`** respetado.
+- **`lang="es-GT"`** en el documento, para que los lectores de pantalla elijan la voz correcta.
+- Los estados activos se marcan **con color y con grosor**, porque el color solo no basta.

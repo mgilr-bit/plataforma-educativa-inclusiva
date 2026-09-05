@@ -2,6 +2,14 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.14.0] — 2026-09-05
+### Agregado
+- Proyecto de frontend con React 19 y Vite, con enrutado y estructura de carpetas.
+- Sistema de tokens de diseño con contrastes medidos contra WCAG 2.1, y tema de alto contraste que supera el nivel AAA.
+- Controles de accesibilidad siempre visibles: alto contraste y tres tamaños de letra, que persisten entre visitas.
+- Base de accesibilidad: enlace para saltar al contenido, foco visible, área táctil mínima y respeto a `prefers-reduced-motion`.
+- Cliente de la API con manejo de token y de errores centralizado.
+
 ## [0.13.1] — 2026-09-05
 ### Corregido
 - La aplicación identificaba a todos los clientes por la dirección del proxy, de modo que agotar el límite de intentos desde una conexión bloqueaba a las demás. El número de proxies de confianza pasa a configurarse con `TRUST_PROXY_HOPS`, que en Railway vale `2`.

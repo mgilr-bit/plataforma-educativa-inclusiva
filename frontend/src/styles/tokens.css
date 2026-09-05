@@ -1,0 +1,72 @@
+/*
+ * Tokens de diseño de la plataforma.
+ *
+ * La accesibilidad vive aquí: el alto contraste y el tamaño de fuente se
+ * cambian modificando estas variables, no cada componente. Los contrastes
+ * están medidos contra WCAG 2.1, no supuestos; el mínimo AA es 4.5:1 para
+ * texto y 3:1 para bordes y controles.
+ */
+
+:root {
+  /* --- Color, tema normal ---------------------------------------------- */
+  /* Los comentarios indican el contraste medido contra el fondo. */
+  --color-fondo: #ffffff;
+  --color-superficie: #f1f4f7;
+  --color-texto: #1a1d21;          /* 16.91:1 */
+  --color-texto-suave: #565e66;    /*  6.59:1 */
+  --color-primario: #12557e;       /*  8.00:1 */
+  --color-primario-texto: #ffffff; /*  8.00:1 sobre primario */
+  --color-error: #a02128;          /*  7.66:1 */
+  --color-exito: #12633a;          /*  7.31:1 */
+  --color-borde: #767e86;          /*  4.12:1, supera el 3:1 exigido a controles */
+  --color-foco: #a34a00;           /*  5.94:1 */
+
+  /* --- Tipografía ------------------------------------------------------- */
+  /* Todo se deriva de --escala-texto, que el usuario ajusta. */
+  --escala-texto: 1;
+  --texto-base: calc(1rem * var(--escala-texto));
+  --texto-pequeno: calc(0.875rem * var(--escala-texto));
+  --texto-grande: calc(1.25rem * var(--escala-texto));
+  --texto-titulo: calc(1.75rem * var(--escala-texto));
+  --texto-titulo-mayor: calc(2.25rem * var(--escala-texto));
+
+  /* Interlineado amplio: ayuda a seguir el renglón al leer en una segunda
+     lengua, que es el caso de muchos estudiantes sordos con el español. */
+  --interlineado: 1.6;
+  --interlineado-titulo: 1.25;
+
+  --familia-texto: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* --- Espaciado y formas ---------------------------------------------- */
+  --espacio-1: 0.25rem;
+  --espacio-2: 0.5rem;
+  --espacio-3: 0.75rem;
+  --espacio-4: 1rem;
+  --espacio-6: 1.5rem;
+  --espacio-8: 2rem;
+  --espacio-12: 3rem;
+
+  --radio: 0.375rem;
+  --borde-foco: 3px;
+
+  /* Área mínima de un control táctil. La recomendación de WCAG 2.5.5 es
+     44x44 px: importa en tabletas, que es como se usará en el aula. */
+  --area-minima: 44px;
+}
+
+/*
+ * Tema de alto contraste. Se activa con data-contraste="alto" en <html>.
+ * Todos los pares superan 7:1, el nivel AAA.
+ */
+:root[data-contraste='alto'] {
+  --color-fondo: #000000;
+  --color-superficie: #121212;
+  --color-texto: #ffffff;          /* 21.00:1 */
+  --color-texto-suave: #e0e0e0;
+  --color-primario: #ffd84d;       /* 15.18:1 */
+  --color-primario-texto: #000000; /* 15.18:1 sobre primario */
+  --color-error: #ff8a80;          /*  9.20:1 */
+  --color-exito: #7be38b;          /* 13.20:1 */
+  --color-borde: #ffffff;
+  --color-foco: #ffd84d;
+}
