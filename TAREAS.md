@@ -17,7 +17,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Ejecutar DDL inicial en PostgreSQL (local) — 2026-08-24
 - [x] Crear migraciones versionadas — 2026-08-24
 - [x] Cargar datos semilla de prueba — 2026-08-24
-- [ ] Desplegar instancia PostgreSQL en Railway
+- [x] Desplegar instancia PostgreSQL en Railway — 2026-09-05 — Issue #14
 
 ## Fase 2 — Backend (Node.js / Express)
 - [x] Inicializar proyecto y estructura de carpetas — 2026-08-24
@@ -30,7 +30,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Endpoint de asistente educativo con Claude API — 2026-09-05 — Issue #21
 - [ ] Manejo de errores y validaciones
 - [x] Pruebas unitarias básicas — 2026-09-05 — Issue #23
-- [ ] Despliegue en Railway
+- [x] Despliegue en Railway — 2026-09-05 — Issue #24
 
 ## Fase 3 — Frontend (React)
 - [ ] Inicializar proyecto React
