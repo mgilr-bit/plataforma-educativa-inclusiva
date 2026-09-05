@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "crear-admin": "node scripts/create-admin.js"
+    "crear-admin": "node scripts/create-admin.js",
+    "test": "node --env-file=tests/test.env --test --test-concurrency=1",
+    "test:preparar": "sh tests/preparar-bd.sh"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
     "pg": "^8.23.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }
