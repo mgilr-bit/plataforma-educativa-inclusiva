@@ -88,6 +88,8 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | GET | `/api/contents/:id/transcription` | Autenticado (filtrado por rol) |
 | PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
 | PATCH | `/api/subtitles/:id` | Administrador o docente titular |
+| POST | `/api/tutor/ask` | Estudiante |
+| GET | `/api/tutor/consultations` | Autenticado (filtrado por rol) |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 
@@ -125,3 +127,27 @@ curl -X POST http://localhost:4000/api/contents/1/transcription \
 - Cada contenido admite una sola transcripción.
 - El docente puede corregir cada subtítulo (`PATCH /api/subtitles/:id`), que queda marcado como `editado_docente`, y avanzar el estado de revisión a `revisada` o `aprobada`. **La revisión humana importa**: los subtítulos automáticos contienen errores, y son el canal principal de acceso al contenido para los estudiantes con discapacidad auditiva.
 - Sin `OPENAI_API_KEY` configurada, el endpoint responde `503` y el resto de la API sigue operando con normalidad.
+
+## Asistente educativo
+
+El estudiante pregunta y la API consulta a Claude, que responde con la transcripción de la clase como contexto.
+
+```bash
+curl -X POST http://localhost:4000/api/tutor/ask \
+  -H "Authorization: Bearer <TOKEN>" -H 'Content-Type: application/json' \
+  -d '{"pregunta":"No entendí qué es una fracción","idContenido":1}'
+```
+
+- `idContenido` es opcional. Si se envía, el estudiante debe estar inscrito en el curso y el contenido estar activo; su transcripción se adjunta como contexto.
+- Se envían los últimos intercambios sobre el mismo contenido, de modo que la conversación tiene continuidad.
+- Las instrucciones del asistente están redactadas para el contexto del proyecto: **oraciones cortas, vocabulario simple y sin modismos**, porque para muchos estudiantes sordos el español escrito es una segunda lengua. Además, el asistente no resuelve evaluaciones: guía al estudiante para que llegue solo a la respuesta.
+- Solo se guarda la consulta cuando hubo respuesta.
+- Sin `ANTHROPIC_API_KEY` configurada, el endpoint responde `503` y el resto de la API sigue operando.
+
+### Alcance del historial
+
+| Rol | Qué consultas ve |
+|---|---|
+| Administrador | Todas. |
+| Docente | Las asociadas a contenidos de los cursos que imparte. |
+| Estudiante | Solo las suyas. |

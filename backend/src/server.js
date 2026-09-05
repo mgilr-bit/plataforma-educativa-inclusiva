@@ -9,6 +9,7 @@ const usersRoutes = require('./routes/users');
 const contentsRoutes = require('./routes/contents');
 const coursesRoutes = require('./routes/courses');
 const transcriptionsRoutes = require('./routes/transcriptions');
+const tutorRoutes = require('./routes/tutor');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -23,6 +24,7 @@ app.use('/api', usersRoutes);
 app.use('/api', contentsRoutes);
 app.use('/api', coursesRoutes);
 app.use('/api', transcriptionsRoutes);
+app.use('/api', tutorRoutes);
 
 // Recurso no encontrado
 app.use((req, res) => {
