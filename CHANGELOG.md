@@ -2,6 +2,20 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.17.0] — 2026-09-05
+### Agregado
+- Panel del docente con sus cursos, inscritos y materiales publicados.
+- Alta de material desde la pantalla del curso, con confirmación del nombre creado.
+- Lista de estudiantes inscritos, visible solo para el docente titular y el administrador.
+- El panel se elige según el rol sobre una misma ruta, `/panel`.
+- 11 pruebas del panel del docente y del alta de material.
+
+### Cambiado
+- Los estilos compartidos de formulario se extraen a `global.css`, en lugar de reutilizar las clases de la pantalla de inicio de sesión.
+
+### Corregido
+- El selector de panel se caía si el usuario aún no había cargado, con el mismo modo de fallo ya corregido en la cabecera.
+
 ## [0.16.0] — 2026-09-05
 ### Agregado
 - Panel del estudiante con sus cursos, y pantalla de materiales de un curso.

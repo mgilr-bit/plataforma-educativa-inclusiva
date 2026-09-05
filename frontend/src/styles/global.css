@@ -105,3 +105,34 @@ a.boton {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- Piezas compartidas de formulario ---------------------------------- */
+
+/* Aviso de error de un formulario completo. Se marca con borde grueso ademas
+   de color, y quien lo muestra debe llevarle el foco. */
+.alerta-error {
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-4);
+  background-color: var(--color-fondo);
+  color: var(--color-error);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radio);
+  font-weight: 600;
+}
+
+.boton-principal {
+  width: 100%;
+  padding: var(--espacio-3) var(--espacio-6);
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio);
+  font-size: var(--texto-grande);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-principal:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}

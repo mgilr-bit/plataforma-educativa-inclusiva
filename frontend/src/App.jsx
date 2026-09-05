@@ -6,7 +6,7 @@ import AccessibilityBar from './components/AccessibilityBar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import StudentPanel from './pages/StudentPanel';
+import RolePanel from './pages/RolePanel';
 import CourseDetail from './pages/CourseDetail';
 import './styles/global.css';
 import './App.css';
@@ -32,7 +32,7 @@ export default function App() {
                 path="/panel"
                 element={(
                   <ProtectedRoute>
-                    <StudentPanel />
+                    <RolePanel />
                   </ProtectedRoute>
                 )}
               />

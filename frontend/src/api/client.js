@@ -120,6 +120,18 @@ export const api = {
     return request(`/contents${suffix}`);
   },
 
+  createContent: ({ courseId, title, type, fileUrl, durationSeconds }) =>
+    request('/contents', {
+      method: 'POST',
+      body: {
+        idCurso: courseId,
+        titulo: title,
+        tipo: type,
+        urlArchivo: fileUrl || null,
+        duracionSeg: durationSeconds || null,
+      },
+    }),
+
   transcription: (contentId) => request(`/contents/${contentId}/transcription`),
   enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),
 };
