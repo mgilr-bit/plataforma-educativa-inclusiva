@@ -20,12 +20,16 @@ const LIMITE_CUERPO = '100kb';
 
 const app = express();
 
-// Railway sirve la aplicacion detras de un proxy. Sin esto, req.ip seria
-// siempre la del proxy y el limite de peticiones se aplicaria a todos los
-// clientes como si fueran uno solo. El 1 indica un unico salto de confianza:
-// poner true aceptaria cualquier cabecera X-Forwarded-For enviada por el
-// cliente, que es justo lo que un atacante falsificaria para saltarse el limite.
-app.set('trust proxy', 1);
+// Numero de proxies de confianza delante de la aplicacion. Determina cual
+// entrada de X-Forwarded-For se toma como direccion del cliente, y de eso
+// depende que el limite de peticiones distinga a un cliente de otro.
+//
+// Se configura por entorno porque el numero de saltos depende del proveedor y
+// no se puede deducir leyendo el codigo: hay que medirlo contra el despliegue
+// real, con GET /api/health/red.
+const SALTOS_DE_PROXY = Number.parseInt(process.env.TRUST_PROXY_HOPS ?? '1', 10);
+
+app.set('trust proxy', Number.isNaN(SALTOS_DE_PROXY) ? 1 : SALTOS_DE_PROXY);
 
 // Origenes permitidos. En desarrollo se admite cualquiera; en produccion solo
 // los declarados en CORS_ORIGINS, separados por comas.
