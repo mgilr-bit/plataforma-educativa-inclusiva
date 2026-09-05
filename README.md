@@ -77,6 +77,19 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | POST | `/api/contents` | Administrador o docente titular |
 | PATCH | `/api/contents/:id` | Administrador o docente titular |
 | DELETE | `/api/contents/:id` | Administrador o docente titular (baja lógica) |
+| GET | `/api/courses` | Autenticado (filtrado por rol) |
+| GET | `/api/courses/:id` | Autenticado (filtrado por rol) |
+| POST | `/api/courses` | Administrador |
+| PATCH | `/api/courses/:id` | Administrador o docente titular |
+| GET | `/api/courses/:id/enrollments` | Administrador o docente titular |
+| POST | `/api/courses/:id/enrollments` | Administrador o docente titular |
+| DELETE | `/api/courses/:id/enrollments/:idEstudiante` | Administrador o docente titular |
+| POST | `/api/contents/:id/transcription` | Administrador o docente titular |
+| GET | `/api/contents/:id/transcription` | Autenticado (filtrado por rol) |
+| PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
+| PATCH | `/api/subtitles/:id` | Administrador o docente titular |
+| POST | `/api/tutor/ask` | Estudiante |
+| GET | `/api/tutor/consultations` | Autenticado (filtrado por rol) |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 
@@ -89,3 +102,141 @@ La baja de usuarios es **lógica** (`estado = false`), no física: siete tablas 
 | Administrador | Todos los contenidos. |
 | Docente | Los de los cursos que imparte, activos y retirados. |
 | Estudiante | Los contenidos activos de los cursos en los que está inscrito. |
+
+### Visibilidad de los cursos
+
+| Rol | Qué ve |
+|---|---|
+| Administrador | Todos los cursos. |
+| Docente | Los cursos que imparte. |
+| Estudiante | Los cursos en los que está inscrito. |
+
+Solo el administrador crea cursos y reasigna su docente titular. Las inscripciones las gestionan el administrador y el docente titular del curso.
+
+## Transcripción de voz a texto
+
+El docente sube el audio de un contenido y la API lo envía a la Whisper API de OpenAI, que devuelve el texto y sus segmentos con marcas de tiempo. El texto se guarda en `transcripcion` y los segmentos en `subtitulo`, que alimentan los subtítulos del reproductor.
+
+```bash
+curl -X POST http://localhost:4000/api/contents/1/transcription \
+  -H "Authorization: Bearer <TOKEN>" \
+  -F "audio=@clase.mp3"
+```
+
+- Formatos admitidos: mp3, mp4, mpeg, mpga, m4a, wav, webm, ogg, flac. Máximo 25 MB.
+- Cada contenido admite una sola transcripción.
+- El docente puede corregir cada subtítulo (`PATCH /api/subtitles/:id`), que queda marcado como `editado_docente`, y avanzar el estado de revisión a `revisada` o `aprobada`. **La revisión humana importa**: los subtítulos automáticos contienen errores, y son el canal principal de acceso al contenido para los estudiantes con discapacidad auditiva.
+- Sin `OPENAI_API_KEY` configurada, el endpoint responde `503` y el resto de la API sigue operando con normalidad.
+
+## Asistente educativo
+
+El estudiante pregunta y la API consulta a Claude, que responde con la transcripción de la clase como contexto.
+
+```bash
+curl -X POST http://localhost:4000/api/tutor/ask \
+  -H "Authorization: Bearer <TOKEN>" -H 'Content-Type: application/json' \
+  -d '{"pregunta":"No entendí qué es una fracción","idContenido":1}'
+```
+
+- `idContenido` es opcional. Si se envía, el estudiante debe estar inscrito en el curso y el contenido estar activo; su transcripción se adjunta como contexto.
+- Se envían los últimos intercambios sobre el mismo contenido, de modo que la conversación tiene continuidad.
+- Las instrucciones del asistente están redactadas para el contexto del proyecto: **oraciones cortas, vocabulario simple y sin modismos**, porque para muchos estudiantes sordos el español escrito es una segunda lengua. Además, el asistente no resuelve evaluaciones: guía al estudiante para que llegue solo a la respuesta.
+- Solo se guarda la consulta cuando hubo respuesta.
+- Sin `ANTHROPIC_API_KEY` configurada, el endpoint responde `503` y el resto de la API sigue operando.
+
+### Alcance del historial
+
+| Rol | Qué consultas ve |
+|---|---|
+| Administrador | Todas. |
+| Docente | Las asociadas a contenidos de los cursos que imparte. |
+| Estudiante | Solo las suyas. |
+
+## Pruebas
+
+```bash
+cd backend
+npm run test:preparar   # una sola vez: crea la base de pruebas y aplica migraciones
+npm test
+```
+
+Las pruebas corren contra `plataforma_educativa_test`, una base aparte, de modo que **nunca tocan los datos de desarrollo**. Cada archivo vacía las tablas y siembra su propio escenario, así que el orden de ejecución no altera los resultados.
+
+`--test-concurrency=1` es obligatorio: los archivos comparten la base, y en paralelo un `TRUNCATE` borraría los datos que otro está usando.
+
+| Conjunto | Qué cubre |
+|---|---|
+| `tests/unit/validators.test.js` | Validaciones de correo, contraseña, nombre e identificadores. |
+| `tests/unit/auth-middleware.test.js` | Verificación de token: válido, ausente, manipulado, vencido y firmado con otra clave. |
+| `tests/unit/whisper-service.test.js` | Cliente de Whisper con `fetch` sustituido; nunca llama al servicio real. |
+| `tests/unit/tutor-service.test.js` | Que las instrucciones del asistente conserven los requisitos de accesibilidad. |
+| `tests/integration/auth.test.js` | Inicio de sesión, cuentas desactivadas y respuestas uniformes ante credenciales inválidas. |
+| `tests/integration/autorizacion.test.js` | Quién ve y modifica qué, por rol. |
+
+`tests/test.env` se versiona a propósito: no contiene secretos. La clave JWT es de usar y tirar y las claves de IA quedan vacías para que las pruebas jamás llamen a servicios externos.
+
+## Manejo de errores
+
+Todas las respuestas de error comparten la misma forma:
+
+```json
+{ "estado": "error", "mensaje": "..." }
+```
+
+Y las de validación añaden el detalle de cada campo:
+
+```json
+{ "estado": "error", "mensaje": "Datos invalidos", "errores": ["..."] }
+```
+
+| Código | Cuándo |
+|---|---|
+| `400` | Datos inválidos, JSON malformado o identificador no numérico. |
+| `401` | Falta el token, o está vencido o manipulado. |
+| `403` | Autenticado, pero sin permiso sobre ese recurso. |
+| `404` | No existe, **o existe y no le corresponde** (no se revela cuál de las dos). |
+| `409` | Conflicto: correo repetido, inscripción duplicada, autodesactivación. |
+| `413` | El cuerpo excede los 100 KB. |
+| `415` | Formato de archivo no admitido. |
+| `422` | La petición era válida pero no se pudo cumplir (el asistente declinó). |
+| `429` | El servicio de IA está saturado. |
+| `502` / `503` / `504` | Un servicio externo falló, no está configurado o tardó demasiado. |
+| `500` | Solo fallos reales del servidor. Nunca revela trazas, SQL ni la cadena de conexión. |
+
+En producción, `CORS_ORIGINS` restringe los orígenes admitidos; vacío permite cualquiera y solo es aceptable en local. El servidor cierra de forma ordenada ante `SIGTERM`, que es la señal que envía Railway al redesplegar.
+
+## Despliegue
+
+| Componente | Dónde | Estado |
+|---|---|---|
+| Base de datos | Railway (PostgreSQL 18) | Esquema y roles aplicados |
+| Backend | Railway | https://plataforma-educativa-inclusiva-production.up.railway.app |
+| Frontend | Vercel | Pendiente (Fase 3) |
+
+Comprobación rápida:
+
+```bash
+curl https://plataforma-educativa-inclusiva-production.up.railway.app/api/health
+```
+
+### Restablecer una contraseña en producción
+
+Cuando el usuario ya existe y no se puede ejecutar el backend contra esa base:
+
+```bash
+cd backend
+node scripts/hash-password.js "correo@dominio.gt" "LaNuevaContrasena"
+```
+
+Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La contraseña nunca sale de la máquina: solo viaja el hash, que el script verifica antes de entregarlo.
+
+### Notas de operación
+
+- **`DATABASE_SSL`** decide si la conexión a la base usa TLS. Antes se deducía de `NODE_ENV`, lo que mezclaba dos cosas independientes: estar en producción y que la base pida cifrado. En Railway la conexión interna va por red privada y no ofrece TLS, así que ahí va en `false`.
+- **`/api/auth/login` admite 10 intentos fallidos cada 15 minutos** por dirección IP; los inicios de sesión correctos no consumen cuota. El resto de la API tiene un límite general de 300 peticiones por ventana. Al superarlos se responde `429` con `Retry-After`.
+- La aplicación declara `trust proxy = 1` porque Railway la sirve tras un proxy. Sin eso, todos los clientes compartirían la misma IP aparente y el límite los trataría como uno solo.
+
+- El backend requiere `DATABASE_URL` y `JWT_SECRET`; sin la segunda no arranca, a propósito.
+- `DATABASE_URL` se define como referencia (`${{Postgres.DATABASE_URL}}`) y viaja por la red privada de Railway.
+- El proxy TCP público de PostgreSQL se habilita solo para aplicar migraciones desde fuera, y **se cierra después**: mientras está activo, la base queda expuesta a internet protegida únicamente por contraseña.
+- Alternativa sin abrir el proxy: `railway connect Postgres`.

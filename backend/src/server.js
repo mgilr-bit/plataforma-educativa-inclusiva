@@ -1,36 +1,39 @@
 // Punto de entrada de la API REST.
 require('dotenv').config();
 
-const express = require('express');
-const cors = require('cors');
-const healthRoutes = require('./routes/health');
-const authRoutes = require('./routes/auth');
-const usersRoutes = require('./routes/users');
-const contentsRoutes = require('./routes/contents');
+const app = require('./app');
+const pool = require('./config/db');
 
-const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
-app.use(express.json());
-
-// Rutas de la API
-app.use('/api', healthRoutes);
-app.use('/api', authRoutes);
-app.use('/api', usersRoutes);
-app.use('/api', contentsRoutes);
-
-// Recurso no encontrado
-app.use((req, res) => {
-  res.status(404).json({ estado: 'error', mensaje: 'Recurso no encontrado' });
-});
-
-// Manejador central de errores
-app.use((error, req, res, next) => {
-  console.error('Error no controlado:', error.message);
-  res.status(500).json({ estado: 'error', mensaje: 'Error interno del servidor' });
-});
-
-app.listen(PORT, () => {
+const servidor = app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
+
+// Un fallo no capturado no debe dejar el proceso en un estado indefinido: se
+// registra y se cierra de forma ordenada para que el orquestador lo reinicie.
+process.on('unhandledRejection', (motivo) => {
+  console.error('Promesa rechazada sin manejar:', motivo);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Excepcion no capturada:', error);
+  cerrar('uncaughtException', 1);
+});
+
+// Railway envia SIGTERM al redesplegar. Cerrar ordenadamente evita cortar
+// peticiones a medias y deja libres las conexiones a la base.
+function cerrar(senal, codigo = 0) {
+  console.log(`Recibido ${senal}: cerrando el servidor...`);
+  servidor.close(() => {
+    pool.end()
+      .catch((error) => console.error('Error al cerrar el pool:', error.message))
+      .finally(() => process.exit(codigo));
+  });
+
+  // Si las conexiones abiertas no terminan a tiempo, se fuerza la salida.
+  setTimeout(() => process.exit(codigo), 10000).unref();
+}
+
+process.on('SIGTERM', () => cerrar('SIGTERM'));
+process.on('SIGINT', () => cerrar('SIGINT'));

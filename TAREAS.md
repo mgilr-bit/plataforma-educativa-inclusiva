@@ -17,7 +17,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Ejecutar DDL inicial en PostgreSQL (local) — 2026-08-24
 - [x] Crear migraciones versionadas — 2026-08-24
 - [x] Cargar datos semilla de prueba — 2026-08-24
-- [ ] Desplegar instancia PostgreSQL en Railway
+- [x] Desplegar instancia PostgreSQL en Railway — 2026-09-05 — Issue #14
 
 ## Fase 2 — Backend (Node.js / Express)
 - [x] Inicializar proyecto y estructura de carpetas — 2026-08-24
@@ -25,11 +25,13 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Autenticación y roles (estudiante, docente, administrador) — 2026-08-25
 - [x] CRUD de usuarios — 2026-08-25 — Issue #18
 - [x] CRUD de contenidos educativos — 2026-08-25 — Issue #19
-- [ ] Endpoint de transcripción con Whisper API
-- [ ] Endpoint de asistente educativo con Claude API
-- [ ] Manejo de errores y validaciones
-- [ ] Pruebas unitarias básicas
-- [ ] Despliegue en Railway
+- [x] CRUD de cursos e inscripciones — 2026-08-25 — Issue #46
+- [x] Endpoint de transcripción con Whisper API — 2026-09-05 — Issue #20
+- [x] Endpoint de asistente educativo con Claude API — 2026-09-05 — Issue #21
+- [x] Manejo de errores y validaciones — 2026-09-05 — Issue #22
+- [x] Limitar intentos de inicio de sesión — 2026-09-05 — Issue #53
+- [x] Pruebas unitarias básicas — 2026-09-05 — Issue #23
+- [x] Despliegue en Railway — 2026-09-05 — Issue #24
 
 ## Fase 3 — Frontend (React)
 - [ ] Inicializar proyecto React
