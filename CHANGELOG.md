@@ -9,6 +9,10 @@ Todas las entregas relevantes del proyecto se documentan aquí, de la más recie
 - Componente de campo de formulario accesible: etiqueta asociada, error enlazado con `aria-describedby` y `aria-invalid`.
 - Rutas protegidas, que esperan a validar el token antes de decidir a dónde llevar al usuario.
 - 13 pruebas del frontend con Vitest, que consultan por rol y por etiqueta.
+- Prueba de humo que monta la aplicación completa: detecta errores de ejecución que no aparecen al construir.
+
+### Corregido
+- El servidor de desarrollo escuchaba solo en IPv6, de modo que un navegador que resolviera `localhost` como IPv4 recibía conexión rechazada. Ahora escucha en todas las interfaces, lo que además permite probar la interfaz desde una tableta en la misma red.
 
 ## [0.14.0] — 2026-09-05
 ### Agregado
