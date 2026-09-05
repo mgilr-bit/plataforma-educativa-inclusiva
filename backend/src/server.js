@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const contentsRoutes = require('./routes/contents');
 const coursesRoutes = require('./routes/courses');
+const transcriptionsRoutes = require('./routes/transcriptions');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -21,6 +22,7 @@ app.use('/api', authRoutes);
 app.use('/api', usersRoutes);
 app.use('/api', contentsRoutes);
 app.use('/api', coursesRoutes);
+app.use('/api', transcriptionsRoutes);
 
 // Recurso no encontrado
 app.use((req, res) => {

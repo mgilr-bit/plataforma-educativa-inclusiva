@@ -84,6 +84,10 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | GET | `/api/courses/:id/enrollments` | Administrador o docente titular |
 | POST | `/api/courses/:id/enrollments` | Administrador o docente titular |
 | DELETE | `/api/courses/:id/enrollments/:idEstudiante` | Administrador o docente titular |
+| POST | `/api/contents/:id/transcription` | Administrador o docente titular |
+| GET | `/api/contents/:id/transcription` | Autenticado (filtrado por rol) |
+| PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
+| PATCH | `/api/subtitles/:id` | Administrador o docente titular |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 
@@ -106,3 +110,18 @@ La baja de usuarios es **lógica** (`estado = false`), no física: siete tablas 
 | Estudiante | Los cursos en los que está inscrito. |
 
 Solo el administrador crea cursos y reasigna su docente titular. Las inscripciones las gestionan el administrador y el docente titular del curso.
+
+## Transcripción de voz a texto
+
+El docente sube el audio de un contenido y la API lo envía a la Whisper API de OpenAI, que devuelve el texto y sus segmentos con marcas de tiempo. El texto se guarda en `transcripcion` y los segmentos en `subtitulo`, que alimentan los subtítulos del reproductor.
+
+```bash
+curl -X POST http://localhost:4000/api/contents/1/transcription \
+  -H "Authorization: Bearer <TOKEN>" \
+  -F "audio=@clase.mp3"
+```
+
+- Formatos admitidos: mp3, mp4, mpeg, mpga, m4a, wav, webm, ogg, flac. Máximo 25 MB.
+- Cada contenido admite una sola transcripción.
+- El docente puede corregir cada subtítulo (`PATCH /api/subtitles/:id`), que queda marcado como `editado_docente`, y avanzar el estado de revisión a `revisada` o `aprobada`. **La revisión humana importa**: los subtítulos automáticos contienen errores, y son el canal principal de acceso al contenido para los estudiantes con discapacidad auditiva.
+- Sin `OPENAI_API_KEY` configurada, el endpoint responde `503` y el resto de la API sigue operando con normalidad.
