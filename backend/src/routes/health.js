@@ -26,4 +26,19 @@ router.get('/health', async (req, res) => {
   }
 });
 
+// GET /api/health/red
+// Diagnostico de la cadena de proxies. Sin el, el numero de saltos de confianza
+// solo se puede adivinar, y de ese numero depende que el limite de intentos
+// distinga a un cliente de otro. No expone nada que el cliente no sepa ya de si
+// mismo: su propia direccion y las cabeceras que el mismo envio.
+router.get('/health/red', (req, res) => {
+  res.json({
+    estado: 'ok',
+    saltosDeConfianza: req.app.get('trust proxy'),
+    direccionDetectada: req.ip,
+    cadenaDeDirecciones: req.ips,
+    xForwardedFor: req.headers['x-forwarded-for'] || null,
+  });
+});
+
 module.exports = router;
