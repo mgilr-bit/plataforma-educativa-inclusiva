@@ -2,6 +2,14 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.15.0] — 2026-09-05
+### Agregado
+- Pantalla de inicio de sesión con validación en el cliente y mensajes en lenguaje sencillo.
+- Contexto de sesión que restaura al usuario al recargar la página y descarta el token si dejó de ser válido.
+- Componente de campo de formulario accesible: etiqueta asociada, error enlazado con `aria-describedby` y `aria-invalid`.
+- Rutas protegidas, que esperan a validar el token antes de decidir a dónde llevar al usuario.
+- 13 pruebas del frontend con Vitest, que consultan por rol y por etiqueta.
+
 ## [0.14.0] — 2026-09-05
 ### Agregado
 - Proyecto de frontend con React 19 y Vite, con enrutado y estructura de carpetas.

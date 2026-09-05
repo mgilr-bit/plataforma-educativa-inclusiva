@@ -35,7 +35,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 
 ## Fase 3 — Frontend (React)
 - [x] Inicializar proyecto React — 2026-09-05 — Issue #25
-- [ ] Implementar wireframes: pantalla de inicio de sesión
+- [x] Implementar wireframes: pantalla de inicio de sesión — 2026-09-05 — Issue #26
 - [ ] Implementar panel del estudiante
 - [ ] Implementar panel del docente
 - [ ] Componente de transcripción en tiempo real (subtítulos)

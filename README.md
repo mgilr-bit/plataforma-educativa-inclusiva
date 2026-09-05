@@ -271,6 +271,14 @@ El mínimo AA es 4.5:1 para texto y 3:1 para bordes y controles; el tema de alto
 
 Como todo deriva de esas variables, **el alto contraste y el escalado de fuente son un cambio de tokens, no de cada componente**.
 
+### Pruebas del frontend
+
+```bash
+cd frontend && npm test
+```
+
+Consultan por **rol y por etiqueta**, no por clase CSS. La diferencia importa: si una prueba encuentra el campo por su etiqueta *"Correo electrónico"*, es porque la asociación está bien hecha, que es exactamente lo que necesita un lector de pantalla. Una prueba que buscara `.form-field__input` pasaría igual con la etiqueta rota.
+
 ### Decisiones incorporadas desde el inicio
 
 - **Enlace para saltar al contenido**, primer elemento enfocable de cada página.
