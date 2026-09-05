@@ -1,0 +1,49 @@
+.accessibility-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-4);
+  background-color: var(--color-superficie);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.accessibility-bar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.accessibility-bar__label {
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+.accessibility-bar__options {
+  display: flex;
+  gap: var(--espacio-1);
+}
+
+.accessibility-bar__button {
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.accessibility-bar__button:hover {
+  border-color: var(--color-primario);
+}
+
+/* El estado activo se marca con color y con un cambio de grosor: quien no
+   distingue bien los colores necesita una segunda señal. */
+.accessibility-bar__button[aria-checked='true'],
+.accessibility-bar__button[aria-pressed='true'] {
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  border-color: var(--color-primario);
+  font-weight: 700;
+}
