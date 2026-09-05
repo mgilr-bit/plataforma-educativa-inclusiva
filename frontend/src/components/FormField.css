@@ -1,0 +1,46 @@
+.form-field {
+  margin-bottom: var(--espacio-6);
+}
+
+.form-field__label {
+  display: block;
+  margin-bottom: var(--espacio-2);
+  font-weight: 600;
+}
+
+.form-field__required {
+  color: var(--color-error);
+}
+
+.form-field__help {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+.form-field__input {
+  width: 100%;
+  min-height: var(--area-minima);
+  padding: var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.form-field__input:disabled {
+  background-color: var(--color-superficie);
+  cursor: not-allowed;
+}
+
+/* El error se señala con borde grueso y con el mensaje escrito: el color por
+   sí solo excluye a quien no lo distingue. */
+.form-field__input--error {
+  border-color: var(--color-error);
+}
+
+.form-field__error {
+  margin: var(--espacio-2) 0 0;
+  color: var(--color-error);
+  font-weight: 600;
+}
