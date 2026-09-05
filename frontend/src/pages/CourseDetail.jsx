@@ -7,6 +7,9 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import Layout from '../components/Layout';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
+import EnrolledStudents from '../components/EnrolledStudents';
+import NewContentForm from '../components/NewContentForm';
+import { useAuth } from '../context/AuthContext';
 import './Panel.css';
 
 // Se nombran en palabras, no con iconos sueltos: un icono sin texto no lo
@@ -20,7 +23,12 @@ const TIPOS = {
 
 export default function CourseDetail() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [state, setState] = useState({ loading: true });
+
+  // El estudiante solo consulta; el docente titular y el administrador
+  // administran el curso.
+  const canManage = user.rol !== 'estudiante';
 
   function load() {
     setState({ loading: true });
@@ -79,6 +87,17 @@ export default function CourseDetail() {
                 </li>
               ))}
             </ul>
+          )}
+
+          {canManage && (
+            <>
+              <NewContentForm
+                courseId={id}
+                onCreated={(contenido) =>
+                  setState((s) => ({ ...s, contents: [contenido, ...s.contents] }))}
+              />
+              <EnrolledStudents courseId={id} />
+            </>
           )}
         </>
       )}

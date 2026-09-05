@@ -85,7 +85,7 @@ export default function Login() {
           tabIndex -1 permite enfocarlo por codigo sin meterlo en el recorrido
           normal del tabulador. */}
       {formError && (
-        <div className="login__error" role="alert" tabIndex={-1} ref={errorRef}>
+        <div className="alerta-error" role="alert" tabIndex={-1} ref={errorRef}>
           {formError}
         </div>
       )}
@@ -116,7 +116,7 @@ export default function Login() {
           disabled={submitting}
         />
 
-        <button className="login__submit" type="submit" disabled={submitting}>
+        <button className="boton-principal" type="submit" disabled={submitting}>
           {submitting ? 'Entrando…' : 'Entrar'}
         </button>
 

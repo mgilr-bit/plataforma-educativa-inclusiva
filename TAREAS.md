@@ -37,7 +37,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Inicializar proyecto React — 2026-09-05 — Issue #25
 - [x] Implementar wireframes: pantalla de inicio de sesión — 2026-09-05 — Issue #26
 - [x] Implementar panel del estudiante — 2026-09-05 — Issue #27
-- [ ] Implementar panel del docente
+- [x] Implementar panel del docente — 2026-09-05 — Issue #28
 - [ ] Componente de transcripción en tiempo real (subtítulos)
 - [ ] Componente de chat con asistente educativo
 - [ ] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado
