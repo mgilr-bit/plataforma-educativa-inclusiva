@@ -5,7 +5,8 @@
 //   docente       -> los que imparte
 //   estudiante    -> aquellos en los que esta inscrito
 const pool = require('../config/db');
-const { toPositiveInteger } = require('../utils/validators');
+const { toText,
+  toPositiveInteger } = require('../utils/validators');
 
 const ROL_ADMINISTRADOR = 'administrador';
 const ROL_DOCENTE = 'docente';
@@ -131,12 +132,14 @@ async function list(req, res, next) {
     valores.push(ciclo);
     condiciones.push(`c.ciclo_escolar = $${valores.length}`);
   }
-  if (req.query.grado) {
-    valores.push(`%${req.query.grado.trim()}%`);
+  const grado = toText(req.query.grado);
+  if (grado) {
+    valores.push(`%${grado}%`);
     condiciones.push(`c.grado ILIKE $${valores.length}`);
   }
-  if (req.query.buscar) {
-    valores.push(`%${req.query.buscar.trim()}%`);
+  const buscar = toText(req.query.buscar);
+  if (buscar) {
+    valores.push(`%${buscar}%`);
     condiciones.push(`c.nombre ILIKE $${valores.length}`);
   }
 

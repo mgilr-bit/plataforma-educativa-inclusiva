@@ -175,6 +175,36 @@ Las pruebas corren contra `plataforma_educativa_test`, una base aparte, de modo 
 
 `tests/test.env` se versiona a propósito: no contiene secretos. La clave JWT es de usar y tirar y las claves de IA quedan vacías para que las pruebas jamás llamen a servicios externos.
 
+## Manejo de errores
+
+Todas las respuestas de error comparten la misma forma:
+
+```json
+{ "estado": "error", "mensaje": "..." }
+```
+
+Y las de validación añaden el detalle de cada campo:
+
+```json
+{ "estado": "error", "mensaje": "Datos invalidos", "errores": ["..."] }
+```
+
+| Código | Cuándo |
+|---|---|
+| `400` | Datos inválidos, JSON malformado o identificador no numérico. |
+| `401` | Falta el token, o está vencido o manipulado. |
+| `403` | Autenticado, pero sin permiso sobre ese recurso. |
+| `404` | No existe, **o existe y no le corresponde** (no se revela cuál de las dos). |
+| `409` | Conflicto: correo repetido, inscripción duplicada, autodesactivación. |
+| `413` | El cuerpo excede los 100 KB. |
+| `415` | Formato de archivo no admitido. |
+| `422` | La petición era válida pero no se pudo cumplir (el asistente declinó). |
+| `429` | El servicio de IA está saturado. |
+| `502` / `503` / `504` | Un servicio externo falló, no está configurado o tardó demasiado. |
+| `500` | Solo fallos reales del servidor. Nunca revela trazas, SQL ni la cadena de conexión. |
+
+En producción, `CORS_ORIGINS` restringe los orígenes admitidos; vacío permite cualquiera y solo es aceptable en local. El servidor cierra de forma ordenada ante `SIGTERM`, que es la señal que envía Railway al redesplegar.
+
 ## Despliegue
 
 | Componente | Dónde | Estado |

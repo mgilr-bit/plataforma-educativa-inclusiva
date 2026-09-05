@@ -28,7 +28,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] CRUD de cursos e inscripciones — 2026-08-25 — Issue #46
 - [x] Endpoint de transcripción con Whisper API — 2026-09-05 — Issue #20
 - [x] Endpoint de asistente educativo con Claude API — 2026-09-05 — Issue #21
-- [ ] Manejo de errores y validaciones
+- [x] Manejo de errores y validaciones — 2026-09-05 — Issue #22
 - [x] Pruebas unitarias básicas — 2026-09-05 — Issue #23
 - [x] Despliegue en Railway — 2026-09-05 — Issue #24
 

@@ -8,6 +8,20 @@ Todas las entregas relevantes del proyecto se documentan aquí, de la más recie
 - Despliegue en Railway: instancia de PostgreSQL con el esquema y los datos semilla aplicados, y backend publicado con dominio propio.
 - `GET /api/health` responde correctamente en producción.
 
+## [0.11.0] — 2026-09-05
+### Corregido
+- Seis entradas mal formadas devolvían `500`: JSON inválido, cuerpo excesivo, un objeto donde se espera texto y tres filtros con parámetros de consulta repetidos.
+
+### Agregado
+- Manejador central de errores que traduce los fallos conocidos al código HTTP que corresponde.
+- `toText`, que valida que un valor sea realmente texto antes de tratarlo como tal.
+- Cierre ordenado ante `SIGTERM` y `SIGINT`, y registro de promesas rechazadas sin manejar.
+- Variable `CORS_ORIGINS` para restringir los orígenes admitidos en producción.
+- 14 pruebas de manejo de errores.
+
+### Cambiado
+- El cuerpo JSON queda limitado a 100 KB.
+
 ## [0.10.0] — 2026-09-05
 ### Agregado
 - Suite de 58 pruebas con el ejecutor propio de Node, sin dependencias de framework.
