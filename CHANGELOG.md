@@ -2,6 +2,14 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.13.1] — 2026-09-05
+### Corregido
+- La aplicación identificaba a todos los clientes por la dirección del proxy, de modo que agotar el límite de intentos desde una conexión bloqueaba a las demás. El número de proxies de confianza pasa a configurarse con `TRUST_PROXY_HOPS`, que en Railway vale `2`.
+
+### Agregado
+- `GET /api/health/red`, que informa qué dirección detecta la aplicación y la cadena recibida, para medir el número de saltos en lugar de deducirlo.
+- Tres pruebas que fijan la lectura de `TRUST_PROXY_HOPS`.
+
 ## [0.13.0] — 2026-09-05
 ### Agregado
 - Límite de intentos en `/api/auth/login`: 10 fallidos cada 15 minutos por dirección IP, sin consumir cuota los inicios correctos.
