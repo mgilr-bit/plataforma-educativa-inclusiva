@@ -105,6 +105,21 @@ export const api = {
     }),
 
   profile: () => request('/auth/me'),
+
+  // La API filtra por rol: el estudiante recibe los cursos en los que esta
+  // inscrito y el docente los que imparte, sin que el frontend deba pedirlo.
   courses: () => request('/courses'),
-  contents: () => request('/contents'),
+  course: (id) => request(`/courses/${id}`),
+
+  contents: (filters = {}) => {
+    const query = new URLSearchParams();
+    if (filters.course) query.set('curso', filters.course);
+    if (filters.type) query.set('tipo', filters.type);
+    if (filters.search) query.set('buscar', filters.search);
+    const suffix = query.toString() ? `?${query}` : '';
+    return request(`/contents${suffix}`);
+  },
+
+  transcription: (contentId) => request(`/contents/${contentId}/transcription`),
+  enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),
 };

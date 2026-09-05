@@ -1,0 +1,63 @@
+.layout__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-4);
+  margin-bottom: var(--espacio-8);
+  padding-bottom: var(--espacio-4);
+  border-bottom: 2px solid var(--color-borde);
+}
+
+.layout__marca {
+  font-size: var(--texto-grande);
+  font-weight: 700;
+  color: var(--color-primario);
+  text-decoration: none;
+}
+
+.layout__nav {
+  display: flex;
+  gap: var(--espacio-4);
+}
+
+.layout__nav a {
+  color: var(--color-texto);
+  padding: var(--espacio-2);
+}
+
+/* La página activa se marca con color y con subrayado grueso: el color solo
+   no basta para quien no lo distingue. */
+.layout__nav a[aria-current='page'] {
+  color: var(--color-primario);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+}
+
+.layout__usuario {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  margin-left: auto;
+}
+
+.layout__nombre {
+  font-size: var(--texto-pequeno);
+}
+
+.layout__rol {
+  color: var(--color-texto-suave);
+}
+
+.layout__salir {
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.layout__salir:hover {
+  border-color: var(--color-primario);
+}
