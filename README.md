@@ -77,6 +77,13 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | POST | `/api/contents` | Administrador o docente titular |
 | PATCH | `/api/contents/:id` | Administrador o docente titular |
 | DELETE | `/api/contents/:id` | Administrador o docente titular (baja lógica) |
+| GET | `/api/courses` | Autenticado (filtrado por rol) |
+| GET | `/api/courses/:id` | Autenticado (filtrado por rol) |
+| POST | `/api/courses` | Administrador |
+| PATCH | `/api/courses/:id` | Administrador o docente titular |
+| GET | `/api/courses/:id/enrollments` | Administrador o docente titular |
+| POST | `/api/courses/:id/enrollments` | Administrador o docente titular |
+| DELETE | `/api/courses/:id/enrollments/:idEstudiante` | Administrador o docente titular |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 
@@ -89,3 +96,13 @@ La baja de usuarios es **lógica** (`estado = false`), no física: siete tablas 
 | Administrador | Todos los contenidos. |
 | Docente | Los de los cursos que imparte, activos y retirados. |
 | Estudiante | Los contenidos activos de los cursos en los que está inscrito. |
+
+### Visibilidad de los cursos
+
+| Rol | Qué ve |
+|---|---|
+| Administrador | Todos los cursos. |
+| Docente | Los cursos que imparte. |
+| Estudiante | Los cursos en los que está inscrito. |
+
+Solo el administrador crea cursos y reasigna su docente titular. Las inscripciones las gestionan el administrador y el docente titular del curso.
