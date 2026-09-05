@@ -5,7 +5,8 @@
 //   docente       -> los de los cursos que imparte
 //   estudiante    -> los de los cursos en los que esta inscrito, solo activos
 const pool = require('../config/db');
-const { toPositiveInteger } = require('../utils/validators');
+const { toText,
+  toPositiveInteger } = require('../utils/validators');
 
 const ROL_ADMINISTRADOR = 'administrador';
 const ROL_DOCENTE = 'docente';
@@ -101,22 +102,24 @@ async function list(req, res, next) {
     valores.push(idCurso);
     condiciones.push(`c.id_curso = $${valores.length}`);
   }
-  if (req.query.tipo) {
-    if (!TIPOS_VALIDOS.includes(req.query.tipo)) {
+  const tipoFiltro = toText(req.query.tipo);
+  if (tipoFiltro) {
+    if (!TIPOS_VALIDOS.includes(tipoFiltro)) {
       return res.status(400).json({
         estado: 'error',
         mensaje: `El tipo debe ser uno de: ${TIPOS_VALIDOS.join(', ')}`,
       });
     }
-    valores.push(req.query.tipo);
+    valores.push(tipoFiltro);
     condiciones.push(`c.tipo = $${valores.length}`);
   }
   if (req.query.estado === 'true' || req.query.estado === 'false') {
     valores.push(req.query.estado === 'true');
     condiciones.push(`c.estado = $${valores.length}`);
   }
-  if (req.query.buscar) {
-    valores.push(`%${req.query.buscar.trim()}%`);
+  const buscar = toText(req.query.buscar);
+  if (buscar) {
+    valores.push(`%${buscar}%`);
     condiciones.push(`c.titulo ILIKE $${valores.length}`);
   }
 

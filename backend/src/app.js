@@ -11,11 +11,33 @@ const contentsRoutes = require('./routes/contents');
 const coursesRoutes = require('./routes/courses');
 const transcriptionsRoutes = require('./routes/transcriptions');
 const tutorRoutes = require('./routes/tutor');
+const { notFound, errorHandler } = require('./middleware/errors');
+
+// Limite del cuerpo JSON. Las peticiones de la plataforma son pequenas; el
+// audio de las transcripciones no pasa por aqui, sino por multipart.
+const LIMITE_CUERPO = '100kb';
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+// Origenes permitidos. En desarrollo se admite cualquiera; en produccion solo
+// los declarados en CORS_ORIGINS, separados por comas.
+const origenesPermitidos = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origen) => origen.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin(origen, callback) {
+    if (origenesPermitidos.length === 0 || !origen || origenesPermitidos.includes(origen)) {
+      return callback(null, true);
+    }
+    const error = new Error('Origen no permitido');
+    error.code = 'ORIGEN_NO_PERMITIDO';
+    return callback(error);
+  },
+}));
+
+app.use(express.json({ limit: LIMITE_CUERPO }));
 
 // Rutas de la API
 app.use('/api', healthRoutes);
@@ -26,18 +48,7 @@ app.use('/api', coursesRoutes);
 app.use('/api', transcriptionsRoutes);
 app.use('/api', tutorRoutes);
 
-// Recurso no encontrado
-app.use((req, res) => {
-  res.status(404).json({ estado: 'error', mensaje: 'Recurso no encontrado' });
-});
-
-// Manejador central de errores
-app.use((error, req, res, next) => {
-  // En las pruebas el ruido de consola estorba y no aporta.
-  if (process.env.NODE_ENV !== 'test') {
-    console.error('Error no controlado:', error.message);
-  }
-  res.status(500).json({ estado: 'error', mensaje: 'Error interno del servidor' });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;

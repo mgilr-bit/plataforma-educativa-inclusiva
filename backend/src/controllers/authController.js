@@ -2,6 +2,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
+const { toText } = require('../utils/validators');
 const { jwtSecret, jwtExpiresIn } = require('../config/auth');
 
 // Hash valido pero imposible de acertar; iguala los tiempos cuando el correo no existe.
@@ -9,9 +10,12 @@ const DUMMY_HASH = '$2a$10$CwTycUXWue0Thq9StjUM0uJ8.Rq7oJ0LhVEcYQ0Bq5X8Yy1qZ2kGa
 
 // POST /api/auth/login
 async function login(req, res, next) {
-  const { correo, contrasena } = req.body || {};
+  const correo = toText((req.body || {}).correo);
+  const contrasena = (req.body || {}).contrasena;
 
-  if (!correo || !contrasena) {
+  // Se exige que ambos sean texto: un objeto donde va una cadena hacia
+  // reventar la comparacion y devolver un 500.
+  if (!correo || typeof contrasena !== 'string' || contrasena.length === 0) {
     return res.status(400).json({
       estado: 'error',
       mensaje: 'El correo y la contrasena son obligatorios',
@@ -24,7 +28,7 @@ async function login(req, res, next) {
        FROM usuario u
        JOIN rol r ON r.id_rol = u.id_rol
        WHERE u.correo = LOWER($1)`,
-      [correo.trim()]
+      [correo]
     );
 
     const usuario = result.rows[0];

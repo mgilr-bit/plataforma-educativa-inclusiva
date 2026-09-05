@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
 const { bcryptRounds } = require('../config/auth');
 const {
+  toText,
   isValidEmail,
   isValidPassword,
   isValidName,
@@ -35,16 +36,18 @@ async function list(req, res, next) {
   const condiciones = [];
   const valores = [];
 
-  if (req.query.rol) {
-    valores.push(req.query.rol);
+  const rolFiltro = toText(req.query.rol);
+  if (rolFiltro) {
+    valores.push(rolFiltro);
     condiciones.push(`r.nombre_rol = $${valores.length}`);
   }
   if (req.query.estado === 'true' || req.query.estado === 'false') {
     valores.push(req.query.estado === 'true');
     condiciones.push(`u.estado = $${valores.length}`);
   }
-  if (req.query.buscar) {
-    valores.push(`%${req.query.buscar.trim()}%`);
+  const buscar = toText(req.query.buscar);
+  if (buscar) {
+    valores.push(`%${buscar}%`);
     condiciones.push(`(u.nombre_completo ILIKE $${valores.length} OR u.correo ILIKE $${valores.length})`);
   }
 
