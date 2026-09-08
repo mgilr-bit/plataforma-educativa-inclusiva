@@ -2,6 +2,15 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.19.0] — 2026-09-08
+### Agregado
+- Chat con el asistente educativo dentro de la pantalla del material, con el historial de preguntas de esa clase.
+- La conversación se anuncia con `role="log"` y `aria-live="polite"`, de modo que el estudiante se entera de la respuesta sin que se le interrumpa mientras escribe.
+- 8 pruebas del chat.
+
+### Corregido
+- El foco no volvía al campo tras enviar una pregunta, porque se pedía mientras el campo seguía deshabilitado. Quien navega con teclado tenía que recorrer toda la conversación para preguntar de nuevo.
+
 ## [0.18.0] — 2026-09-05
 ### Agregado
 - Reproductor con subtítulos: los segmentos se entregan como pista WebVTT nativa, de modo que el navegador los dibuja respetando los ajustes de subtítulos del sistema operativo.

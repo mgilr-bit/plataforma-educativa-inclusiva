@@ -1,0 +1,65 @@
+.tutor {
+  margin-top: var(--espacio-12);
+  padding-top: var(--espacio-6);
+  border-top: 2px solid var(--color-borde);
+}
+
+.tutor__ayuda,
+.tutor__vacio {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.tutor__conversacion {
+  list-style: none;
+  margin: 0 0 var(--espacio-6);
+  padding: 0;
+}
+
+.tutor__intercambio {
+  margin-bottom: var(--espacio-6);
+}
+
+.tutor__pregunta,
+.tutor__respuesta {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio);
+}
+
+.tutor__pregunta {
+  background-color: var(--color-superficie);
+  border-left: 6px solid var(--color-borde);
+  margin-bottom: var(--espacio-2);
+}
+
+/* La respuesta se distingue por la barra de color y por la etiqueta escrita,
+   no solo por estar alineada de otro modo. */
+.tutor__respuesta {
+  background-color: var(--color-fondo);
+  border: 2px solid var(--color-primario);
+}
+
+.tutor__quien {
+  display: block;
+  margin-bottom: var(--espacio-1);
+  font-size: var(--texto-pequeno);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+}
+
+/* El asistente responde en pasos numerados; conservar los saltos de línea
+   mantiene esa estructura, que es justo lo que hace la explicación legible. */
+.tutor__texto {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.tutor__campo {
+  width: 100%;
+  padding: var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+  resize: vertical;
+}

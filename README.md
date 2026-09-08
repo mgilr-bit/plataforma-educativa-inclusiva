@@ -277,6 +277,12 @@ Los segmentos que devuelve la API se convierten a **WebVTT** y se entregan al re
 
 Además, **la transcripción completa se muestra siempre**, no solo los subtítulos sobre el video. Un estudiante sordo puede preferir leer el texto entero a su ritmo; sin esa lista, el contenido solo existiría mientras el video avanza. El fragmento en curso se resalta con fondo, barra lateral y negrita —tres señales, no solo color— y con `aria-current` para el lector de pantalla.
 
+### Asistente educativo
+
+El chat vive dentro de la pantalla del material y solo se ofrece al estudiante, porque la API registra cada consulta contra quien pregunta.
+
+Las respuestas se muestran **conservando los saltos de línea**: el asistente explica en pasos numerados, y aplastarlos arruinaría la explicación. Quién habla se indica **con palabras** —«Usted preguntó», «El asistente respondió»—, no solo por la posición o el color, para que un lector de pantalla distinga los turnos.
+
 ### Pruebas del frontend
 
 ```bash

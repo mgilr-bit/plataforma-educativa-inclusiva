@@ -134,4 +134,17 @@ export const api = {
 
   transcription: (contentId) => request(`/contents/${contentId}/transcription`),
   enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),
+
+  // Asistente educativo. idContenido es opcional: si se envia, la respuesta se
+  // apoya en la transcripcion de esa clase.
+  askTutor: ({ question, contentId }) =>
+    request('/tutor/ask', {
+      method: 'POST',
+      body: { pregunta: question, idContenido: contentId ?? null },
+    }),
+
+  consultations: ({ contentId } = {}) => {
+    const query = contentId ? `?contenido=${contentId}` : '';
+    return request(`/tutor/consultations${query}`);
+  },
 };
