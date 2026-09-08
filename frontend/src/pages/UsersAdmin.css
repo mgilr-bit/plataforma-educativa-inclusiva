@@ -1,0 +1,57 @@
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-4);
+  margin-bottom: var(--espacio-6);
+}
+
+.filtros__campo {
+  flex: 1 1 12rem;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacio-8);
+}
+
+.tabla caption {
+  text-align: left;
+}
+
+.tabla th,
+.tabla td {
+  padding: var(--espacio-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.tabla thead th {
+  background-color: var(--color-superficie);
+  border-bottom: 2px solid var(--color-borde);
+}
+
+.tabla tbody th {
+  font-weight: 600;
+}
+
+.tabla button {
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.tabla button:hover {
+  border-color: var(--color-primario);
+}
+
+/* En pantalla estrecha la tabla se desplaza en lugar de desbordar la página. */
+@media (max-width: 40rem) {
+  .tabla {
+    display: block;
+    overflow-x: auto;
+  }
+}

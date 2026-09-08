@@ -111,12 +111,12 @@ export default function SubtitlePlayer({ content, subtitles }) {
                   type="button"
                   className="transcripcion__salto"
                   onClick={() => saltarA(segmento.tiempo_inicio)}
+                  // El nombre accesible se declara entero: compuesto por
+                  // partes, el algoritmo las pega sin espacios.
+                  aria-label={`Ir al minuto ${formatMinutes(segmento.tiempo_inicio)}: ${segmento.segmento_texto}`}
                 >
                   <span className="transcripcion__tiempo">
                     {formatMinutes(segmento.tiempo_inicio)}
-                    <span className="sr-only">
-                      {` — ir al minuto ${formatMinutes(segmento.tiempo_inicio)}`}
-                    </span>
                   </span>
                   <span className="transcripcion__texto">{segmento.segmento_texto}</span>
                 </button>

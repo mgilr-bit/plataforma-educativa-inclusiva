@@ -283,6 +283,14 @@ El chat vive dentro de la pantalla del material y solo se ofrece al estudiante, 
 
 Las respuestas se muestran **conservando los saltos de línea**: el asistente explica en pasos numerados, y aplastarlos arruinaría la explicación. Quién habla se indica **con palabras** —«Usted preguntó», «El asistente respondió»—, no solo por la posición o el color, para que un lector de pantalla distinga los turnos.
 
+### Nombres accesibles
+
+Los botones que se repiten en una lista —«Desactivar», «Dar de baja»— declaran su nombre completo con `aria-label`, no componiéndolo con un sufijo oculto.
+
+La razón se descubrió midiendo: el cálculo del nombre accesible **recorta el texto de cada nodo por separado**, así que `Desactivar` seguido de `<span class="sr-only"> la cuenta de Ana</span>` se anuncia como *«Desactivarla cuenta de Ana»*, con las palabras pegadas. El texto en pantalla se ve correcto; solo el lector de pantalla nota la diferencia.
+
+Por lo mismo, **ningún par de controles comparte etiqueta** en una misma pantalla: dos campos llamados «Rol» son indistinguibles para quien navega sin ver. Hay una prueba que lo comprueba.
+
 ### Sesión vencida
 
 El token dura ocho horas. Un estudiante que abre la plataforma por la mañana y vuelve por la tarde se encuentra con un `401`.

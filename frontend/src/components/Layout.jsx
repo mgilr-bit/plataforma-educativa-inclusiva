@@ -28,6 +28,18 @@ export default function Layout({ children }) {
           >
             Mis cursos
           </Link>
+
+          {/* La gestion de usuarios solo existe para el administrador; la API
+              rechazaria al resto, y mostrar un enlace que lleva a un error es
+              peor que no mostrarlo. */}
+          {user?.rol === 'administrador' && (
+            <Link
+              to="/usuarios"
+              aria-current={location.pathname === '/usuarios' ? 'page' : undefined}
+            >
+              Usuarios
+            </Link>
+          )}
         </nav>
 
         {user && (

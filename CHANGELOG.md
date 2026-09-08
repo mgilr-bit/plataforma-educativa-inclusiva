@@ -2,6 +2,17 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.22.0] — 2026-09-08
+### Agregado
+- Gestión de usuarios: listado en tabla con búsqueda y filtros, alta de cuentas, baja y reactivación. Visible solo para el administrador.
+- Alta de cursos con asignación del docente titular.
+- Inscripción y baja de estudiantes desde la pantalla del curso.
+- 10 pruebas de la gestión de usuarios, y auditoría de accesibilidad sobre esa pantalla.
+
+### Corregido
+- Los nombres accesibles de los botones salían con las palabras pegadas: el cálculo recorta el texto de cada nodo por separado, así que «Desactivar» y « la cuenta de…» se unían en «Desactivarla cuenta de…». Se declaran ahora completos con `aria-label`.
+- Dos controles compartían la etiqueta «Rol» en la misma pantalla, indistinguibles para quien no la ve.
+
 ## [0.21.0] — 2026-09-08
 ### Agregado
 - Manejo de sesión vencida: un `401` en una petición autenticada descarta el token y lleva al inicio de sesión, explicando por qué.

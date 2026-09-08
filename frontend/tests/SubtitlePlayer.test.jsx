@@ -58,8 +58,9 @@ describe('Reproductor con subtítulos', () => {
   test('el tiempo se anuncia con palabras para el lector de pantalla', () => {
     render(<SubtitlePlayer content={VIDEO} subtitles={SUBTITULOS} />);
 
-    // "0:07" a secas no dice qué es ni qué pasa al pulsarlo.
-    expect(screen.getByText(/ir al minuto 0:07/i)).toBeInTheDocument();
+    // "0:07" a secas no dice qué es ni qué pasa al pulsarlo. Se comprueba el
+    // nombre accesible completo, que es lo que anuncia el lector de pantalla.
+    expect(screen.getByRole('button', { name: /ir al minuto 0:07: con distinto denominador/i })).toBeInTheDocument();
   });
 
   test('sin archivo reproducible, la transcripción sigue siendo legible', () => {

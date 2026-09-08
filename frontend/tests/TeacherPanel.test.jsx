@@ -13,7 +13,10 @@ vi.mock('../src/api/client', async () => {
   const real = await vi.importActual('../src/api/client');
   return {
     ...real,
-    api: { courses: vi.fn(), profile: vi.fn(), createContent: vi.fn(), enrollments: vi.fn() },
+    api: {
+      courses: vi.fn(), profile: vi.fn(), createContent: vi.fn(),
+      enrollments: vi.fn(), users: vi.fn(), createCourse: vi.fn(),
+    },
   };
 });
 
@@ -31,7 +34,10 @@ const DOCENTE = { id_usuario: 2, nombre_completo: 'Ana Pérez', rol: 'docente' }
 const ESTUDIANTE = { id_usuario: 6, nombre_completo: 'Pedro López', rol: 'estudiante' };
 
 describe('Panel del docente', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    api.users.mockResolvedValue({ usuarios: [] });
+  });
 
   test('muestra los cursos con inscritos y materiales', async () => {
     api.courses.mockResolvedValue({
@@ -66,7 +72,10 @@ describe('Panel del docente', () => {
 });
 
 describe('Elección de panel según el rol', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    api.users.mockResolvedValue({ usuarios: [] });
+  });
 
   test('el estudiante recibe su panel', async () => {
     api.courses.mockResolvedValue({ cursos: [] });
@@ -82,16 +91,22 @@ describe('Elección de panel según el rol', () => {
     expect(await screen.findByText(/todavía no tiene cursos asignados/i)).toBeInTheDocument();
   });
 
-  test('el administrador recibe el del docente', async () => {
+  test('el administrador recibe el panel de cursos, con alta incluida', async () => {
     api.courses.mockResolvedValue({ cursos: [] });
     montar(<RolePanel />, { ...DOCENTE, rol: 'administrador' });
 
-    expect(await screen.findByText(/todavía no tiene cursos asignados/i)).toBeInTheDocument();
+    // Y con el mensaje que le corresponde: decirle que espere al
+    // administrador no tendría sentido, porque lo es.
+    expect(await screen.findByRole('heading', { name: /crear curso/i })).toBeInTheDocument();
+    expect(await screen.findByText(/todavía no hay cursos/i)).toBeInTheDocument();
   });
 });
 
 describe('Alta de material', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    api.users.mockResolvedValue({ usuarios: [] });
+  });
 
   test('un título vacío se rechaza sin llamar a la API', async () => {
     const usuario = userEvent.setup();

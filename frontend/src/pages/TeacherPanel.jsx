@@ -3,11 +3,17 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import Layout from '../components/Layout';
+import NewCourseForm from '../components/NewCourseForm';
+import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
 
 export default function TeacherPanel() {
+  const { user } = useAuth();
   const [state, setState] = useState({ loading: true });
+
+  // Solo el administrador crea cursos y asigna el docente titular.
+  const esAdministrador = user?.rol === 'administrador';
 
   function load() {
     setState({ loading: true });
@@ -20,18 +26,26 @@ export default function TeacherPanel() {
 
   return (
     <Layout>
-      <h1>Mis cursos</h1>
-      <p>Aquí administra el material de los cursos que imparte.</p>
+      <h1>{esAdministrador ? 'Cursos' : 'Mis cursos'}</h1>
+      <p>
+        {esAdministrador
+          ? 'Aquí crea los cursos y asigna el docente que los imparte.'
+          : 'Aquí administra el material de los cursos que imparte.'}
+      </p>
 
       {state.loading && <LoadingState label="Cargando sus cursos…" />}
       {state.error && <ErrorState message={state.error} onRetry={load} />}
 
       {state.courses && state.courses.length === 0 && (
         <EmptyState
-          title="Todavía no tiene cursos asignados"
-          description="El administrador de la plataforma es quien asigna los cursos a cada docente."
+          title={esAdministrador ? 'Todavía no hay cursos' : 'Todavía no tiene cursos asignados'}
+          description={esAdministrador
+            ? 'Use el formulario de arriba para crear el primero.'
+            : 'El administrador de la plataforma es quien asigna los cursos a cada docente.'}
         />
       )}
+
+      {esAdministrador && <NewCourseForm onCreated={load} />}
 
       {state.courses && state.courses.length > 0 && (
         <ul className="tarjetas">
