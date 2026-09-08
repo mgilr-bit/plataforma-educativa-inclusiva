@@ -41,7 +41,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Componente de transcripción en tiempo real (subtítulos) — 2026-09-05 — Issue #29
 - [x] Componente de chat con asistente educativo — 2026-09-08 — Issue #30
 - [x] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado — 2026-09-08 — Issue #31
-- [ ] Consumo de la API del backend
+- [x] Consumo de la API del backend — 2026-09-08 — Issue #32
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas

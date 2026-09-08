@@ -1,6 +1,6 @@
 // Pantalla de inicio de sesion.
 import { useRef, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/FormField';
 import './Login.css';
@@ -10,6 +10,12 @@ const MIN_PASSWORD = 8;
 export default function Login() {
   const { login, authenticated, loading: checkingSession } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Al expulsar por sesion vencida se guarda la pantalla de origen, para
+  // devolver al usuario donde estaba en vez de al panel generico.
+  const origen = location.state?.from || '/panel';
+  const sesionVencida = Boolean(location.state?.expired);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +33,7 @@ export default function Login() {
   }
 
   if (authenticated) {
-    return <Navigate to="/panel" replace />;
+    return <Navigate to={origen} replace />;
   }
 
   // La validacion se repite en el servidor; aqui evita un viaje innecesario y
@@ -62,7 +68,7 @@ export default function Login() {
     setSubmitting(true);
     try {
       await login(email.trim(), password);
-      navigate('/panel', { replace: true });
+      navigate(origen, { replace: true });
     } catch (error) {
       setFormError(
         error.status === 0
@@ -84,6 +90,12 @@ export default function Login() {
       {/* role="alert" hace que el lector de pantalla lo anuncie al aparecer.
           tabIndex -1 permite enfocarlo por codigo sin meterlo en el recorrido
           normal del tabulador. */}
+      {sesionVencida && !formError && (
+        <p className="mensaje-aviso" role="status">
+          Su sesión terminó por seguridad. Vuelva a entrar para continuar.
+        </p>
+      )}
+
       {formError && (
         <div className="alerta-error" role="alert" tabIndex={-1} ref={errorRef}>
           {formError}

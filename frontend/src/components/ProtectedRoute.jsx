@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProtectedRoute({ children }) {
-  const { authenticated, loading } = useAuth();
+  const { authenticated, loading, sessionExpired } = useAuth();
   const location = useLocation();
 
   // Mientras se valida el token no se decide nada: redirigir aqui expulsaria a
@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!authenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    return <Navigate to="/login" replace state={{ from: location.pathname, expired: sessionExpired }} />;
   }
 
   return children;
