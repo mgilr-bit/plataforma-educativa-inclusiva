@@ -10,6 +10,7 @@ Todas las entregas relevantes del proyecto se documentan aquí, de la más recie
 - 10 pruebas de la gestión de usuarios, y auditoría de accesibilidad sobre esa pantalla.
 
 ### Corregido
+- Las rutas no comprobaban el rol: un estudiante que escribiera `/usuarios` veía la pantalla de administración. La API rechazaba las peticiones, de modo que no se filtraron datos, pero la interfaz mostraba una sección que no le corresponde.
 - Los nombres accesibles de los botones salían con las palabras pegadas: el cálculo recorta el texto de cada nodo por separado, así que «Desactivar» y « la cuenta de…» se unían en «Desactivarla cuenta de…». Se declaran ahora completos con `aria-label`.
 - Dos controles compartían la etiqueta «Rol» en la misma pantalla, indistinguibles para quien no la ve.
 
