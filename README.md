@@ -283,6 +283,20 @@ El chat vive dentro de la pantalla del material y solo se ofrece al estudiante, 
 
 Las respuestas se muestran **conservando los saltos de línea**: el asistente explica en pasos numerados, y aplastarlos arruinaría la explicación. Quién habla se indica **con palabras** —«Usted preguntó», «El asistente respondió»—, no solo por la posición o el color, para que un lector de pantalla distinga los turnos.
 
+### Sesión vencida
+
+El token dura ocho horas. Un estudiante que abre la plataforma por la mañana y vuelve por la tarde se encuentra con un `401`.
+
+Cuando eso ocurre, el cliente descarta el token y avisa al contexto de sesión; las rutas protegidas llevan al inicio de sesión **explicando por qué** y recordando la pantalla de origen, para devolver al usuario donde estaba en vez de al panel genérico.
+
+Se distinguen tres situaciones que parecen la misma:
+
+| Situación | Qué ocurre |
+|---|---|
+| Sesión vencida estando dentro | Se avisa: «Su sesión terminó por seguridad» |
+| Entrar sin haber iniciado sesión | Se lleva al login, sin aviso: no hubo sesión que vencer |
+| Contraseña incorrecta | No cierra la sesión existente |
+
 ### Auditoría de accesibilidad
 
 La suite incluye una auditoría con **axe-core**, el mismo motor que usan las extensiones de auditoría de los navegadores. Recorre cada pantalla y falla si aparece una violación.

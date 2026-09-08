@@ -3,7 +3,7 @@
 // Guarda el token y el perfil, y los restaura al recargar la pagina para que la
 // sesion no se pierda. Ningun componente toca localStorage directamente.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { api, readToken, saveToken, clearToken } from '../api/client';
+import { api, readToken, saveToken, clearToken, setUnauthorizedHandler } from '../api/client';
 
 const AuthContext = createContext(null);
 
@@ -12,6 +12,10 @@ export function AuthProvider({ children }) {
   // Arranca en true porque, si hay token guardado, hay que validarlo antes de
   // decidir que mostrar. Sin esto, la aplicacion parpadearia hacia el login.
   const [loading, setLoading] = useState(Boolean(readToken()));
+  // Distingue quedarse sin sesion de no haberla tenido nunca: al primero hay
+  // que explicarle por que se le expulso, al segundo no hay nada que
+  // explicarle y avisarle solo confundiria.
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
     if (!readToken()) {
@@ -33,21 +37,35 @@ export function AuthProvider({ children }) {
     return () => { active = false; };
   }, []);
 
+  // El cliente avisa cuando la API rechaza una peticion autenticada. Al
+  // quedarse sin usuario, las rutas protegidas llevan solas al inicio de
+  // sesion, marcando de donde venia para poder volver.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      setUser(null);
+      setSessionExpired(true);
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
+
   const login = useCallback(async (email, password) => {
     const data = await api.login(email, password);
     saveToken(data.token);
     setUser(data.usuario);
+    setSessionExpired(false);
     return data.usuario;
   }, []);
 
   const logout = useCallback(() => {
     clearToken();
     setUser(null);
+    // Salir por decision propia no es una sesion vencida.
+    setSessionExpired(false);
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, logout, authenticated: Boolean(user) }),
-    [user, loading, login, logout]
+    () => ({ user, loading, sessionExpired, login, logout, authenticated: Boolean(user) }),
+    [user, loading, sessionExpired, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

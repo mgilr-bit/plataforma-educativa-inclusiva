@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.21.0] — 2026-09-08
+### Agregado
+- Manejo de sesión vencida: un `401` en una petición autenticada descarta el token y lleva al inicio de sesión, explicando por qué.
+- Tras volver a entrar, el usuario regresa a la pantalla donde estaba.
+- 5 pruebas del vencimiento de sesión.
+
+### Corregido
+- Se distingue quedarse sin sesión de no haberla tenido nunca: a quien entra por primera vez ya no se le dice que su sesión terminó.
+- Un `401` al iniciar sesión ya no cierra la sesión existente: escribir mal la contraseña no debe expulsar a quien ya estaba dentro.
+
 ## [0.20.0] — 2026-09-08
 ### Agregado
 - Auditoría automática de accesibilidad con axe-core sobre todas las pantallas, integrada en la suite de pruebas.

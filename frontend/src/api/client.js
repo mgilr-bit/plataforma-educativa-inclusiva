@@ -38,6 +38,18 @@ export function clearToken() {
   }
 }
 
+// Que hacer cuando la API rechaza una peticion autenticada.
+//
+// El token vence a las ocho horas, asi que un estudiante que abre la
+// plataforma por la manana y vuelve por la tarde se encuentra con un 401. Sin
+// esto veria el mensaje de error crudo de la API en mitad de la pantalla, sin
+// entender que solo tiene que volver a entrar.
+let onUnauthorized = null;
+
+export function setUnauthorizedHandler(handler) {
+  onUnauthorized = handler;
+}
+
 // Error con el codigo HTTP y el detalle por campo que devuelve la API.
 export class ApiError extends Error {
   constructor(message, { status, details, cause } = {}) {
@@ -84,6 +96,13 @@ async function request(path, { method = 'GET', body, authenticated = true } = {}
   const data = text ? JSON.parse(text) : {};
 
   if (!response.ok) {
+    // Solo cuenta como sesion vencida si la peticion llevaba token: un 401 en
+    // el inicio de sesion significa credenciales incorrectas, no sesion caida.
+    if (response.status === 401 && authenticated) {
+      clearToken();
+      onUnauthorized?.();
+    }
+
     throw new ApiError(data.mensaje || 'Ocurrió un error inesperado', {
       status: response.status,
       details: data.errores,

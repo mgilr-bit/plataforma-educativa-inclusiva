@@ -136,3 +136,14 @@ a.boton {
   opacity: 0.7;
   cursor: wait;
 }
+
+/* Aviso informativo, distinto de un error: no es culpa del usuario. */
+.mensaje-aviso {
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-left-width: 6px;
+  border-left-color: var(--color-primario);
+  border-radius: var(--radio);
+}
