@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import RolePanel from './pages/RolePanel';
 import CourseDetail from './pages/CourseDetail';
 import ContentDetail from './pages/ContentDetail';
+import UsersAdmin from './pages/UsersAdmin';
 import './styles/global.css';
 import './App.css';
 
@@ -55,6 +56,14 @@ export default function App() {
                 element={(
                   <ProtectedRoute>
                     <ContentDetail />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/usuarios"
+                element={(
+                  <ProtectedRoute roles={['administrador']}>
+                    <UsersAdmin />
                   </ProtectedRoute>
                 )}
               />

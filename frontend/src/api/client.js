@@ -125,10 +125,55 @@ export const api = {
 
   profile: () => request('/auth/me'),
 
+  users: (filters = {}) => {
+    const query = new URLSearchParams();
+    if (filters.role) query.set('rol', filters.role);
+    if (filters.active !== undefined && filters.active !== '') query.set('estado', filters.active);
+    if (filters.search) query.set('buscar', filters.search);
+    if (filters.page) query.set('pagina', filters.page);
+    const suffix = query.toString() ? `?${query}` : '';
+    return request(`/users${suffix}`);
+  },
+
+  createUser: ({ fullName, email, password, roleId }) =>
+    request('/users', {
+      method: 'POST',
+      body: { nombreCompleto: fullName, correo: email, contrasena: password, idRol: roleId },
+    }),
+
+  updateUser: (id, changes) => {
+    // Solo se envian los campos indicados: la API interpreta la ausencia como
+    // "no tocar", y mandar el resto en blanco los borraria.
+    const body = {};
+    if (changes.fullName !== undefined) body.nombreCompleto = changes.fullName;
+    if (changes.email !== undefined) body.correo = changes.email;
+    if (changes.password !== undefined) body.contrasena = changes.password;
+    if (changes.roleId !== undefined) body.idRol = changes.roleId;
+    if (changes.active !== undefined) body.estado = changes.active;
+    return request(`/users/${id}`, { method: 'PATCH', body });
+  },
+
+  deactivateUser: (id) => request(`/users/${id}`, { method: 'DELETE' }),
+
   // La API filtra por rol: el estudiante recibe los cursos en los que esta
   // inscrito y el docente los que imparte, sin que el frontend deba pedirlo.
   courses: () => request('/courses'),
   course: (id) => request(`/courses/${id}`),
+
+  createCourse: ({ name, grade, schoolYear, teacherId }) =>
+    request('/courses', {
+      method: 'POST',
+      body: { nombre: name, grado: grade, cicloEscolar: Number(schoolYear), idDocente: Number(teacherId) },
+    }),
+
+  enroll: (courseId, studentId) =>
+    request(`/courses/${courseId}/enrollments`, {
+      method: 'POST',
+      body: { idEstudiante: Number(studentId) },
+    }),
+
+  unenroll: (courseId, studentId) =>
+    request(`/courses/${courseId}/enrollments/${studentId}`, { method: 'DELETE' }),
 
   contents: (filters = {}) => {
     const query = new URLSearchParams();

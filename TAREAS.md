@@ -42,6 +42,8 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Componente de chat con asistente educativo — 2026-09-08 — Issue #30
 - [x] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado — 2026-09-08 — Issue #31
 - [x] Consumo de la API del backend — 2026-09-08 — Issue #32
+- [x] Gestión de usuarios desde la interfaz — 2026-09-08 — Issue #69
+- [x] Gestión de cursos e inscripciones desde la interfaz — 2026-09-08 — Issue #70
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas

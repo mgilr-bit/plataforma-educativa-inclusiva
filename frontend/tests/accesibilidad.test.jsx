@@ -6,7 +6,7 @@
 // herramienta lo ve. Aun asi, lo que si detecta son fallos objetivos que de
 // otro modo llegarian a produccion.
 import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import axe from 'axe-core';
 import { PreferencesProvider } from '../src/context/PreferencesContext';
@@ -17,6 +17,7 @@ import StudentPanel from '../src/pages/StudentPanel';
 import TeacherPanel from '../src/pages/TeacherPanel';
 import SubtitlePlayer from '../src/components/SubtitlePlayer';
 import TutorChat from '../src/components/TutorChat';
+import UsersAdmin from '../src/pages/UsersAdmin';
 import { api, saveToken } from '../src/api/client';
 
 vi.mock('../src/api/client', async () => {
@@ -26,6 +27,7 @@ vi.mock('../src/api/client', async () => {
     api: {
       profile: vi.fn(), courses: vi.fn(), login: vi.fn(),
       consultations: vi.fn(), askTutor: vi.fn(),
+      users: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), deactivateUser: vi.fn(),
     },
   };
 });
@@ -47,7 +49,7 @@ async function auditar(contenedor) {
   }));
 }
 
-const USUARIO = { id_usuario: 1, nombre_completo: 'Ana Pérez', rol: 'docente' };
+const USUARIO = { id_usuario: 1, nombre_completo: 'Milton Gil', rol: 'administrador' };
 
 function envolver(componente) {
   saveToken('token-de-prueba');
@@ -66,6 +68,10 @@ describe('Auditoría de accesibilidad', () => {
     vi.clearAllMocks();
     api.courses.mockResolvedValue({ cursos: [] });
     api.consultations.mockResolvedValue({ consultas: [] });
+    api.users.mockResolvedValue({
+      usuarios: [{ id_usuario: 2, nombre_completo: 'Ana Pérez', correo: 'a@b.gt', rol: 'docente', estado: true }],
+      paginacion: { total: 1, pagina: 1, limite: 20, paginas: 1 },
+    });
     URL.createObjectURL = vi.fn(() => 'blob:prueba');
     URL.revokeObjectURL = vi.fn();
   });
@@ -99,6 +105,13 @@ describe('Auditoría de accesibilidad', () => {
         ]}
       />
     );
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('la gestión de usuarios no tiene violaciones', async () => {
+    const { container } = envolver(<UsersAdmin />);
+    // Se espera a que la tabla exista: auditarla vacía no probaría nada.
+    await screen.findByRole('table');
     expect(await auditar(container)).toEqual([]);
   });
 
