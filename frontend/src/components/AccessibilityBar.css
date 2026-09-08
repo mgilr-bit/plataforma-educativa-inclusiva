@@ -9,10 +9,40 @@
   border-bottom: 1px solid var(--color-borde);
 }
 
-.accessibility-bar__group {
+.accessibility-bar__grupo {
   display: flex;
   align-items: center;
   gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.accessibility-bar__opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  min-height: var(--area-minima);
+  padding: var(--espacio-1) var(--espacio-2);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+/* El foco se dibuja alrededor de toda la opción, no solo del círculo del
+   radio, que es demasiado pequeño para verse. */
+.accessibility-bar__opcion:has(input:focus-visible) {
+  outline: var(--borde-foco) solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+/* La opción elegida se marca con fondo y negrita, además del propio radio:
+   tres señales para que no dependa de distinguir un círculo diminuto. */
+.accessibility-bar__opcion:has(input:checked) {
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  border-color: var(--color-primario);
+  font-weight: 700;
 }
 
 .accessibility-bar__label {
@@ -20,10 +50,6 @@
   color: var(--color-texto-suave);
 }
 
-.accessibility-bar__options {
-  display: flex;
-  gap: var(--espacio-1);
-}
 
 .accessibility-bar__button {
   padding: var(--espacio-2) var(--espacio-3);

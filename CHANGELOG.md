@@ -2,6 +2,17 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.20.0] — 2026-09-08
+### Agregado
+- Auditoría automática de accesibilidad con axe-core sobre todas las pantallas, integrada en la suite de pruebas.
+- El foco pasa al contenido principal al cambiar de pantalla, para que el lector de pantalla anuncie la pantalla nueva.
+
+### Cambiado
+- El selector de tamaño de letra usa radios nativos en lugar de botones con `role="radio"`: el grupo entero pasa a ser una sola parada del tabulador y se recorre con las flechas.
+
+### Corregido
+- `role="log"` estaba puesto sobre la lista de la conversación, lo que anulaba su semántica de lista. Ahora va en el contenedor, conservando ambas cosas.
+
 ## [0.19.0] — 2026-09-08
 ### Agregado
 - Chat con el asistente educativo dentro de la pantalla del material, con el historial de preguntas de esa clase.

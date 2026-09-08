@@ -95,9 +95,12 @@ export default function TutorChat({ contentId }) {
 
       {loadingHistory && <p aria-live="polite">Cargando sus preguntas anteriores…</p>}
 
-      {/* role="log" describe una zona que crece por abajo. aria-live avisa de
-          lo nuevo sin robar el foco a quien esta escribiendo. */}
-      <ol className="tutor__conversacion" role="log" aria-live="polite" aria-label="Conversación">
+      {/* El role="log" va en el contenedor y no en la lista: puesto sobre el
+          <ol> anularia su semantica, y el lector de pantalla dejaria de
+          anunciar cuantos intercambios hay. aria-live avisa de lo nuevo sin
+          robar el foco a quien esta escribiendo. */}
+      <div role="log" aria-live="polite" aria-label="Conversación">
+        <ol className="tutor__conversacion">
         {exchanges.map((intercambio) => (
           <li key={intercambio.id_consulta} className="tutor__intercambio">
             <div className="tutor__pregunta">
@@ -112,9 +115,10 @@ export default function TutorChat({ contentId }) {
                   pasos numerados, y aplastarlos arruinaria la explicacion. */}
               <p className="tutor__texto">{intercambio.respuesta}</p>
             </div>
-          </li>
-        ))}
-      </ol>
+            </li>
+          ))}
+        </ol>
+      </div>
 
       {exchanges.length === 0 && !loadingHistory && (
         <p className="tutor__vacio">

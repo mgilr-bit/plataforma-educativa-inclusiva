@@ -40,7 +40,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Implementar panel del docente — 2026-09-05 — Issue #28
 - [x] Componente de transcripción en tiempo real (subtítulos) — 2026-09-05 — Issue #29
 - [x] Componente de chat con asistente educativo — 2026-09-08 — Issue #30
-- [ ] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado
+- [x] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado — 2026-09-08 — Issue #31
 - [ ] Consumo de la API del backend
 - [ ] Despliegue en Vercel
 
