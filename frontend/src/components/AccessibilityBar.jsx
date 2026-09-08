@@ -12,27 +12,26 @@ export default function AccessibilityBar() {
 
   return (
     <div className="accessibility-bar">
-      <div className="accessibility-bar__group">
-        <span id="text-size-label" className="accessibility-bar__label">
-          Tamaño de letra
-        </span>
-        {/* Un grupo de radio, no botones sueltos: comunica al lector de
-            pantalla que son opciones excluyentes y cual esta activa. */}
-        <div className="accessibility-bar__options" role="radiogroup" aria-labelledby="text-size-label">
-          {TEXT_SCALES.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              role="radio"
-              aria-checked={scale === option.id}
-              className="accessibility-bar__button"
-              onClick={() => setScale(option.id)}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Se usa un fieldset con radios reales, no botones con role="radio".
+          Los radios nativos traen el comportamiento esperado: el grupo entero
+          es una sola parada del tabulador y se recorre con las flechas. Con
+          botones sueltos, quien navega con teclado tendria que tabular una vez
+          por cada opcion antes de seguir. */}
+      <fieldset className="accessibility-bar__grupo">
+        <legend className="accessibility-bar__label">Tamaño de letra</legend>
+        {TEXT_SCALES.map((option) => (
+          <label key={option.id} className="accessibility-bar__opcion">
+            <input
+              type="radio"
+              name="escala-texto"
+              value={option.id}
+              checked={scale === option.id}
+              onChange={() => setScale(option.id)}
+            />
+            <span className="accessibility-bar__texto-opcion">{option.label}</span>
+          </label>
+        ))}
+      </fieldset>
 
       <button
         type="button"

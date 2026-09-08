@@ -20,7 +20,7 @@ function montar() {
 describe('Barra de accesibilidad', () => {
   test('los tamaños de letra forman un grupo de opciones excluyentes', () => {
     montar();
-    const grupo = screen.getByRole('radiogroup', { name: /tamaño de letra/i });
+    const grupo = screen.getByRole('group', { name: /tamaño de letra/i });
     expect(grupo).toBeInTheDocument();
     expect(screen.getAllByRole('radio')).toHaveLength(3);
   });
@@ -32,7 +32,7 @@ describe('Barra de accesibilidad', () => {
     await usuario.click(screen.getByRole('radio', { name: /muy grande/i }));
 
     expect(document.documentElement.style.getPropertyValue('--escala-texto')).toBe('1.5');
-    expect(screen.getByRole('radio', { name: /muy grande/i })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: /muy grande/i })).toBeChecked();
   });
 
   test('el alto contraste se anuncia como botón de dos estados', async () => {
@@ -59,7 +59,7 @@ describe('Barra de accesibilidad', () => {
     montar();
 
     expect(screen.getByRole('button', { name: /alto contraste/i })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('radio', { name: /^grande$/i })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: /^grande$/i })).toBeChecked();
   });
 
   test('funciona sin almacenamiento disponible, como en modo privado', () => {

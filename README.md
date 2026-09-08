@@ -283,6 +283,17 @@ El chat vive dentro de la pantalla del material y solo se ofrece al estudiante, 
 
 Las respuestas se muestran **conservando los saltos de línea**: el asistente explica en pasos numerados, y aplastarlos arruinaría la explicación. Quién habla se indica **con palabras** —«Usted preguntó», «El asistente respondió»—, no solo por la posición o el color, para que un lector de pantalla distinga los turnos.
 
+### Auditoría de accesibilidad
+
+La suite incluye una auditoría con **axe-core**, el mismo motor que usan las extensiones de auditoría de los navegadores. Recorre cada pantalla y falla si aparece una violación.
+
+Detecta una parte de los problemas, no todos: lo que depende de juicio humano —si un texto alternativo describe bien una imagen, si el orden de lectura tiene sentido— ninguna herramienta lo ve. La regla de contraste queda desactivada porque jsdom no calcula estilos reales; esos valores se verificaron aparte con la fórmula de WCAG al fijar los tokens.
+
+Lo que la auditoría **no** puede comprobar y se resolvió a mano:
+
+- **El grupo de tamaño de letra usa radios nativos.** Con botones y `role="radio"` el marcado es válido y axe no protesta, pero cada opción sería una parada distinta del tabulador. Los radios nativos hacen del grupo una sola parada, recorrible con flechas.
+- **El foco pasa al contenido principal al cambiar de pantalla.** En una aplicación de una sola página el navegador no recarga nada, así que sin esto el lector de pantalla se queda en el enlace pulsado y el estudiante no sabe que cambió de pantalla.
+
 ### Pruebas del frontend
 
 ```bash
