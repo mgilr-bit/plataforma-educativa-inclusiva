@@ -6,6 +6,7 @@
 // tiene que reaprender la interfaz cada vez.
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Icon from './Icon';
 import './Layout.css';
 
 export default function Layout({ children }) {
@@ -16,6 +17,7 @@ export default function Layout({ children }) {
     <div className="layout">
       <header className="layout__header">
         <Link className="layout__marca" to="/panel">
+          <Icon nombre="libro" tamano={24} />
           Plataforma Educativa
         </Link>
 
@@ -45,10 +47,11 @@ export default function Layout({ children }) {
         {user && (
           <div className="layout__usuario">
             <span className="layout__nombre">
-              {user.nombre_completo}
-              <span className="layout__rol"> · {user.rol}</span>
+              <strong>{user.nombre_completo}</strong>
+              <span className="layout__rol">{user.rol}</span>
             </span>
             <button type="button" className="layout__salir" onClick={logout}>
+              <Icon nombre="salir" tamano={18} />
               Cerrar sesión
             </button>
           </div>

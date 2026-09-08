@@ -2,36 +2,46 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--espacio-4);
+  gap: var(--espacio-6);
   margin-bottom: var(--espacio-8);
   padding-bottom: var(--espacio-4);
-  border-bottom: 2px solid var(--color-borde);
+  border-bottom: 1px solid var(--color-borde);
 }
 
 .layout__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
   font-size: var(--texto-grande);
   font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--color-primario);
   text-decoration: none;
 }
 
 .layout__nav {
   display: flex;
-  gap: var(--espacio-4);
+  gap: var(--espacio-2);
 }
 
 .layout__nav a {
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio);
   color: var(--color-texto);
-  padding: var(--espacio-2);
+  text-decoration: none;
 }
 
-/* La página activa se marca con color y con subrayado grueso: el color solo
-   no basta para quien no lo distingue. */
+.layout__nav a:hover {
+  background-color: var(--color-superficie);
+}
+
+/* La pagina activa se marca de tres formas: color, peso y una barra inferior
+   gruesa. El color por si solo excluye a quien no lo distingue, y el peso por
+   si solo se pierde entre dos o tres enlaces. */
 .layout__nav a[aria-current='page'] {
   color: var(--color-primario);
   font-weight: 700;
-  text-decoration: underline;
-  text-decoration-thickness: 3px;
+  box-shadow: inset 0 -3px 0 var(--color-primario);
 }
 
 .layout__usuario {
@@ -42,22 +52,44 @@
 }
 
 .layout__nombre {
+  display: flex;
+  flex-direction: column;
   font-size: var(--texto-pequeno);
+  line-height: 1.3;
 }
 
 .layout__rol {
   color: var(--color-texto-suave);
+  text-transform: capitalize;
 }
 
 .layout__salir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-3);
   background-color: var(--color-fondo);
   color: var(--color-texto);
-  border: 2px solid var(--color-borde);
+  border: 1px solid var(--color-borde);
   border-radius: var(--radio);
-  cursor: pointer;
 }
 
 .layout__salir:hover {
+  background-color: var(--color-superficie);
   border-color: var(--color-primario);
+  color: var(--color-primario);
+}
+
+/* En pantalla estrecha la cabecera se apila y el bloque del usuario deja de
+   empujarse a la derecha, que ahi no existe. */
+@media (max-width: 40rem) {
+  .layout__header {
+    gap: var(--espacio-3);
+  }
+
+  .layout__usuario {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
 }

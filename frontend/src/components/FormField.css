@@ -40,6 +40,9 @@
 }
 
 .form-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
   margin: var(--espacio-2) 0 0;
   color: var(--color-error);
   font-weight: 600;
