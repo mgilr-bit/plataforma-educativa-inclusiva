@@ -271,6 +271,12 @@ El mínimo AA es 4.5:1 para texto y 3:1 para bordes y controles; el tema de alto
 
 Como todo deriva de esas variables, **el alto contraste y el escalado de fuente son un cambio de tokens, no de cada componente**.
 
+### Subtítulos
+
+Los segmentos que devuelve la API se convierten a **WebVTT** y se entregan al reproductor como pista nativa, en lugar de dibujarlos por cuenta propia. La razón: así el navegador los renderiza respetando los ajustes de subtítulos que el usuario ya configuró en su sistema operativo —tamaño, color, fondo—, que suelen estar mejor afinados a su necesidad que cualquier valor que eligiéramos nosotros.
+
+Además, **la transcripción completa se muestra siempre**, no solo los subtítulos sobre el video. Un estudiante sordo puede preferir leer el texto entero a su ritmo; sin esa lista, el contenido solo existiría mientras el video avanza. El fragmento en curso se resalta con fondo, barra lateral y negrita —tres señales, no solo color— y con `aria-current` para el lector de pantalla.
+
 ### Pruebas del frontend
 
 ```bash

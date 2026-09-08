@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.18.0] — 2026-09-05
+### Agregado
+- Reproductor con subtítulos: los segmentos se entregan como pista WebVTT nativa, de modo que el navegador los dibuja respetando los ajustes de subtítulos del sistema operativo.
+- Transcripción completa siempre visible junto al material, con el fragmento en curso resaltado y navegable: al pulsarlo, el reproductor salta a ese momento.
+- Pantalla de material con su estado de revisión.
+- 16 pruebas del generador WebVTT y del reproductor.
+
+### Corregido
+- Vitest solo ejecutaba los archivos `.test.jsx`, de modo que una prueba en `.test.js` no se habría ejecutado nunca sin avisar.
+
 ## [0.17.0] — 2026-09-05
 ### Agregado
 - Panel del docente con sus cursos, inscritos y materiales publicados.

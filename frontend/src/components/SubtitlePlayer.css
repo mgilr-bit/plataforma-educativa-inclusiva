@@ -1,0 +1,67 @@
+.reproductor__medio {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: var(--espacio-6);
+  background-color: #000;
+  border-radius: var(--radio);
+}
+
+.reproductor__aviso {
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.reproductor__ayuda {
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+.transcripcion {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.transcripcion__linea {
+  border-bottom: 1px solid var(--color-borde);
+}
+
+/* El fragmento en curso se marca de tres formas a la vez: fondo, barra lateral
+   gruesa y negrita. Con una sola señal, quien no distinga ese color o tenga la
+   pantalla con poco brillo lo perdería. */
+.transcripcion__linea--activa {
+  background-color: var(--color-superficie);
+  border-left: 6px solid var(--color-primario);
+  font-weight: 700;
+}
+
+.transcripcion__salto {
+  display: flex;
+  gap: var(--espacio-4);
+  width: 100%;
+  padding: var(--espacio-3);
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.transcripcion__salto:hover {
+  background-color: var(--color-superficie);
+}
+
+.transcripcion__tiempo {
+  flex-shrink: 0;
+  min-width: 3.5rem;
+  color: var(--color-primario);
+  font-variant-numeric: tabular-nums;
+}
+
+.transcripcion__linea > .transcripcion__texto {
+  display: block;
+  padding: var(--espacio-3);
+}

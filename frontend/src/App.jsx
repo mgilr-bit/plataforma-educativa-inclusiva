@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import RolePanel from './pages/RolePanel';
 import CourseDetail from './pages/CourseDetail';
+import ContentDetail from './pages/ContentDetail';
 import './styles/global.css';
 import './App.css';
 
@@ -41,6 +42,14 @@ export default function App() {
                 element={(
                   <ProtectedRoute>
                     <CourseDetail />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/contenidos/:id"
+                element={(
+                  <ProtectedRoute>
+                    <ContentDetail />
                   </ProtectedRoute>
                 )}
               />
