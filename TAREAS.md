@@ -44,6 +44,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Consumo de la API del backend — 2026-09-08 — Issue #32
 - [x] Gestión de usuarios desde la interfaz — 2026-09-08 — Issue #69
 - [x] Gestión de cursos e inscripciones desde la interfaz — 2026-09-08 — Issue #70
+- [x] Datos de ejemplo y arranque con un solo comando — 2026-09-08 — Issue #72
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas
