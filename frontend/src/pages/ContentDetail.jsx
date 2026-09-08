@@ -4,6 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import Layout from '../components/Layout';
 import SubtitlePlayer from '../components/SubtitlePlayer';
+import TutorChat from '../components/TutorChat';
+import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
 
@@ -15,7 +17,12 @@ const REVISION = {
 
 export default function ContentDetail() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [state, setState] = useState({ loading: true });
+
+  // El asistente registra las consultas contra el estudiante que pregunta,
+  // asi que solo se ofrece a ese rol.
+  const puedePreguntar = user?.rol === 'estudiante';
 
   function load() {
     setState({ loading: true });
@@ -79,6 +86,8 @@ export default function ContentDetail() {
               description="Cuando el docente la genere, el texto y los subtítulos aparecerán aquí."
             />
           )}
+
+          {puedePreguntar && <TutorChat contentId={Number(id)} />}
         </>
       )}
     </Layout>
