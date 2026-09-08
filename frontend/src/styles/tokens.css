@@ -47,7 +47,19 @@
   --espacio-12: 3rem;
 
   --radio: 0.375rem;
+  --radio-grande: 0.75rem;
   --borde-foco: 3px;
+
+  /* --- Profundidad ------------------------------------------------------ */
+  /* La elevacion separa lo que flota de lo que es fondo. Se usa con
+     moderacion: tres niveles bastan y mas solo genera ruido. */
+  --sombra-1: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.10);
+  --sombra-2: 0 2px 4px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.10);
+  --sombra-3: 0 4px 8px rgba(15, 23, 42, 0.08), 0 12px 24px rgba(15, 23, 42, 0.12);
+
+  /* --- Movimiento ------------------------------------------------------- */
+  /* Entre 150 y 300 ms: por debajo no se percibe, por encima estorba. */
+  --transicion: 180ms ease;
 
   /* Área mínima de un control táctil. La recomendación de WCAG 2.5.5 es
      44x44 px: importa en tabletas, que es como se usará en el aula. */
@@ -69,4 +81,10 @@
   --color-exito: #7be38b;          /* 13.20:1 */
   --color-borde: #ffffff;
   --color-foco: #ffd84d;
+
+  /* Sobre fondo negro una sombra no se distingue. La profundidad se transmite
+     con el borde, que en este tema es blanco puro. */
+  --sombra-1: none;
+  --sombra-2: none;
+  --sombra-3: none;
 }

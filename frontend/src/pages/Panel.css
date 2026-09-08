@@ -1,25 +1,49 @@
+/* Rejilla que se adapta sola: en pantalla ancha caben varias tarjetas, en
+   una tableta se reordenan sin puntos de ruptura escritos a mano. El minimo
+   de 18rem evita que una tarjeta quede tan estrecha que el titulo se parta. */
 .tarjetas {
   list-style: none;
-  margin: 0;
+  margin: 0 0 var(--espacio-8);
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: var(--espacio-4);
 }
 
 .tarjeta {
-  padding: var(--espacio-4);
-  background-color: var(--color-superficie);
-  border: 2px solid var(--color-borde);
-  border-radius: var(--radio);
+  display: flex;
+  flex-direction: column;
+  padding: var(--espacio-6);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-primario);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-1);
+}
+
+/* Al pasar el puntero cambian el borde y la sombra, nunca el tamano: un
+   cambio de tamano desplaza las tarjetas vecinas y hace fallar el clic. */
+.tarjeta:hover {
+  box-shadow: var(--sombra-2);
 }
 
 .tarjeta__titulo {
-  margin: 0 0 var(--espacio-2);
+  margin: 0 0 var(--espacio-3);
   font-size: var(--texto-grande);
+  line-height: var(--interlineado-titulo);
 }
 
 .tarjeta__titulo a {
   color: var(--color-primario);
+  text-decoration: none;
+}
+
+/* El subrayado aparece al pasar por encima o al enfocar, pero el enlace ya se
+   distingue antes por color y peso, no solo por el subrayado. */
+.tarjeta__titulo a:hover,
+.tarjeta__titulo a:focus-visible {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 .tarjeta__detalle {
@@ -28,23 +52,52 @@
   color: var(--color-texto-suave);
 }
 
+/* El ultimo dato queda pegado al fondo de la tarjeta, de modo que todas las
+   tarjetas de una fila alinean esa linea aunque tengan titulos de distinto
+   largo. */
+.tarjeta__detalle:last-child {
+  margin-top: auto;
+  padding-top: var(--espacio-3);
+}
+
 .estado-error {
   padding: var(--espacio-4);
   border: 2px solid var(--color-error);
+  border-left-width: 6px;
   border-radius: var(--radio);
   color: var(--color-error);
 }
 
 .estado-vacio {
-  padding: var(--espacio-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-12) var(--espacio-6);
   background-color: var(--color-superficie);
   border: 2px dashed var(--color-borde);
-  border-radius: var(--radio);
+  border-radius: var(--radio-grande);
   text-align: center;
 }
 
 .estado-vacio h3 {
-  margin-bottom: var(--espacio-2);
+  margin: 0;
+}
+
+.estado-vacio p {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--color-texto-suave);
+}
+
+.estado-vacio .icono {
+  color: var(--color-texto-suave);
+}
+
+.estado-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
 }
 
 .migas {

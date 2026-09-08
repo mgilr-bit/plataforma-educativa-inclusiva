@@ -4,6 +4,7 @@
 // un componente para que ninguna pantalla pueda olvidarse de alguna de esas
 // piezas: una etiqueta suelta o un error sin asociar deja el campo inservible
 // para un lector de pantalla.
+import Icon from './Icon';
 import './FormField.css';
 
 export default function FormField({
@@ -57,7 +58,7 @@ export default function FormField({
           buscarlo, y se marca con texto ademas de color. */}
       {error && (
         <p className="form-field__error" id={errorId}>
-          <span aria-hidden="true">⚠ </span>
+          <Icon nombre="alerta" tamano={18} />
           {error}
         </p>
       )}

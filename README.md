@@ -326,6 +326,16 @@ Las rutas restringidas declaran qué roles las pueden ver:
 
 Cuando el rol no coincide se explica el motivo y se ofrece una salida, en lugar de dejar la pantalla en blanco o redirigir en silencio.
 
+### Criterios de diseño visual
+
+La jerarquía se construye con **espaciado, peso tipográfico y elevación**, nunca con color añadido: los contrastes están medidos y cualquier color nuevo obligaría a rehacer esa verificación.
+
+- **La elevación tiene tres niveles** y se anula en el tema de alto contraste, donde una sombra sobre negro no se distingue: allí la profundidad la da el borde.
+- **Las transiciones van en color, borde y sombra, nunca en tamaño.** Un cambio de tamaño al pasar el puntero desplaza los elementos vecinos y hace fallar el clic a quien tiene dificultad motriz.
+- **Los iconos son SVG en línea**, no emojis ni una librería externa: heredan el color del texto, así que funcionan en ambos temas sin ajustes, y todos son decorativos —acompañan a un texto que ya dice lo mismo—, por lo que llevan `aria-hidden`.
+- **La rejilla de tarjetas se adapta sola** con `auto-fill`, sin puntos de ruptura escritos a mano.
+- **Ningún color se escribe fuera de los tokens.** La única excepción es el negro del reproductor, que debe serlo en ambos temas.
+
 ### Nombres accesibles
 
 Los botones que se repiten en una lista —«Desactivar», «Dar de baja»— declaran su nombre completo con `aria-label`, no componiéndolo con un sufijo oculto.

@@ -1,4 +1,5 @@
 // Estados de carga, error y vacio.
+import Icon from './Icon';
 //
 // Se centralizan para que todas las pantallas los anuncien igual. El detalle
 // que importa es aria-live: sin el, un lector de pantalla no se entera de que
@@ -10,12 +11,15 @@ export function LoadingState({ label = 'Cargando…' }) {
 export function ErrorState({ message, onRetry }) {
   return (
     <div role="alert" className="estado-error">
-      <p>{message}</p>
-      {onRetry && (
-        <button type="button" onClick={onRetry}>
-          Intentar de nuevo
-        </button>
-      )}
+      <Icon nombre="alerta" tamano={22} />
+      <div>
+        <p>{message}</p>
+        {onRetry && (
+          <button type="button" onClick={onRetry}>
+            Intentar de nuevo
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -25,6 +29,7 @@ export function ErrorState({ message, onRetry }) {
 export function EmptyState({ title, description }) {
   return (
     <div className="estado-vacio">
+      <Icon nombre="vacio" tamano={40} />
       <h3>{title}</h3>
       {description && <p>{description}</p>}
     </div>
