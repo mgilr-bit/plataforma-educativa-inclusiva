@@ -4,10 +4,12 @@ import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/FormField';
 import './Login.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 const MIN_PASSWORD = 8;
 
 export default function Login() {
+  usePageTitle('Iniciar sesión');
   const { login, authenticated, loading: checkingSession } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

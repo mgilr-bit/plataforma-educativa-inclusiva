@@ -8,6 +8,7 @@ import TutorChat from '../components/TutorChat';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 const REVISION = {
   pendiente: 'Sin revisar por el docente',
@@ -44,6 +45,9 @@ export default function ContentDetail() {
   }
 
   useEffect(load, [id]);
+
+  // Mientras carga se anuncia el respaldo; al llegar el dato, su nombre.
+  usePageTitle(state.loading ? 'Material' : (state.content?.titulo || 'Material'));
 
   return (
     <Layout>

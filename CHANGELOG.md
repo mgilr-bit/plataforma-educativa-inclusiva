@@ -2,6 +2,15 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.26.0] — 2026-09-15
+### Agregado
+- Informe de conformidad con WCAG 2.1 en `docs/accesibilidad/`, con el estado de cada criterio, su evidencia y las limitaciones declaradas de la revisión.
+- Cada pantalla fija su propio título de documento.
+- 9 pruebas de criterios concretos: títulos por pantalla, recorrido de teclado, ausencia de trampas de foco y escalado del texto.
+
+### Corregido
+- Todas las pantallas compartían el mismo título del documento, lo que incumplía el criterio 2.4.2. Quien tuviera varias pestañas abiertas no podía distinguirlas.
+
 ## [0.25.0] — 2026-09-15
 ### Agregado
 - Pruebas de integración que recorren la plataforma de extremo a extremo —el administrador monta el curso, la docente publica material, el estudiante lo consume— y verifican que cada respuesta traiga los campos exactos que leen las pantallas.

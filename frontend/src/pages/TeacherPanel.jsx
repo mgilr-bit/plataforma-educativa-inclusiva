@@ -7,6 +7,7 @@ import NewCourseForm from '../components/NewCourseForm';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function TeacherPanel() {
   const { user } = useAuth();
@@ -14,6 +15,8 @@ export default function TeacherPanel() {
 
   // Solo el administrador crea cursos y asigna el docente titular.
   const esAdministrador = user?.rol === 'administrador';
+
+  usePageTitle(esAdministrador ? 'Cursos' : 'Mis cursos');
 
   function load() {
     setState({ loading: true });

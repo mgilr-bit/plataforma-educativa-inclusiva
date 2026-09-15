@@ -5,8 +5,10 @@ import { api } from '../api/client';
 import Layout from '../components/Layout';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function StudentPanel() {
+  usePageTitle('Mis cursos');
   const [state, setState] = useState({ loading: true });
 
   function load() {

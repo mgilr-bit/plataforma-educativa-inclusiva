@@ -3,8 +3,10 @@
 // tareas siguientes de la fase.
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
+import usePageTitle from '../hooks/usePageTitle';
 
 export default function Home() {
+  usePageTitle(null);
   const [state, setState] = useState({ loading: true });
 
   useEffect(() => {

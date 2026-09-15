@@ -49,7 +49,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 
 ## Fase 4 — Integración y pruebas
 - [x] Pruebas de integración frontend–backend — 2026-09-15 — Issue #34
-- [ ] Pruebas de accesibilidad (WCAG)
+- [x] Pruebas de accesibilidad (WCAG) — 2026-09-15 — Issue #35
 - [ ] Pruebas con usuarios (docentes y estudiantes)
 - [ ] Corrección de hallazgos
 
