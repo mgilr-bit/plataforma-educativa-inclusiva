@@ -2,6 +2,11 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.25.0] — 2026-09-15
+### Agregado
+- Pruebas de integración que recorren la plataforma de extremo a extremo —el administrador monta el curso, la docente publica material, el estudiante lo consume— y verifican que cada respuesta traiga los campos exactos que leen las pantallas.
+- Comprobación del contrato de errores: toda respuesta de error trae `estado` y `mensaje`, y las de validación además el detalle por campo.
+
 ## [0.24.0] — 2026-09-08
 ### Cambiado
 - Jerarquía visual de todas las pantallas: rejilla de tarjetas que se adapta al ancho, escala de elevación, ritmo de espaciado y peso tipográfico diferenciado por nivel de encabezado.
