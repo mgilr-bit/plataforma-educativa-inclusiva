@@ -1,3 +1,28 @@
 .login {
   max-width: 32rem;
+  margin: var(--espacio-8) auto;
+  padding: var(--espacio-8);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-top: 4px solid var(--color-primario);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-2);
+}
+
+.login h1 {
+  margin-bottom: var(--espacio-2);
+}
+
+/* La frase de entrada acompana al titulo: separarla con el margen normal de
+   parrafo la deja huerfana. */
+.login h1 + p {
+  margin-bottom: var(--espacio-8);
+  color: var(--color-texto-suave);
+}
+
+@media (max-width: 40rem) {
+  .login {
+    padding: var(--espacio-4);
+    margin-top: var(--espacio-4);
+  }
 }

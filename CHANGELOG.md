@@ -2,6 +2,20 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.24.0] — 2026-09-08
+### Cambiado
+- Jerarquía visual de todas las pantallas: rejilla de tarjetas que se adapta al ancho, escala de elevación, ritmo de espaciado y peso tipográfico diferenciado por nivel de encabezado.
+- El inicio de sesión se presenta como tarjeta centrada, y la cabecera separa marca, navegación y usuario.
+- Estados vacíos y de error con icono, y filas de tabla resaltadas al pasar el puntero.
+
+### Agregado
+- Conjunto propio de iconos SVG en línea, que heredan el color del texto y funcionan en ambos temas sin ajustes.
+- Transiciones de 180 ms en color, borde y sombra.
+
+### Notas
+- No se modificó ningún color: los contrastes medidos contra WCAG siguen siendo los mismos.
+- Las sombras se anulan en el tema de alto contraste, donde la profundidad se transmite con el borde.
+
 ## [0.23.0] — 2026-09-08
 ### Agregado
 - `npm run datos-demo`: escenario de ejemplo con establecimiento, docentes, estudiantes, cursos, materiales y una transcripción con subtítulos. Se niega a ejecutarse si la base no es local, porque borra todo lo que haya.
