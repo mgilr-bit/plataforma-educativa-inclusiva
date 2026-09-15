@@ -68,22 +68,35 @@ describe('whisperService', () => {
     await assert.rejects(() => transcribeAudio(AUDIO, 'clase.mp3'), WhisperError);
   });
 
-  test('traduce el 429 del proveedor sin disfrazarlo de otro error', async () => {
-    responder(429, { error: 'rate limit' });
+  test('el exceso de peticiones se traduce a 429 con una espera', async () => {
+    responder(429, { error: { code: 'rate_limit_exceeded' } });
     await assert.rejects(
       () => transcribeAudio(AUDIO, 'clase.mp3'),
-      (error) => error.estado === 429
+      (error) => error.estado === 429 && /saturado/i.test(error.message)
     );
   });
 
-  test('un 401 del proveedor no se propaga como 401 al cliente', async () => {
-    responder(401, { error: 'clave invalida' });
+  test('la falta de saldo se distingue del exceso de peticiones', async () => {
+    // El proveedor usa 429 para ambas cosas, pero lo que hay que hacer es
+    // distinto: recargar la cuenta o esperar. Un mensaje que solo diga "429"
+    // no le sirve de nada al docente.
+    responder(429, { error: { code: 'insufficient_quota' } });
     await assert.rejects(
       () => transcribeAudio(AUDIO, 'clase.mp3'),
-      // Seria confuso: el estudiante creeria que su sesion caduco.
-      (error) => error.estado === 502
+      (error) => error.estado === 503 && /saldo/i.test(error.message)
     );
   });
+
+  test('una clave invalida se explica como problema de configuracion', async () => {
+    responder(401, { error: { code: 'invalid_api_key' } });
+    await assert.rejects(
+      () => transcribeAudio(AUDIO, 'clase.mp3'),
+      // 503 y no 401: el estudiante no debe creer que su sesion caduco.
+      (error) => error.estado === 503 && /clave/i.test(error.message)
+    );
+  });
+
+
 
   test('un fallo de red responde 502', async () => {
     global.fetch = async () => { throw new Error('ECONNREFUSED'); };

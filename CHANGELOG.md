@@ -2,6 +2,10 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.28.0] — 2026-09-15
+### Corregido
+- Los errores del servicio de transcripción se traducían a «respondió 429», que no le dice nada a un docente. Ahora se distingue la falta de saldo del exceso de peticiones y de una clave inválida, porque lo que hay que hacer es distinto en cada caso.
+
 ## [0.27.0] — 2026-09-15
 ### Agregado
 - El docente puede subir el archivo de la clase —audio, video o documento, hasta 200 MB— y la plataforma lo guarda y lo sirve al estudiante.

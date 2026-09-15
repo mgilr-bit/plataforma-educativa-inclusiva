@@ -55,12 +55,40 @@ async function transcribeAudio(buffer, nombreArchivo, { idioma } = {}) {
 
   if (!respuesta.ok) {
     const detalle = await respuesta.text().catch(() => '');
-    // 401 y 429 del proveedor se traducen a codigos propios para no confundir
-    // al cliente con un problema de su propia autenticacion.
-    const estado = respuesta.status === 429 ? 429 : 502;
+    let codigo = null;
+    try {
+      codigo = JSON.parse(detalle)?.error?.code;
+    } catch {
+      // El proveedor no siempre responde en JSON.
+    }
+
+    // Un 429 puede ser falta de saldo o exceso de peticiones, y lo que hay que
+    // hacer es distinto: recargar la cuenta, o esperar. Decir "respondio 429"
+    // no le sirve de nada a un docente.
+    if (codigo === 'insufficient_quota' || codigo === 'credit_balance_exhausted') {
+      throw new WhisperError(
+        'El servicio de transcripcion no tiene saldo disponible. Avise al administrador de la plataforma.',
+        { estado: 503, causa: detalle.slice(0, 500) }
+      );
+    }
+
+    if (respuesta.status === 429) {
+      throw new WhisperError(
+        'El servicio de transcripcion esta saturado. Intente de nuevo en unos minutos.',
+        { estado: 429, causa: detalle.slice(0, 500) }
+      );
+    }
+
+    if (respuesta.status === 401) {
+      throw new WhisperError(
+        'La clave del servicio de transcripcion no es valida. Avise al administrador de la plataforma.',
+        { estado: 503, causa: detalle.slice(0, 500) }
+      );
+    }
+
     throw new WhisperError(
       `El servicio de transcripcion respondio ${respuesta.status}`,
-      { estado, causa: detalle.slice(0, 500) }
+      { estado: 502, causa: detalle.slice(0, 500) }
     );
   }
 
