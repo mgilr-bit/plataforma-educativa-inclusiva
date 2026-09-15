@@ -48,7 +48,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas
-- [ ] Pruebas de integración frontend–backend
+- [x] Pruebas de integración frontend–backend — 2026-09-15 — Issue #34
 - [ ] Pruebas de accesibilidad (WCAG)
 - [ ] Pruebas con usuarios (docentes y estudiantes)
 - [ ] Corrección de hallazgos

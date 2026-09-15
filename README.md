@@ -358,6 +358,19 @@ Se distinguen tres situaciones que parecen la misma:
 | Entrar sin haber iniciado sesión | Se lleva al login, sin aviso: no hubo sesión que vencer |
 | Contraseña incorrecta | No cierra la sesión existente |
 
+### Pruebas de integración
+
+Las pruebas del frontend simulan la API por completo y las del backend no saben qué campos lee el frontend. Entre ambas queda un hueco: **si un nombre de campo cambia en un lado, todas las pruebas siguen en verde y la aplicación se rompe en el navegador.**
+
+`backend/tests/integration/recorridos.test.js` cubre ese hueco. Recorre la plataforma como lo haría una persona y comprueba que cada respuesta traiga los campos exactos que las pantallas leen, con el nombre exacto.
+
+Comprobado renombrando un alias del SQL —`docente` a `profesor`, un cambio plausible—:
+
+| Suite | Resultado |
+|---|---|
+| Frontend (85 pruebas, API simulada) | pasaron todas, ciegas al cambio |
+| Integración | **falló**, señalando el campo |
+
 ### Auditoría de accesibilidad
 
 La suite incluye una auditoría con **axe-core**, el mismo motor que usan las extensiones de auditoría de los navegadores. Recorre cada pantalla y falla si aparece una violación.
