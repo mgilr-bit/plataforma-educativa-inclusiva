@@ -165,3 +165,64 @@ describe('Alta de material', () => {
     await waitFor(() => expect(campo).toHaveValue(''));
   });
 });
+
+describe('Subida del archivo de la clase', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    api.users.mockResolvedValue({ usuarios: [] });
+  });
+
+  test('el campo acepta audio, video y documentos', async () => {
+    montar(<NewContentForm courseId="1" />, DOCENTE);
+
+    const campo = screen.getByLabelText(/archivo de la clase/i);
+    expect(campo).toHaveAttribute('type', 'file');
+    expect(campo.accept).toMatch(/audio/);
+    expect(campo.accept).toMatch(/video/);
+  });
+
+  test('al adjuntar un archivo, el campo de enlace se deshabilita', async () => {
+    const usuario = userEvent.setup();
+    montar(<NewContentForm courseId="1" />, DOCENTE);
+
+    const archivo = new File(['audio simulado'], 'clase.m4a', { type: 'audio/mp4' });
+    await usuario.upload(screen.getByLabelText(/archivo de la clase/i), archivo);
+
+    // Ofrecer las dos vías a la vez confundiría: el archivo manda.
+    expect(screen.getByLabelText(/o un enlace/i)).toBeDisabled();
+  });
+
+  test('el archivo llega al cliente de la API', async () => {
+    api.createContent.mockResolvedValue({ contenido: { id_contenido: 9, titulo: 'Clase' } });
+    const usuario = userEvent.setup();
+    montar(<NewContentForm courseId="1" />, DOCENTE);
+
+    const archivo = new File(['audio simulado'], 'clase.m4a', { type: 'audio/mp4' });
+    await usuario.type(screen.getByLabelText(/título del material/i), 'Clase');
+    await usuario.upload(screen.getByLabelText(/archivo de la clase/i), archivo);
+    await usuario.click(screen.getByRole('button', { name: /agregar material/i }));
+
+    await waitFor(() => {
+      expect(api.createContent).toHaveBeenCalledWith(
+        expect.objectContaining({ file: archivo, title: 'Clase' })
+      );
+    });
+  });
+
+  test('mientras sube, el botón lo dice con otras palabras', async () => {
+    let resolver;
+    api.createContent.mockReturnValue(new Promise((r) => { resolver = r; }));
+    const usuario = userEvent.setup();
+    montar(<NewContentForm courseId="1" />, DOCENTE);
+
+    const archivo = new File(['audio'], 'clase.m4a', { type: 'audio/mp4' });
+    await usuario.type(screen.getByLabelText(/título del material/i), 'Clase');
+    await usuario.upload(screen.getByLabelText(/archivo de la clase/i), archivo);
+    await usuario.click(screen.getByRole('button', { name: /agregar material/i }));
+
+    // "Guardando" para un archivo de 200 MB haría pensar que se colgó.
+    expect(screen.getByRole('button', { name: /subiendo el archivo/i })).toBeInTheDocument();
+
+    resolver({ contenido: { id_contenido: 9, titulo: 'Clase' } });
+  });
+});

@@ -20,3 +20,9 @@ npm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Archivos subidos por los docentes
+uploads/
+
+# Audios generados para pruebas: se regeneran con npm run generar-clases
+docs/clases-ejemplo/

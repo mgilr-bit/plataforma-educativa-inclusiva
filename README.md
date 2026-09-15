@@ -59,6 +59,26 @@ Comprueba antes que PostgreSQL responda, que la base exista y que el `.env` est�
 
 El frontend queda en `http://localhost:5173` y la API en `http://localhost:4000`.
 
+## Clases de ejemplo en audio
+
+```bash
+cd backend && npm run generar-clases
+```
+
+Genera tres clases reales en audio —matemática, ciencias y lenguaje— con la síntesis de voz de macOS, usando una voz en español de México, la más cercana al habla de Guatemala entre las disponibles. Quedan en `docs/clases-ejemplo/`.
+
+Sirven para probar el recorrido completo sin tener que grabar nada: la docente las sube desde la pantalla del curso, y con `OPENAI_API_KEY` configurada puede generar su transcripción real.
+
+## Archivos de las clases
+
+El docente sube el archivo al crear el material y la plataforma lo guarda; la transcripción se genera después a partir de ese archivo, sin volver a subirlo.
+
+- Hasta **200 MB** por archivo. El límite de Whisper (25 MB) solo aplica a lo que se envía a transcribir.
+- Los nombres se generan al azar: el original puede traer acentos o rutas, y uno predecible permitiría adivinar direcciones ajenas.
+- `UPLOADS_DIR` apunta a la carpeta de destino. **En un despliegue debe ser un volumen persistente**: el disco de un contenedor se borra en cada redespliegue.
+
+> **Limitación conocida.** Los archivos se sirven por su dirección, sin comprobar la sesión, porque un elemento `<video>` no puede enviar la cabecera de autorización. El nombre aleatorio impide adivinarlos, pero quien reciba una dirección puede abrirla. Es aceptable para material de clase en un piloto; para datos sensibles haría falta un esquema de direcciones firmadas.
+
 ## Datos de ejemplo
 
 ```bash

@@ -61,9 +61,12 @@ export class ApiError extends Error {
   }
 }
 
-async function request(path, { method = 'GET', body, authenticated = true } = {}) {
+async function request(path, { method = 'GET', body, formData, authenticated = true } = {}) {
   const headers = {};
 
+  // Con FormData no se fija Content-Type: el navegador lo compone con el
+  // limite del formulario, y ponerlo a mano deja al servidor sin saber
+  // donde empieza cada parte.
   if (body !== undefined) {
     headers['Content-Type'] = 'application/json';
   }
@@ -80,7 +83,7 @@ async function request(path, { method = 'GET', body, authenticated = true } = {}
     response = await fetch(`${BASE_URL}${path}`, {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: formData ?? (body === undefined ? undefined : JSON.stringify(body)),
     });
   } catch (error) {
     // Sin conexion o servidor inalcanzable. Se distingue de un error devuelto
@@ -184,8 +187,21 @@ export const api = {
     return request(`/contents${suffix}`);
   },
 
-  createContent: ({ courseId, title, type, fileUrl, durationSeconds }) =>
-    request('/contents', {
+  // Con archivo adjunto la peticion viaja como multipart; sin el, como JSON.
+  // El navegador fija por si mismo el limite del formulario, asi que no hay que
+  // poner Content-Type a mano: hacerlo rompe la peticion.
+  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file }) => {
+    if (file) {
+      const datos = new FormData();
+      datos.append('idCurso', String(courseId));
+      datos.append('titulo', title);
+      datos.append('tipo', type);
+      if (durationSeconds) datos.append('duracionSeg', String(durationSeconds));
+      datos.append('archivo', file);
+      return request('/contents', { method: 'POST', formData: datos });
+    }
+
+    return request('/contents', {
       method: 'POST',
       body: {
         idCurso: courseId,
@@ -194,7 +210,12 @@ export const api = {
         urlArchivo: fileUrl || null,
         duracionSeg: durationSeconds || null,
       },
-    }),
+    });
+  },
+
+  // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  transcribe: (contentId) =>
+    request(`/contents/${contentId}/transcription`, { method: 'POST' }),
 
   transcription: (contentId) => request(`/contents/${contentId}/transcription`),
   enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),

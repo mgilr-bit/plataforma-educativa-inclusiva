@@ -2,7 +2,10 @@
 //
 // La transcripcion se genera con Whisper a partir del audio que sube el docente
 // y se guarda junto con sus segmentos, que alimentan los subtitulos.
+const path = require('node:path');
+const fs = require('node:fs/promises');
 const pool = require('../config/db');
+const { DIRECTORIO, RUTA_PUBLICA } = require('../config/storage');
 const { toPositiveInteger } = require('../utils/validators');
 const { transcribeAudio, WhisperError } = require('../services/whisperService');
 
@@ -13,12 +16,37 @@ const LARGO_MAXIMO_SEGMENTO = 500;
 // Recupera el contenido con el docente de su curso, para comprobar permisos.
 async function buscarContenido(idContenido) {
   const resultado = await pool.query(
-    `SELECT c.id_contenido, c.titulo, cu.id_docente, cu.id_curso
+    `SELECT c.id_contenido, c.titulo, c.url_archivo, cu.id_docente, cu.id_curso
      FROM contenido c JOIN curso cu ON cu.id_curso = c.id_curso
      WHERE c.id_contenido = $1`,
     [idContenido]
   );
   return resultado.rows[0] || null;
+}
+
+// Lee el archivo que el docente ya subio, si el material tiene uno guardado en
+// la plataforma. Asi no hay que volver a subirlo solo para transcribirlo.
+async function leerArchivoGuardado(urlArchivo) {
+  if (!urlArchivo || !urlArchivo.startsWith(`${RUTA_PUBLICA}/`)) {
+    return null;
+  }
+
+  const nombre = path.basename(urlArchivo);
+  const ruta = path.join(DIRECTORIO, nombre);
+
+  // Se comprueba que la ruta resultante siga dentro del directorio: un nombre
+  // con ".." apuntaria fuera y dejaria leer cualquier archivo del servidor.
+  if (!ruta.startsWith(DIRECTORIO + path.sep)) {
+    return null;
+  }
+
+  try {
+    const contenido = await fs.readFile(ruta);
+    return { buffer: contenido, nombre };
+  } catch {
+    // El registro apunta a un archivo que ya no esta.
+    return null;
+  }
 }
 
 // El estudiante solo accede a los contenidos activos de sus cursos.
@@ -43,13 +71,6 @@ async function create(req, res, next) {
   if (!idContenido) {
     return res.status(400).json({ estado: 'error', mensaje: 'El identificador no es valido' });
   }
-  if (!req.file) {
-    return res.status(400).json({
-      estado: 'error',
-      mensaje: 'Debe adjuntar un archivo de audio en el campo "audio"',
-    });
-  }
-
   try {
     const contenido = await buscarContenido(idContenido);
     if (!contenido) {
@@ -75,8 +96,20 @@ async function create(req, res, next) {
       });
     }
 
-    const resultado = await transcribeAudio(req.file.buffer, req.file.originalname, {
-      idioma: req.body.idioma,
+    // El audio puede venir en la peticion o estar ya guardado con el material.
+    const adjunto = req.file
+      ? { buffer: req.file.buffer, nombre: req.file.originalname }
+      : await leerArchivoGuardado(contenido.url_archivo);
+
+    if (!adjunto) {
+      return res.status(400).json({
+        estado: 'error',
+        mensaje: 'Adjunte un archivo de audio, o suba primero el archivo de la clase.',
+      });
+    }
+
+    const resultado = await transcribeAudio(adjunto.buffer, adjunto.nombre, {
+      idioma: (req.body || {}).idioma,
     });
 
     if (!resultado.texto) {

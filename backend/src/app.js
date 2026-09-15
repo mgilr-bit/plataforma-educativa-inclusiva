@@ -12,6 +12,7 @@ const coursesRoutes = require('./routes/courses');
 const transcriptionsRoutes = require('./routes/transcriptions');
 const tutorRoutes = require('./routes/tutor');
 const { notFound, errorHandler } = require('./middleware/errors');
+const { DIRECTORIO, RUTA_PUBLICA, asegurarDirectorio } = require('./config/storage');
 const { loginLimiter, apiLimiter } = require('./middleware/rateLimit');
 
 // Limite del cuerpo JSON. Las peticiones de la plataforma son pequenas; el
@@ -54,6 +55,23 @@ app.use(express.json({ limit: LIMITE_CUERPO }));
 // El limite estricto va antes que el general y solo sobre el inicio de sesion.
 app.use('/api/auth/login', loginLimiter);
 app.use('/api', apiLimiter);
+
+// Archivos de las clases.
+//
+// Se sirven por su direccion, sin comprobar la sesion: un elemento <video> no
+// puede enviar la cabecera de autorizacion. El nombre de cada archivo es
+// aleatorio, de modo que no se puede adivinar, pero quien reciba una direccion
+// puede abrirla. Es aceptable para material de clase en un piloto; para datos
+// sensibles haria falta un esquema de direcciones firmadas.
+asegurarDirectorio();
+app.use(RUTA_PUBLICA, express.static(DIRECTORIO, {
+  // Los nombres son unicos e inmutables: el navegador puede cachearlos.
+  maxAge: '7d',
+  index: false,
+  // Sin esto, un archivo subido con extension .html se ejecutaria como pagina
+  // en el mismo origen que la API.
+  setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}));
 
 // Rutas de la API
 app.use('/api', healthRoutes);

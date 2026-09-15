@@ -2,6 +2,17 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.27.0] — 2026-09-15
+### Agregado
+- El docente puede subir el archivo de la clase —audio, video o documento, hasta 200 MB— y la plataforma lo guarda y lo sirve al estudiante.
+- La transcripción se genera a partir del archivo ya guardado, sin volver a subirlo.
+- `npm run generar-clases`: genera clases de ejemplo en audio real con voz en español, para probar el recorrido completo sin grabar nada.
+- Variable `UPLOADS_DIR` para apuntar a un volumen persistente en el despliegue.
+
+### Corregido
+- Un archivo subido quedaba huérfano en disco si el alta del material fallaba después de guardarlo.
+- La transcripción desde el archivo guardado fallaba con `500`: sin cuerpo en la petición, `req.body` queda indefinido.
+
 ## [0.26.0] — 2026-09-15
 ### Agregado
 - Informe de conformidad con WCAG 2.1 en `docs/accesibilidad/`, con el estado de cada criterio, su evidencia y las limitaciones declaradas de la revisión.
