@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import NewUserForm from '../components/NewUserForm';
 import './UsersAdmin.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 const ROLES = [
   { id: 1, nombre: 'administrador' },
@@ -13,6 +14,7 @@ const ROLES = [
 ];
 
 export default function UsersAdmin() {
+  usePageTitle('Usuarios');
   const [state, setState] = useState({ loading: true });
   const [role, setRole] = useState('');
   const [active, setActive] = useState('');

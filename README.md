@@ -371,6 +371,10 @@ Comprobado renombrando un alias del SQL —`docente` a `profesor`, un cambio pla
 | Frontend (85 pruebas, API simulada) | pasaron todas, ciegas al cambio |
 | Integración | **falló**, señalando el campo |
 
+### Informe de conformidad WCAG
+
+`docs/accesibilidad/informe-wcag.md` recoge el estado de cada criterio de WCAG 2.1 nivel AA, con su evidencia, los contrastes medidos, los hallazgos corregidos durante el desarrollo y **las limitaciones declaradas de la revisión**.
+
 ### Auditoría de accesibilidad
 
 La suite incluye una auditoría con **axe-core**, el mismo motor que usan las extensiones de auditoría de los navegadores. Recorre cada pantalla y falla si aparece una violación.

@@ -11,6 +11,7 @@ import EnrolledStudents from '../components/EnrolledStudents';
 import NewContentForm from '../components/NewContentForm';
 import { useAuth } from '../context/AuthContext';
 import './Panel.css';
+import usePageTitle from '../hooks/usePageTitle';
 
 // Se nombran en palabras, no con iconos sueltos: un icono sin texto no lo
 // anuncia el lector de pantalla y no todos los alumnos lo interpretan igual.
@@ -39,6 +40,9 @@ export default function CourseDetail() {
   }
 
   useEffect(load, [id]);
+
+  // Mientras carga se anuncia el respaldo; al llegar el dato, su nombre.
+  usePageTitle(state.loading ? 'Curso' : (state.course?.nombre || 'Curso'));
 
   return (
     <Layout>
