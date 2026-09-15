@@ -2,6 +2,11 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.23.0] — 2026-09-08
+### Agregado
+- `npm run datos-demo`: escenario de ejemplo con establecimiento, docentes, estudiantes, cursos, materiales y una transcripción con subtítulos. Se niega a ejecutarse si la base no es local, porque borra todo lo que haya.
+- `sh scripts/dev.sh`: levanta backend y frontend con un solo comando, comprobando antes PostgreSQL, la base y el `.env`.
+
 ## [0.22.0] — 2026-09-08
 ### Agregado
 - Gestión de usuarios: listado en tabla con búsqueda y filtros, alta de cuentas, baja y reactivación. Visible solo para el administrador.

@@ -41,15 +41,44 @@ CLAUDE.md    Contexto del proyecto para Claude Code
 
 ```bash
 # Backend
-cd backend && npm install && npm run dev
+cd backend && npm install && cp .env.example .env
 
 # Frontend
-cd frontend && npm install && npm run dev
+cd frontend && npm install && cp .env.example .env
 ```
 
-El frontend corre en `http://localhost:5173` y espera la API en `VITE_API_URL`.
+## Arranque
 
-Las variables de entorno se documentan en `backend/.env.example` y `frontend/.env.example`.
+Un solo comando levanta ambos servidores:
+
+```bash
+sh scripts/dev.sh
+```
+
+Comprueba antes que PostgreSQL responda, que la base exista y que el `.env` esté puesto, y explica qué hacer si falta alguna. `Ctrl+C` detiene los dos: dejar uno vivo ocuparía el puerto y el siguiente arranque fallaría sin decir por qué.
+
+El frontend queda en `http://localhost:5173` y la API en `http://localhost:4000`.
+
+## Datos de ejemplo
+
+```bash
+cd backend && npm run datos-demo
+```
+
+Deja un escenario coherente: un establecimiento, tres docentes, ocho estudiantes, cuatro cursos —uno sin inscritos, a propósito—, cinco materiales —uno retirado— y una transcripción con cinco subtítulos, uno de ellos corregido por la docente.
+
+**Borra todo lo que haya en la base**, así que se niega a ejecutarse si `DATABASE_URL` no apunta a un servidor local. Comprueba el destino real de la conexión, no el nombre de la variable.
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Administrador | `admin@umg.edu.gt` | `Admin12345` |
+| Docente | `ana@umg.edu.gt` | `Docente12345` |
+| Docente | `luis@umg.edu.gt` | `Docente12345` |
+| Estudiante | `pedro@umg.edu.gt` | `Estudiante12345` |
+| Estudiante | `sofia@umg.edu.gt` | `Estudiante12345` |
+| Cuenta desactivada | `elena@umg.edu.gt` | `Estudiante12345` |
+
+Son credenciales de desarrollo, escritas en el repositorio a propósito. **Nunca deben usarse en un despliegue real.**
 
 ## Primer administrador
 
