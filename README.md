@@ -133,6 +133,7 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | POST | `/api/courses` | Administrador |
 | PATCH | `/api/courses/:id` | Administrador o docente titular |
 | GET | `/api/courses/:id/enrollments` | Administrador o docente titular |
+| GET | `/api/courses/:id/available-students` | Administrador o docente titular |
 | POST | `/api/courses/:id/enrollments` | Administrador o docente titular |
 | DELETE | `/api/courses/:id/enrollments/:idEstudiante` | Administrador o docente titular |
 | POST | `/api/contents/:id/transcription` | Administrador o docente titular |

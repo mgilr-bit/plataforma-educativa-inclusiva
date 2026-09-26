@@ -50,6 +50,18 @@ const TRAZOS = {
       <line x1="12" y1="3" x2="12" y2="21" />
     </>
   ),
+  texto: (
+    <>
+      <path d="M5 19l5.5-14h3L19 19" />
+      <line x1="7.5" y1="14" x2="16.5" y2="14" />
+    </>
+  ),
+  contraste: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" />
+    </>
+  ),
   salir: (
     <>
       <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" />
