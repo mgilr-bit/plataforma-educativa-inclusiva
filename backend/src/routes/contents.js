@@ -2,6 +2,7 @@
 const { Router } = require('express');
 const { list, getById, create, update, deactivate } = require('../controllers/contentsController');
 const { authenticate, authorize } = require('../middleware/auth');
+const { subida, manejarErroresDeSubida } = require('../middleware/upload');
 
 const router = Router();
 
@@ -14,7 +15,15 @@ router.get('/contents/:id', getById);
 
 // La escritura queda para docentes y administradores; el controlador verifica
 // ademas que el docente sea el titular del curso.
-router.post('/contents', authorize('administrador', 'docente'), create);
+// El archivo es opcional: un material puede ser solo un enunciado, o apuntar
+// a algo que ya vive en otro sitio.
+router.post(
+  '/contents',
+  authorize('administrador', 'docente'),
+  subida.single('archivo'),
+  manejarErroresDeSubida,
+  create
+);
 router.patch('/contents/:id', authorize('administrador', 'docente'), update);
 router.delete('/contents/:id', authorize('administrador', 'docente'), deactivate);
 

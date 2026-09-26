@@ -4,9 +4,12 @@
 //   administrador -> todos los contenidos
 //   docente       -> los de los cursos que imparte
 //   estudiante    -> los de los cursos en los que esta inscrito, solo activos
+const fs = require('node:fs/promises');
+const path = require('node:path');
 const pool = require('../config/db');
 const { toText,
   toPositiveInteger } = require('../utils/validators');
+const { RUTA_PUBLICA, DIRECTORIO } = require('../config/storage');
 
 const ROL_ADMINISTRADOR = 'administrador';
 const ROL_DOCENTE = 'docente';
@@ -189,36 +192,61 @@ async function getById(req, res, next) {
   }
 }
 
+// Borra un archivo recien subido cuando el alta no llega a completarse. Sin
+// esto, cada intento fallido dejaria una copia huerfana ocupando disco, sin
+// ninguna fila que la referencie.
+async function descartarSubida(archivo) {
+  if (!archivo) return;
+  try {
+    await fs.unlink(path.join(DIRECTORIO, archivo.filename));
+  } catch {
+    // Si ya no esta, no hay nada que hacer.
+  }
+}
+
 // POST /api/contents
 async function create(req, res, next) {
-  const { idCurso, titulo, tipo, urlArchivo, duracionSeg } = req.body || {};
+  const cuerpo = req.body || {};
+  const { titulo, tipo, urlArchivo } = cuerpo;
+  // En una peticion multipart todos los campos llegan como texto, incluidos
+  // los numeros: sin convertirlos, la validacion los rechazaria.
+  const idCurso = toPositiveInteger(cuerpo.idCurso);
+  const duracionSeg = cuerpo.duracionSeg ? toPositiveInteger(cuerpo.duracionSeg) : null;
   const errores = validarCampos({ idCurso, titulo, tipo, urlArchivo, duracionSeg }, { esCreacion: true });
 
   if (errores.length > 0) {
+    await descartarSubida(req.file);
     return res.status(400).json({ estado: 'error', mensaje: 'Datos invalidos', errores });
   }
 
   try {
     const permiso = await verificarCursoPropio(req.user, idCurso);
     if (permiso.error === 'curso_inexistente') {
+      await descartarSubida(req.file);
       return res.status(400).json({ estado: 'error', mensaje: 'El curso indicado no existe' });
     }
     if (permiso.error === 'ajeno') {
+      await descartarSubida(req.file);
       return res.status(403).json({
         estado: 'error',
         mensaje: 'Solo puede cargar contenido en los cursos que imparte',
       });
     }
 
+    // Si el docente adjunto un archivo, manda ese: la direccion escrita a mano
+    // solo sirve para material que ya vive en otro sitio.
+    const archivoSubido = req.file ? `${RUTA_PUBLICA}/${req.file.filename}` : null;
+
     const resultado = await pool.query(
       `INSERT INTO contenido (id_curso, titulo, tipo, url_archivo, duracion_seg)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id_contenido, id_curso, titulo, tipo, url_archivo, duracion_seg, fecha_carga, estado`,
-      [idCurso, titulo.trim(), tipo, urlArchivo || null, duracionSeg || null]
+      [idCurso, titulo.trim(), tipo, archivoSubido || urlArchivo || null, duracionSeg || null]
     );
 
     res.status(201).json({ estado: 'ok', contenido: resultado.rows[0] });
   } catch (error) {
+    await descartarSubida(req.file);
     next(error);
   }
 }
