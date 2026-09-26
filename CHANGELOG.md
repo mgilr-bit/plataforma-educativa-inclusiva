@@ -2,6 +2,10 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.28.1] — 2026-09-26
+### Corregido
+- El informe de uso del asistente omitía los tokens escritos en caché, de modo que una consulta con la transcripción completa aparecía como si hubiera consumido 2 tokens de entrada.
+
 ## [0.28.0] — 2026-09-15
 ### Corregido
 - Los errores del servicio de transcripción se traducían a «respondió 429», que no le dice nada a un docente. Ahora se distingue la falta de saldo del exceso de peticiones y de una clave inválida, porque lo que hay que hacer es distinto en cada caso.
