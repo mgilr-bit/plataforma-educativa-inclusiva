@@ -128,6 +128,7 @@ async function responderConsulta({ pregunta, tituloContenido, transcripcion, his
       tokens: {
         entrada: respuesta.usage?.input_tokens ?? null,
         salida: respuesta.usage?.output_tokens ?? null,
+        cacheEscrito: respuesta.usage?.cache_creation_input_tokens ?? null,
         cacheLeido: respuesta.usage?.cache_read_input_tokens ?? null,
       },
     };
