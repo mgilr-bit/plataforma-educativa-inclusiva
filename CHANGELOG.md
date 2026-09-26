@@ -2,6 +2,150 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.28.0] — 2026-09-15
+### Corregido
+- Los errores del servicio de transcripción se traducían a «respondió 429», que no le dice nada a un docente. Ahora se distingue la falta de saldo del exceso de peticiones y de una clave inválida, porque lo que hay que hacer es distinto en cada caso.
+
+## [0.27.0] — 2026-09-15
+### Agregado
+- El docente puede subir el archivo de la clase —audio, video o documento, hasta 200 MB— y la plataforma lo guarda y lo sirve al estudiante.
+- La transcripción se genera a partir del archivo ya guardado, sin volver a subirlo.
+- `npm run generar-clases`: genera clases de ejemplo en audio real con voz en español, para probar el recorrido completo sin grabar nada.
+- Variable `UPLOADS_DIR` para apuntar a un volumen persistente en el despliegue.
+
+### Corregido
+- Un archivo subido quedaba huérfano en disco si el alta del material fallaba después de guardarlo.
+- La transcripción desde el archivo guardado fallaba con `500`: sin cuerpo en la petición, `req.body` queda indefinido.
+
+## [0.26.0] — 2026-09-15
+### Agregado
+- Informe de conformidad con WCAG 2.1 en `docs/accesibilidad/`, con el estado de cada criterio, su evidencia y las limitaciones declaradas de la revisión.
+- Cada pantalla fija su propio título de documento.
+- 9 pruebas de criterios concretos: títulos por pantalla, recorrido de teclado, ausencia de trampas de foco y escalado del texto.
+
+### Corregido
+- Todas las pantallas compartían el mismo título del documento, lo que incumplía el criterio 2.4.2. Quien tuviera varias pestañas abiertas no podía distinguirlas.
+
+## [0.25.0] — 2026-09-15
+### Agregado
+- Pruebas de integración que recorren la plataforma de extremo a extremo —el administrador monta el curso, la docente publica material, el estudiante lo consume— y verifican que cada respuesta traiga los campos exactos que leen las pantallas.
+- Comprobación del contrato de errores: toda respuesta de error trae `estado` y `mensaje`, y las de validación además el detalle por campo.
+
+## [0.24.0] — 2026-09-08
+### Cambiado
+- Jerarquía visual de todas las pantallas: rejilla de tarjetas que se adapta al ancho, escala de elevación, ritmo de espaciado y peso tipográfico diferenciado por nivel de encabezado.
+- El inicio de sesión se presenta como tarjeta centrada, y la cabecera separa marca, navegación y usuario.
+- Estados vacíos y de error con icono, y filas de tabla resaltadas al pasar el puntero.
+
+### Agregado
+- Conjunto propio de iconos SVG en línea, que heredan el color del texto y funcionan en ambos temas sin ajustes.
+- Transiciones de 180 ms en color, borde y sombra.
+
+### Notas
+- No se modificó ningún color: los contrastes medidos contra WCAG siguen siendo los mismos.
+- Las sombras se anulan en el tema de alto contraste, donde la profundidad se transmite con el borde.
+
+## [0.23.0] — 2026-09-08
+### Agregado
+- `npm run datos-demo`: escenario de ejemplo con establecimiento, docentes, estudiantes, cursos, materiales y una transcripción con subtítulos. Se niega a ejecutarse si la base no es local, porque borra todo lo que haya.
+- `sh scripts/dev.sh`: levanta backend y frontend con un solo comando, comprobando antes PostgreSQL, la base y el `.env`.
+
+## [0.22.0] — 2026-09-08
+### Agregado
+- Gestión de usuarios: listado en tabla con búsqueda y filtros, alta de cuentas, baja y reactivación. Visible solo para el administrador.
+- Alta de cursos con asignación del docente titular.
+- Inscripción y baja de estudiantes desde la pantalla del curso.
+- 10 pruebas de la gestión de usuarios, y auditoría de accesibilidad sobre esa pantalla.
+
+### Corregido
+- Las rutas no comprobaban el rol: un estudiante que escribiera `/usuarios` veía la pantalla de administración. La API rechazaba las peticiones, de modo que no se filtraron datos, pero la interfaz mostraba una sección que no le corresponde.
+- Los nombres accesibles de los botones salían con las palabras pegadas: el cálculo recorta el texto de cada nodo por separado, así que «Desactivar» y « la cuenta de…» se unían en «Desactivarla cuenta de…». Se declaran ahora completos con `aria-label`.
+- Dos controles compartían la etiqueta «Rol» en la misma pantalla, indistinguibles para quien no la ve.
+
+## [0.21.0] — 2026-09-08
+### Agregado
+- Manejo de sesión vencida: un `401` en una petición autenticada descarta el token y lleva al inicio de sesión, explicando por qué.
+- Tras volver a entrar, el usuario regresa a la pantalla donde estaba.
+- 5 pruebas del vencimiento de sesión.
+
+### Corregido
+- Se distingue quedarse sin sesión de no haberla tenido nunca: a quien entra por primera vez ya no se le dice que su sesión terminó.
+- Un `401` al iniciar sesión ya no cierra la sesión existente: escribir mal la contraseña no debe expulsar a quien ya estaba dentro.
+
+## [0.20.0] — 2026-09-08
+### Agregado
+- Auditoría automática de accesibilidad con axe-core sobre todas las pantallas, integrada en la suite de pruebas.
+- El foco pasa al contenido principal al cambiar de pantalla, para que el lector de pantalla anuncie la pantalla nueva.
+
+### Cambiado
+- El selector de tamaño de letra usa radios nativos en lugar de botones con `role="radio"`: el grupo entero pasa a ser una sola parada del tabulador y se recorre con las flechas.
+
+### Corregido
+- `role="log"` estaba puesto sobre la lista de la conversación, lo que anulaba su semántica de lista. Ahora va en el contenedor, conservando ambas cosas.
+
+## [0.19.0] — 2026-09-08
+### Agregado
+- Chat con el asistente educativo dentro de la pantalla del material, con el historial de preguntas de esa clase.
+- La conversación se anuncia con `role="log"` y `aria-live="polite"`, de modo que el estudiante se entera de la respuesta sin que se le interrumpa mientras escribe.
+- 8 pruebas del chat.
+
+### Corregido
+- El foco no volvía al campo tras enviar una pregunta, porque se pedía mientras el campo seguía deshabilitado. Quien navega con teclado tenía que recorrer toda la conversación para preguntar de nuevo.
+
+## [0.18.0] — 2026-09-05
+### Agregado
+- Reproductor con subtítulos: los segmentos se entregan como pista WebVTT nativa, de modo que el navegador los dibuja respetando los ajustes de subtítulos del sistema operativo.
+- Transcripción completa siempre visible junto al material, con el fragmento en curso resaltado y navegable: al pulsarlo, el reproductor salta a ese momento.
+- Pantalla de material con su estado de revisión.
+- 16 pruebas del generador WebVTT y del reproductor.
+
+### Corregido
+- Vitest solo ejecutaba los archivos `.test.jsx`, de modo que una prueba en `.test.js` no se habría ejecutado nunca sin avisar.
+
+## [0.17.0] — 2026-09-05
+### Agregado
+- Panel del docente con sus cursos, inscritos y materiales publicados.
+- Alta de material desde la pantalla del curso, con confirmación del nombre creado.
+- Lista de estudiantes inscritos, visible solo para el docente titular y el administrador.
+- El panel se elige según el rol sobre una misma ruta, `/panel`.
+- 11 pruebas del panel del docente y del alta de material.
+
+### Cambiado
+- Los estilos compartidos de formulario se extraen a `global.css`, en lugar de reutilizar las clases de la pantalla de inicio de sesión.
+
+### Corregido
+- El selector de panel se caía si el usuario aún no había cargado, con el mismo modo de fallo ya corregido en la cabecera.
+
+## [0.16.0] — 2026-09-05
+### Agregado
+- Panel del estudiante con sus cursos, y pantalla de materiales de un curso.
+- Estructura común de las pantallas con sesión: cabecera, navegación con la página activa marcada y cierre de sesión.
+- Estados de carga, error y listado vacío anunciados con `aria-live`, con opción de reintentar.
+- 6 pruebas del panel del estudiante.
+
+### Corregido
+- La cabecera se caía si el usuario aún no había cargado, dejando la pantalla en blanco.
+
+## [0.15.0] — 2026-09-05
+### Agregado
+- Pantalla de inicio de sesión con validación en el cliente y mensajes en lenguaje sencillo.
+- Contexto de sesión que restaura al usuario al recargar la página y descarta el token si dejó de ser válido.
+- Componente de campo de formulario accesible: etiqueta asociada, error enlazado con `aria-describedby` y `aria-invalid`.
+- Rutas protegidas, que esperan a validar el token antes de decidir a dónde llevar al usuario.
+- 13 pruebas del frontend con Vitest, que consultan por rol y por etiqueta.
+- Prueba de humo que monta la aplicación completa: detecta errores de ejecución que no aparecen al construir.
+
+### Corregido
+- El servidor de desarrollo escuchaba solo en IPv6, de modo que un navegador que resolviera `localhost` como IPv4 recibía conexión rechazada. Ahora escucha en todas las interfaces, lo que además permite probar la interfaz desde una tableta en la misma red.
+
+## [0.14.0] — 2026-09-05
+### Agregado
+- Proyecto de frontend con React 19 y Vite, con enrutado y estructura de carpetas.
+- Sistema de tokens de diseño con contrastes medidos contra WCAG 2.1, y tema de alto contraste que supera el nivel AAA.
+- Controles de accesibilidad siempre visibles: alto contraste y tres tamaños de letra, que persisten entre visitas.
+- Base de accesibilidad: enlace para saltar al contenido, foco visible, área táctil mínima y respeto a `prefers-reduced-motion`.
+- Cliente de la API con manejo de token y de errores centralizado.
+
 ## [0.13.1] — 2026-09-05
 ### Corregido
 - La aplicación identificaba a todos los clientes por la dirección del proxy, de modo que agotar el límite de intentos desde una conexión bloqueaba a las demás. El número de proxies de confianza pasa a configurarse con `TRUST_PROXY_HOPS`, que en Railway vale `2`.

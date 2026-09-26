@@ -26,6 +26,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] CRUD de usuarios — 2026-08-25 — Issue #18
 - [x] CRUD de contenidos educativos — 2026-08-25 — Issue #19
 - [x] CRUD de cursos e inscripciones — 2026-08-25 — Issue #46
+- [x] Almacenamiento de archivos de las clases — 2026-09-15 — Issue #77
 - [x] Endpoint de transcripción con Whisper API — 2026-09-05 — Issue #20
 - [x] Endpoint de asistente educativo con Claude API — 2026-09-05 — Issue #21
 - [x] Manejo de errores y validaciones — 2026-09-05 — Issue #22
@@ -34,19 +35,22 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Despliegue en Railway — 2026-09-05 — Issue #24
 
 ## Fase 3 — Frontend (React)
-- [ ] Inicializar proyecto React
-- [ ] Implementar wireframes: pantalla de inicio de sesión
-- [ ] Implementar panel del estudiante
-- [ ] Implementar panel del docente
-- [ ] Componente de transcripción en tiempo real (subtítulos)
-- [ ] Componente de chat con asistente educativo
-- [ ] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado
-- [ ] Consumo de la API del backend
+- [x] Inicializar proyecto React — 2026-09-05 — Issue #25
+- [x] Implementar wireframes: pantalla de inicio de sesión — 2026-09-05 — Issue #26
+- [x] Implementar panel del estudiante — 2026-09-05 — Issue #27
+- [x] Implementar panel del docente — 2026-09-05 — Issue #28
+- [x] Componente de transcripción en tiempo real (subtítulos) — 2026-09-05 — Issue #29
+- [x] Componente de chat con asistente educativo — 2026-09-08 — Issue #30
+- [x] Accesibilidad: alto contraste, tamaños de fuente, navegación por teclado — 2026-09-08 — Issue #31
+- [x] Consumo de la API del backend — 2026-09-08 — Issue #32
+- [x] Gestión de usuarios desde la interfaz — 2026-09-08 — Issue #69
+- [x] Gestión de cursos e inscripciones desde la interfaz — 2026-09-08 — Issue #70
+- [x] Datos de ejemplo y arranque con un solo comando — 2026-09-08 — Issue #72
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas
-- [ ] Pruebas de integración frontend–backend
-- [ ] Pruebas de accesibilidad (WCAG)
+- [x] Pruebas de integración frontend–backend — 2026-09-15 — Issue #34
+- [x] Pruebas de accesibilidad (WCAG) — 2026-09-15 — Issue #35
 - [ ] Pruebas con usuarios (docentes y estudiantes)
 - [ ] Corrección de hallazgos
 

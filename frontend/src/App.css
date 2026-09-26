@@ -1,0 +1,11 @@
+.content {
+  max-width: 70ch; /* Renglones cortos: se leen con menos esfuerzo. */
+  margin: 0 auto;
+  padding: var(--espacio-8) var(--espacio-4);
+}
+
+/* El contenedor recibe el foco al usar el salto de contenido, pero no debe
+   dibujar un contorno alrededor de toda la pagina. */
+.content:focus {
+  outline: none;
+}

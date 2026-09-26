@@ -41,13 +41,64 @@ CLAUDE.md    Contexto del proyecto para Claude Code
 
 ```bash
 # Backend
-cd backend && npm install && npm run dev
+cd backend && npm install && cp .env.example .env
 
 # Frontend
-cd frontend && npm install && npm run dev
+cd frontend && npm install && cp .env.example .env
 ```
 
-Las variables de entorno se documentan en `backend/.env.example` y `frontend/.env.example`.
+## Arranque
+
+Un solo comando levanta ambos servidores:
+
+```bash
+sh scripts/dev.sh
+```
+
+Comprueba antes que PostgreSQL responda, que la base exista y que el `.env` esté puesto, y explica qué hacer si falta alguna. `Ctrl+C` detiene los dos: dejar uno vivo ocuparía el puerto y el siguiente arranque fallaría sin decir por qué.
+
+El frontend queda en `http://localhost:5173` y la API en `http://localhost:4000`.
+
+## Clases de ejemplo en audio
+
+```bash
+cd backend && npm run generar-clases
+```
+
+Genera tres clases reales en audio —matemática, ciencias y lenguaje— con la síntesis de voz de macOS, usando una voz en español de México, la más cercana al habla de Guatemala entre las disponibles. Quedan en `docs/clases-ejemplo/`.
+
+Sirven para probar el recorrido completo sin tener que grabar nada: la docente las sube desde la pantalla del curso, y con `OPENAI_API_KEY` configurada puede generar su transcripción real.
+
+## Archivos de las clases
+
+El docente sube el archivo al crear el material y la plataforma lo guarda; la transcripción se genera después a partir de ese archivo, sin volver a subirlo.
+
+- Hasta **200 MB** por archivo. El límite de Whisper (25 MB) solo aplica a lo que se envía a transcribir.
+- Los nombres se generan al azar: el original puede traer acentos o rutas, y uno predecible permitiría adivinar direcciones ajenas.
+- `UPLOADS_DIR` apunta a la carpeta de destino. **En un despliegue debe ser un volumen persistente**: el disco de un contenedor se borra en cada redespliegue.
+
+> **Limitación conocida.** Los archivos se sirven por su dirección, sin comprobar la sesión, porque un elemento `<video>` no puede enviar la cabecera de autorización. El nombre aleatorio impide adivinarlos, pero quien reciba una dirección puede abrirla. Es aceptable para material de clase en un piloto; para datos sensibles haría falta un esquema de direcciones firmadas.
+
+## Datos de ejemplo
+
+```bash
+cd backend && npm run datos-demo
+```
+
+Deja un escenario coherente: un establecimiento, tres docentes, ocho estudiantes, cuatro cursos —uno sin inscritos, a propósito—, cinco materiales —uno retirado— y una transcripción con cinco subtítulos, uno de ellos corregido por la docente.
+
+**Borra todo lo que haya en la base**, así que se niega a ejecutarse si `DATABASE_URL` no apunta a un servidor local. Comprueba el destino real de la conexión, no el nombre de la variable.
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Administrador | `admin@umg.edu.gt` | `Admin12345` |
+| Docente | `ana@umg.edu.gt` | `Docente12345` |
+| Docente | `luis@umg.edu.gt` | `Docente12345` |
+| Estudiante | `pedro@umg.edu.gt` | `Estudiante12345` |
+| Estudiante | `sofia@umg.edu.gt` | `Estudiante12345` |
+| Cuenta desactivada | `elena@umg.edu.gt` | `Estudiante12345` |
+
+Son credenciales de desarrollo, escritas en el repositorio a propósito. **Nunca deben usarse en un despliegue real.**
 
 ## Primer administrador
 
@@ -248,3 +299,127 @@ Imprime una sentencia `UPDATE` lista para pegar en la consola de la base. La con
 - `DATABASE_URL` se define como referencia (`${{Postgres.DATABASE_URL}}`) y viaja por la red privada de Railway.
 - El proxy TCP público de PostgreSQL se habilita solo para aplicar migraciones desde fuera, y **se cierra después**: mientras está activo, la base queda expuesta a internet protegida únicamente por contraseña.
 - Alternativa sin abrir el proxy: `railway connect Postgres`.
+
+## Accesibilidad del frontend
+
+No es una capa que se añada al final: está en la base del sistema de estilos.
+
+### Tokens con contraste medido
+
+Todo el color, el tamaño de letra y el espaciado viven en `src/styles/tokens.css`. Los contrastes están **calculados contra WCAG 2.1**, no supuestos:
+
+| Par | Tema normal | Alto contraste |
+|---|---|---|
+| Texto sobre fondo | 16.91:1 | 21.00:1 |
+| Texto suave sobre fondo | 6.59:1 | — |
+| Primario sobre fondo | 8.00:1 | 15.18:1 |
+| Error sobre fondo | 7.66:1 | 9.20:1 |
+| Borde sobre fondo | 4.12:1 | — |
+
+El mínimo AA es 4.5:1 para texto y 3:1 para bordes y controles; el tema de alto contraste supera 7:1, que es AAA.
+
+Como todo deriva de esas variables, **el alto contraste y el escalado de fuente son un cambio de tokens, no de cada componente**.
+
+### Subtítulos
+
+Los segmentos que devuelve la API se convierten a **WebVTT** y se entregan al reproductor como pista nativa, en lugar de dibujarlos por cuenta propia. La razón: así el navegador los renderiza respetando los ajustes de subtítulos que el usuario ya configuró en su sistema operativo —tamaño, color, fondo—, que suelen estar mejor afinados a su necesidad que cualquier valor que eligiéramos nosotros.
+
+Además, **la transcripción completa se muestra siempre**, no solo los subtítulos sobre el video. Un estudiante sordo puede preferir leer el texto entero a su ritmo; sin esa lista, el contenido solo existiría mientras el video avanza. El fragmento en curso se resalta con fondo, barra lateral y negrita —tres señales, no solo color— y con `aria-current` para el lector de pantalla.
+
+### Asistente educativo
+
+El chat vive dentro de la pantalla del material y solo se ofrece al estudiante, porque la API registra cada consulta contra quien pregunta.
+
+Las respuestas se muestran **conservando los saltos de línea**: el asistente explica en pasos numerados, y aplastarlos arruinaría la explicación. Quién habla se indica **con palabras** —«Usted preguntó», «El asistente respondió»—, no solo por la posición o el color, para que un lector de pantalla distinga los turnos.
+
+### Control de acceso en la interfaz
+
+Las rutas restringidas declaran qué roles las pueden ver:
+
+```jsx
+<ProtectedRoute roles={['administrador']}>
+  <UsersAdmin />
+</ProtectedRoute>
+```
+
+**Ocultar el enlace en la navegación no es control de acceso**: cualquiera puede escribir la dirección. La API rechaza igualmente las peticiones —ahí está la defensa real—, pero sin esta comprobación el usuario vería una sección que no le corresponde y un formulario que nunca funcionaría.
+
+Cuando el rol no coincide se explica el motivo y se ofrece una salida, en lugar de dejar la pantalla en blanco o redirigir en silencio.
+
+### Criterios de diseño visual
+
+La jerarquía se construye con **espaciado, peso tipográfico y elevación**, nunca con color añadido: los contrastes están medidos y cualquier color nuevo obligaría a rehacer esa verificación.
+
+- **La elevación tiene tres niveles** y se anula en el tema de alto contraste, donde una sombra sobre negro no se distingue: allí la profundidad la da el borde.
+- **Las transiciones van en color, borde y sombra, nunca en tamaño.** Un cambio de tamaño al pasar el puntero desplaza los elementos vecinos y hace fallar el clic a quien tiene dificultad motriz.
+- **Los iconos son SVG en línea**, no emojis ni una librería externa: heredan el color del texto, así que funcionan en ambos temas sin ajustes, y todos son decorativos —acompañan a un texto que ya dice lo mismo—, por lo que llevan `aria-hidden`.
+- **La rejilla de tarjetas se adapta sola** con `auto-fill`, sin puntos de ruptura escritos a mano.
+- **Ningún color se escribe fuera de los tokens.** La única excepción es el negro del reproductor, que debe serlo en ambos temas.
+
+### Nombres accesibles
+
+Los botones que se repiten en una lista —«Desactivar», «Dar de baja»— declaran su nombre completo con `aria-label`, no componiéndolo con un sufijo oculto.
+
+La razón se descubrió midiendo: el cálculo del nombre accesible **recorta el texto de cada nodo por separado**, así que `Desactivar` seguido de `<span class="sr-only"> la cuenta de Ana</span>` se anuncia como *«Desactivarla cuenta de Ana»*, con las palabras pegadas. El texto en pantalla se ve correcto; solo el lector de pantalla nota la diferencia.
+
+Por lo mismo, **ningún par de controles comparte etiqueta** en una misma pantalla: dos campos llamados «Rol» son indistinguibles para quien navega sin ver. Hay una prueba que lo comprueba.
+
+### Sesión vencida
+
+El token dura ocho horas. Un estudiante que abre la plataforma por la mañana y vuelve por la tarde se encuentra con un `401`.
+
+Cuando eso ocurre, el cliente descarta el token y avisa al contexto de sesión; las rutas protegidas llevan al inicio de sesión **explicando por qué** y recordando la pantalla de origen, para devolver al usuario donde estaba en vez de al panel genérico.
+
+Se distinguen tres situaciones que parecen la misma:
+
+| Situación | Qué ocurre |
+|---|---|
+| Sesión vencida estando dentro | Se avisa: «Su sesión terminó por seguridad» |
+| Entrar sin haber iniciado sesión | Se lleva al login, sin aviso: no hubo sesión que vencer |
+| Contraseña incorrecta | No cierra la sesión existente |
+
+### Pruebas de integración
+
+Las pruebas del frontend simulan la API por completo y las del backend no saben qué campos lee el frontend. Entre ambas queda un hueco: **si un nombre de campo cambia en un lado, todas las pruebas siguen en verde y la aplicación se rompe en el navegador.**
+
+`backend/tests/integration/recorridos.test.js` cubre ese hueco. Recorre la plataforma como lo haría una persona y comprueba que cada respuesta traiga los campos exactos que las pantallas leen, con el nombre exacto.
+
+Comprobado renombrando un alias del SQL —`docente` a `profesor`, un cambio plausible—:
+
+| Suite | Resultado |
+|---|---|
+| Frontend (85 pruebas, API simulada) | pasaron todas, ciegas al cambio |
+| Integración | **falló**, señalando el campo |
+
+### Informe de conformidad WCAG
+
+`docs/accesibilidad/informe-wcag.md` recoge el estado de cada criterio de WCAG 2.1 nivel AA, con su evidencia, los contrastes medidos, los hallazgos corregidos durante el desarrollo y **las limitaciones declaradas de la revisión**.
+
+### Auditoría de accesibilidad
+
+La suite incluye una auditoría con **axe-core**, el mismo motor que usan las extensiones de auditoría de los navegadores. Recorre cada pantalla y falla si aparece una violación.
+
+Detecta una parte de los problemas, no todos: lo que depende de juicio humano —si un texto alternativo describe bien una imagen, si el orden de lectura tiene sentido— ninguna herramienta lo ve. La regla de contraste queda desactivada porque jsdom no calcula estilos reales; esos valores se verificaron aparte con la fórmula de WCAG al fijar los tokens.
+
+Lo que la auditoría **no** puede comprobar y se resolvió a mano:
+
+- **El grupo de tamaño de letra usa radios nativos.** Con botones y `role="radio"` el marcado es válido y axe no protesta, pero cada opción sería una parada distinta del tabulador. Los radios nativos hacen del grupo una sola parada, recorrible con flechas.
+- **El foco pasa al contenido principal al cambiar de pantalla.** En una aplicación de una sola página el navegador no recarga nada, así que sin esto el lector de pantalla se queda en el enlace pulsado y el estudiante no sabe que cambió de pantalla.
+
+### Pruebas del frontend
+
+```bash
+cd frontend && npm test
+```
+
+Consultan por **rol y por etiqueta**, no por clase CSS. La diferencia importa: si una prueba encuentra el campo por su etiqueta *"Correo electrónico"*, es porque la asociación está bien hecha, que es exactamente lo que necesita un lector de pantalla. Una prueba que buscara `.form-field__input` pasaría igual con la etiqueta rota.
+
+### Decisiones incorporadas desde el inicio
+
+- **Enlace para saltar al contenido**, primer elemento enfocable de cada página.
+- **Indicador de foco visible** con `:focus-visible`, nunca eliminado sin sustituirlo.
+- **Área mínima de 44×44 px** en controles, por WCAG 2.5.5: importa en tabletas, que es como se usará en el aula.
+- **Interlineado de 1.6 y renglones de 70 caracteres**, que reducen el esfuerzo de lectura en una segunda lengua.
+- **`prefers-reduced-motion`** respetado.
+- **`lang="es-GT"`** en el documento, para que los lectores de pantalla elijan la voz correcta.
+- Los estados activos se marcan **con color y con grosor**, porque el color solo no basta.

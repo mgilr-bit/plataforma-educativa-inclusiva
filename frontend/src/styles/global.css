@@ -1,0 +1,239 @@
+/* Estilos base de la plataforma. Se apoyan por completo en los tokens. */
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Al navegar con teclado, el destino no debe quedar pegado al borde. */
+  scroll-padding-top: var(--espacio-8);
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--familia-texto);
+  font-size: var(--texto-base);
+  line-height: var(--interlineado);
+}
+
+h1, h2, h3 {
+  line-height: var(--interlineado-titulo);
+  margin: 0 0 var(--espacio-4);
+  /* Los titulos grandes respiran mejor con el interletrado algo cerrado. */
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--texto-titulo-mayor);
+  font-weight: 700;
+}
+
+/* El espacio por encima de un h2 es lo que separa una seccion de la anterior.
+   Sin el, todo se lee como un bloque continuo. */
+h2 {
+  font-size: var(--texto-titulo);
+  font-weight: 700;
+  margin-top: var(--espacio-12);
+}
+
+/* El primer titulo de una zona no necesita ese espacio: ya viene separado. */
+h1 + h2,
+h2:first-child,
+section > h2:first-child {
+  margin-top: 0;
+}
+
+h3 {
+  font-size: var(--texto-grande);
+  font-weight: 600;
+}
+
+p { margin: 0 0 var(--espacio-4); }
+
+/*
+ * Indicador de foco.
+ *
+ * Es la pieza central de la navegación por teclado: quien no usa ratón
+ * necesita ver siempre dónde está. Se usa :focus-visible para no mostrarlo
+ * en clics de ratón, y nunca se elimina el contorno sin sustituirlo.
+ */
+:focus-visible {
+  outline: var(--borde-foco) solid var(--color-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio);
+}
+
+/* Enlace para saltar directamente al contenido. Es lo primero que encuentra
+   quien navega con teclado, y evita recorrer la navegación en cada página. */
+.skip-link {
+  position: absolute;
+  left: var(--espacio-4);
+  top: calc(-1 * var(--espacio-12));
+  z-index: 100;
+  padding: var(--espacio-3) var(--espacio-4);
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  border-radius: var(--radio);
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: var(--espacio-4);
+}
+
+/* Contenido visible solo para lectores de pantalla. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Cualquier control interactivo respeta el área mínima táctil. */
+button,
+[role='button'],
+a.boton {
+  min-height: var(--area-minima);
+  min-width: var(--area-minima);
+}
+
+/* Quien declara preferir menos movimiento no debe recibir animaciones:
+   pueden provocar mareo o dificultar la lectura. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Piezas compartidas de formulario ---------------------------------- */
+
+/* Aviso de error de un formulario completo. Se marca con borde grueso ademas
+   de color, y quien lo muestra debe llevarle el foco. */
+.alerta-error {
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-4);
+  background-color: var(--color-fondo);
+  color: var(--color-error);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radio);
+  font-weight: 600;
+}
+
+.boton-principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  width: 100%;
+  padding: var(--espacio-3) var(--espacio-6);
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio);
+  font-size: var(--texto-grande);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-principal:hover:not(:disabled) {
+  box-shadow: var(--sombra-2);
+}
+
+.boton-principal:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Botones secundarios: los de las tablas y listas. Se distinguen del principal
+   por el fondo, no por el tamano, para que el area de pulsacion no cambie. */
+.tabla button,
+.lista-simple button,
+.estado-error button {
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.tabla button:hover,
+.lista-simple button:hover,
+.estado-error button:hover {
+  background-color: var(--color-superficie);
+  border-color: var(--color-primario);
+  color: var(--color-primario);
+}
+
+/* Aviso informativo, distinto de un error: no es culpa del usuario. */
+.mensaje-aviso {
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-left-width: 6px;
+  border-left-color: var(--color-primario);
+  border-radius: var(--radio);
+}
+
+/* --- Interaccion -------------------------------------------------------- */
+
+/* Todo lo que reacciona al puntero lo anuncia con el cursor. */
+button,
+[role='button'],
+a,
+label,
+select,
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+/* Las transiciones van en color y sombra, nunca en tamano: un cambio de
+   tamano al pasar el puntero desplaza lo que hay alrededor y hace fallar el
+   clic de quien tiene dificultad motriz. */
+button,
+a,
+.tarjeta,
+input,
+select,
+textarea {
+  transition: background-color var(--transicion), border-color var(--transicion),
+    box-shadow var(--transicion), color var(--transicion);
+}
+
+/* Los iconos se alinean con la linea base del texto que acompanan y crecen
+   con el, porque su tamano se expresa en em y no en pixeles fijos. */
+.icono {
+  flex-shrink: 0;
+  vertical-align: -0.15em;
+}
