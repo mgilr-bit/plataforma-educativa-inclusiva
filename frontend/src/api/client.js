@@ -169,6 +169,10 @@ export const api = {
       body: { nombre: name, grado: grade, cicloEscolar: Number(schoolYear), idDocente: Number(teacherId) },
     }),
 
+  // Los estudiantes que el docente puede inscribir en ese curso. Endpoint
+  // propio: el docente no tiene acceso al listado general de usuarios.
+  availableStudents: (courseId) => request(`/courses/${courseId}/available-students`),
+
   enroll: (courseId, studentId) =>
     request(`/courses/${courseId}/enrollments`, {
       method: 'POST',

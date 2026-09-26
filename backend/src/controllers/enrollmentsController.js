@@ -56,6 +56,52 @@ async function list(req, res, next) {
   }
 }
 
+// GET /api/courses/:id/available-students
+//
+// Devuelve los estudiantes activos que aun no estan inscritos en ese curso.
+//
+// Existe como endpoint propio en lugar de abrir /api/users a los docentes: lo
+// que el docente necesita es elegir a quien inscribir en SU curso, no conocer
+// el padron completo del establecimiento. Ademas evita ofrecerle a quien ya
+// esta dentro.
+async function available(req, res, next) {
+  const idCurso = toPositiveInteger(req.params.id);
+  if (!idCurso) {
+    return res.status(400).json({ estado: 'error', mensaje: 'El identificador no es valido' });
+  }
+
+  try {
+    const permiso = await verificarCursoPropio(req.user, idCurso);
+    if (permiso.error === 'inexistente') {
+      return res.status(404).json({ estado: 'error', mensaje: 'Curso no encontrado' });
+    }
+    if (permiso.error === 'ajeno') {
+      return res.status(403).json({
+        estado: 'error',
+        mensaje: 'Solo puede inscribir estudiantes en los cursos que imparte',
+      });
+    }
+
+    const resultado = await pool.query(
+      `SELECT u.id_usuario, u.nombre_completo, u.correo
+       FROM usuario u
+       JOIN rol r ON r.id_rol = u.id_rol
+       WHERE r.nombre_rol = $1
+         AND u.estado = TRUE
+         AND NOT EXISTS (
+           SELECT 1 FROM inscripcion i
+           WHERE i.id_estudiante = u.id_usuario AND i.id_curso = $2
+         )
+       ORDER BY u.nombre_completo`,
+      [ROL_ESTUDIANTE, idCurso]
+    );
+
+    res.json({ estado: 'ok', total: resultado.rowCount, estudiantes: resultado.rows });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // POST /api/courses/:id/enrollments
 async function enroll(req, res, next) {
   const idCurso = toPositiveInteger(req.params.id);
@@ -171,4 +217,4 @@ async function unenroll(req, res, next) {
   }
 }
 
-module.exports = { list, enroll, unenroll };
+module.exports = { list, available, enroll, unenroll };

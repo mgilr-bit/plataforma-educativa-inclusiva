@@ -2,6 +2,14 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.29.0] — 2026-09-26
+### Corregido
+- El docente no podía inscribir estudiantes: la pantalla llenaba el desplegable con el listado general de usuarios, al que no tiene acceso, así que quedaba vacío y deshabilitado sin explicar por qué.
+
+### Agregado
+- `GET /api/courses/:id/available-students`: los estudiantes activos que aún no están inscritos en ese curso, accesible para su docente titular. Se resuelve así en lugar de abrir el listado general: el docente necesita elegir a quién inscribir en su curso, no conocer el padrón del establecimiento.
+- El control de accesibilidad pasa a ser un control segmentado, con tamaño propio independiente de la escala que él mismo gobierna, y anclado al desplazarse.
+
 ## [0.28.1] — 2026-09-26
 ### Corregido
 - El informe de uso del asistente omitía los tokens escritos en caché, de modo que una consulta con la transcripción completa aparecía como si hubiera consumido 2 tokens de entrada.

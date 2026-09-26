@@ -1,75 +1,172 @@
-.accessibility-bar {
+/*
+ * Barra de accesibilidad.
+ *
+ * Discreta pero siempre presente. Dos decisiones la gobiernan:
+ *
+ * 1. No crece con la escala de texto que ella misma controla. Si lo hiciera,
+ *    al elegir "Muy grande" el control ocuparia media pantalla y empujaria el
+ *    contenido que el usuario quiere leer. Su tamano se fija en rem, que
+ *    responde al zoom del navegador pero no a esta escala.
+ *
+ * 2. El circulo del radio se oculta a la vista, no al teclado ni al lector de
+ *    pantalla: el estado se comunica con el fondo del boton y con su peso.
+ *    Dos senales visibles del mismo estado, una dentro de otra, se leian como
+ *    ruido.
+ */
+.barra-a11y {
+  background-color: var(--color-superficie);
+  border-bottom: 1px solid var(--color-borde);
+  /* Se ancla arriba: el ajuste sigue a mano al desplazarse por una clase
+     larga, que es justo cuando el usuario nota que la letra le queda chica. */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.barra-a11y__interior {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: var(--espacio-4);
+  max-width: 72rem;
+  margin: 0 auto;
   padding: var(--espacio-2) var(--espacio-4);
-  background-color: var(--color-superficie);
-  border-bottom: 1px solid var(--color-borde);
+  /* Tamano propio, independiente de --escala-texto. */
+  font-size: 0.8125rem;
 }
 
-.accessibility-bar__grupo {
+/* --- Control segmentado ------------------------------------------------- */
+
+.segmentado {
   display: flex;
   align-items: center;
-  gap: var(--espacio-2);
+  gap: var(--espacio-3);
   margin: 0;
   padding: 0;
   border: none;
 }
 
-.accessibility-bar__opcion {
+.segmentado__titulo {
   display: inline-flex;
   align-items: center;
-  gap: var(--espacio-1);
-  min-height: var(--area-minima);
-  padding: var(--espacio-1) var(--espacio-2);
+  gap: var(--espacio-2);
+  padding: 0;
+  color: var(--color-texto-suave);
+  white-space: nowrap;
+}
+
+/* Las opciones se unen en un solo bloque, con los bordes internos
+   compartidos: se lee como un control, no como tres botones sueltos. */
+.segmentado__opciones {
+  display: flex;
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
-  cursor: pointer;
+  overflow: hidden;
+  background-color: var(--color-fondo);
 }
 
-/* El foco se dibuja alrededor de toda la opción, no solo del círculo del
-   radio, que es demasiado pequeño para verse. */
-.accessibility-bar__opcion:has(input:focus-visible) {
-  outline: var(--borde-foco) solid var(--color-foco);
-  outline-offset: 2px;
+.segmentado__opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  /* Area de pulsacion de 44 px de alto sin engordar la barra: el relleno
+     vertical se compensa con una altura minima. */
+  min-height: var(--area-minima);
+  padding: 0 var(--espacio-3);
+  color: var(--color-texto);
+  white-space: nowrap;
 }
 
-/* La opción elegida se marca con fondo y negrita, además del propio radio:
-   tres señales para que no dependa de distinguir un círculo diminuto. */
-.accessibility-bar__opcion:has(input:checked) {
+.segmentado__opcion + .segmentado__opcion {
+  border-left: 1px solid var(--color-borde);
+}
+
+/* El radio sigue ahi para el teclado y el lector de pantalla; solo se oculta
+   su dibujo, que duplicaba la senal del fondo. */
+.segmentado__opcion input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.segmentado__muestra {
+  font-weight: 700;
+  line-height: 1;
+}
+
+.segmentado__opcion:hover {
+  background-color: var(--color-superficie);
+}
+
+/* Estado activo: fondo, color y peso. Tres senales, porque el color solo
+   excluye a quien no lo distingue. */
+.segmentado__opcion:has(input:checked) {
   background-color: var(--color-primario);
   color: var(--color-primario-texto);
-  border-color: var(--color-primario);
   font-weight: 700;
 }
 
-.accessibility-bar__label {
-  font-size: var(--texto-pequeno);
-  color: var(--color-texto-suave);
+/* El foco se dibuja sobre la opcion entera, no sobre el circulo oculto. */
+.segmentado__opcion:has(input:focus-visible) {
+  outline: var(--borde-foco) solid var(--color-foco);
+  outline-offset: -3px;
 }
 
+/* --- Alto contraste ----------------------------------------------------- */
 
-.accessibility-bar__button {
-  padding: var(--espacio-2) var(--espacio-3);
+.barra-a11y__contraste {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--area-minima);
+  padding: 0 var(--espacio-3);
   background-color: var(--color-fondo);
   color: var(--color-texto);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
-  cursor: pointer;
+  font: inherit;
+  white-space: nowrap;
 }
 
-.accessibility-bar__button:hover {
+.barra-a11y__contraste:hover {
   border-color: var(--color-primario);
+  color: var(--color-primario);
 }
 
-/* El estado activo se marca con color y con un cambio de grosor: quien no
-   distingue bien los colores necesita una segunda señal. */
-.accessibility-bar__button[aria-checked='true'],
-.accessibility-bar__button[aria-pressed='true'] {
+.barra-a11y__contraste[aria-pressed='true'] {
   background-color: var(--color-primario);
   color: var(--color-primario-texto);
   border-color: var(--color-primario);
   font-weight: 700;
+}
+
+/* En pantalla estrecha la etiqueta en palabras sobra: la "A" de cada tamano
+   ya dice cual es, y el nombre sigue disponible para el lector de pantalla. */
+@media (max-width: 34rem) {
+  .barra-a11y__interior {
+    justify-content: space-between;
+    gap: var(--espacio-2);
+  }
+
+  .segmentado__titulo-texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .segmentado__etiqueta {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
