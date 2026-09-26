@@ -142,6 +142,7 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | PATCH | `/api/subtitles/:id` | Administrador o docente titular |
 | POST | `/api/tutor/ask` | Estudiante |
 | GET | `/api/tutor/consultations` | Autenticado (filtrado por rol) |
+| DELETE | `/api/tutor/consultations/:id` | Estudiante (solo las suyas) |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 

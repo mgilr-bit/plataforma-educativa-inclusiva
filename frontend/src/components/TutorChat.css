@@ -84,3 +84,33 @@
     margin-right: 0;
   }
 }
+
+/* Aviso de quien puede leer las preguntas. Informativo, no de alarma: el
+   borde de acento lo distingue sin darle aspecto de advertencia. */
+.tutor__aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-3);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-primario);
+  border-radius: var(--radio);
+  font-size: var(--texto-pequeno);
+}
+
+.tutor__borrar {
+  margin-top: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: none;
+  color: var(--color-texto-suave);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  font-size: var(--texto-pequeno);
+}
+
+.tutor__borrar:hover:not(:disabled) {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
