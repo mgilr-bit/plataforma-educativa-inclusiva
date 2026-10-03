@@ -232,6 +232,10 @@ export const api = {
       body: { pregunta: question, idContenido: contentId ?? null },
     }),
 
+  // Solo puede borrar quien pregunto, y el borrado es real: el docente deja
+  // de verla.
+  deleteConsultation: (id) => request(`/tutor/consultations/${id}`, { method: 'DELETE' }),
+
   consultations: ({ contentId } = {}) => {
     const query = contentId ? `?contenido=${contentId}` : '';
     return request(`/tutor/consultations${query}`);

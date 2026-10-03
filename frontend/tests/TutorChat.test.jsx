@@ -7,7 +7,7 @@ import { api } from '../src/api/client';
 
 vi.mock('../src/api/client', async () => {
   const real = await vi.importActual('../src/api/client');
-  return { ...real, api: { askTutor: vi.fn(), consultations: vi.fn() } };
+  return { ...real, api: { askTutor: vi.fn(), consultations: vi.fn(), deleteConsultation: vi.fn() } };
 });
 
 const HISTORIAL = {
@@ -107,6 +107,64 @@ describe('Chat con el asistente', () => {
 
     const alerta = await screen.findByRole('alert');
     expect(alerta).toHaveTextContent(/no está disponible.*consulte a su docente/i);
+  });
+
+  test('avisa que el docente puede ver las preguntas', async () => {
+    render(<TutorChat contentId={1} />);
+
+    // Si el estudiante se entera despues, deja de preguntar con confianza.
+    // Se comprueba tambien el porque: sin el, el aviso se lee como vigilancia.
+    const aviso = await screen.findByText(/su docente puede ver estas preguntas/i);
+    expect(aviso).toHaveTextContent(/saber qué explicar mejor en clase/i);
+    expect(aviso).toHaveTextContent(/puede borrar cualquier pregunta suya/i);
+  });
+
+  test('el botón de borrar dice cuál pregunta borra', async () => {
+    api.consultations.mockResolvedValue(HISTORIAL);
+    render(<TutorChat contentId={1} />);
+
+    // Con lector de pantalla, varios botones "Borrar" seguidos son
+    // indistinguibles: el nombre accesible tiene que llevar la pregunta.
+    expect(
+      await screen.findByRole('button', { name: 'Borrar la pregunta: ¿Qué es una fracción?' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Borrar la pregunta: ¿Y cómo sumo dos?' })
+    ).toBeInTheDocument();
+  });
+
+  test('al borrar, la consulta desaparece de la conversación', async () => {
+    api.consultations.mockResolvedValue(HISTORIAL);
+    api.deleteConsultation.mockResolvedValue({ estado: 'ok' });
+    const usuario = userEvent.setup();
+    render(<TutorChat contentId={1} />);
+
+    await usuario.click(
+      await screen.findByRole('button', { name: 'Borrar la pregunta: ¿Qué es una fracción?' })
+    );
+
+    expect(api.deleteConsultation).toHaveBeenCalledWith(1);
+    await waitFor(() => {
+      expect(screen.queryByText('¿Qué es una fracción?')).not.toBeInTheDocument();
+    });
+    // Solo esa: borrar una no puede llevarse las demas.
+    expect(screen.getByText('¿Y cómo sumo dos?')).toBeInTheDocument();
+  });
+
+  test('si el borrado falla, la consulta sigue visible y se avisa', async () => {
+    api.consultations.mockResolvedValue(HISTORIAL);
+    api.deleteConsultation.mockRejectedValue(new Error('sin conexión'));
+    const usuario = userEvent.setup();
+    render(<TutorChat contentId={1} />);
+
+    await usuario.click(
+      await screen.findByRole('button', { name: 'Borrar la pregunta: ¿Qué es una fracción?' })
+    );
+
+    // Quitarla de la pantalla sin haberla borrado le haria creer que ya no
+    // esta, cuando el docente la seguiria viendo.
+    expect(await screen.findByRole('alert')).toHaveTextContent(/sin conexión/i);
+    expect(screen.getByText('¿Qué es una fracción?')).toBeInTheDocument();
   });
 
   test('un fallo al cargar el historial no impide preguntar', async () => {
