@@ -2,14 +2,14 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, CONTRASENA } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, CONTRASENA } = require('../helpers/datos');
 
 describe('Autenticacion', () => {
   before(async () => { await sembrarEscenario(); });
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   test('inicia sesion con credenciales correctas', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: CONTRASENA });
 
@@ -20,24 +20,24 @@ describe('Autenticacion', () => {
   });
 
   test('el correo no distingue mayusculas', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'ADMIN@PRUEBA.GT', contrasena: CONTRASENA });
     assert.equal(res.status, 200);
   });
 
   test('rechaza una contrasena incorrecta', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: 'equivocada' });
     assert.equal(res.status, 401);
   });
 
   test('da el mismo mensaje si el correo no existe, para no revelar cuales estan registrados', async () => {
-    const inexistente = await request(app)
+    const inexistente = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'nadie@prueba.gt', contrasena: 'equivocada' });
-    const existente = await request(app)
+    const existente = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: 'equivocada' });
 
@@ -47,7 +47,7 @@ describe('Autenticacion', () => {
 
   test('impide iniciar sesion a una cuenta desactivada', async () => {
     await pool.query("UPDATE usuario SET estado = FALSE WHERE correo = 'alumno2@prueba.gt'");
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'alumno2@prueba.gt', contrasena: CONTRASENA });
 
@@ -56,11 +56,11 @@ describe('Autenticacion', () => {
   });
 
   test('/auth/me exige token', async () => {
-    assert.equal((await request(app).get('/api/auth/me')).status, 401);
+    assert.equal((await request(servidor).get('/api/auth/me')).status, 401);
   });
 
   test('una ruta inexistente responde 404 en json', async () => {
-    const res = await request(app).get('/api/no-existe');
+    const res = await request(servidor).get('/api/no-existe');
     assert.equal(res.status, 404);
     assert.equal(res.body.estado, 'error');
   });

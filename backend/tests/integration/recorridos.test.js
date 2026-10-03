@@ -11,7 +11,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, limpiarBase, crearUsuario, CONTRASENA } = require('../helpers/datos');
+const { servidor, cerrar, pool, limpiarBase, crearUsuario, CONTRASENA } = require('../helpers/datos');
 
 // Los nombres van en espanol porque asi esta definido el contrato de la API.
 // Un cambio aqui obliga a cambiar el frontend, y esa es justamente la
@@ -42,14 +42,14 @@ describe('Recorridos completos', () => {
     await crearUsuario({ nombre: 'Admin Prueba', correo: 'admin@prueba.gt', idRol: 1 });
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   describe('El administrador monta el curso', () => {
     test('inicia sesión enviando correo y contrasena', async () => {
       // El frontend envia estas dos claves exactas. Enviar email/password
       // devolveria 400 y el inicio de sesion quedaria roto sin que ninguna
       // prueba de las otras suites lo notara.
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/auth/login')
         .send({ correo: 'admin@prueba.gt', contrasena: CONTRASENA });
 
@@ -62,7 +62,7 @@ describe('Recorridos completos', () => {
     });
 
     test('crea una cuenta de docente', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/users')
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .send({
@@ -77,7 +77,7 @@ describe('Recorridos completos', () => {
     });
 
     test('crea una cuenta de estudiante', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/users')
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .send({
@@ -90,7 +90,7 @@ describe('Recorridos completos', () => {
     });
 
     test('el listado de usuarios trae lo que muestra la tabla', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .get('/api/users?rol=docente&estado=true')
         .set('Authorization', `Bearer ${tokenAdmin}`);
 
@@ -105,7 +105,7 @@ describe('Recorridos completos', () => {
     });
 
     test('crea el curso y le asigna la docente', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/courses')
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .send({
@@ -120,7 +120,7 @@ describe('Recorridos completos', () => {
     });
 
     test('inscribe al estudiante', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .post(`/api/courses/${idCurso}/enrollments`)
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .send({ idEstudiante });
@@ -131,12 +131,12 @@ describe('Recorridos completos', () => {
 
   describe('La docente publica material', () => {
     test('inicia sesión y ve su curso con los conteos', async () => {
-      const sesion = await request(app)
+      const sesion = await request(servidor)
         .post('/api/auth/login')
         .send({ correo: 'ana@prueba.gt', contrasena: CONTRASENA });
       tokenDocente = sesion.body.token;
 
-      const res = await request(app)
+      const res = await request(servidor)
         .get('/api/courses')
         .set('Authorization', `Bearer ${tokenDocente}`);
 
@@ -154,7 +154,7 @@ describe('Recorridos completos', () => {
     });
 
     test('publica un material en su curso', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/contents')
         .set('Authorization', `Bearer ${tokenDocente}`)
         .send({
@@ -170,7 +170,7 @@ describe('Recorridos completos', () => {
     });
 
     test('consulta los inscritos de su curso', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .get(`/api/courses/${idCurso}/enrollments`)
         .set('Authorization', `Bearer ${tokenDocente}`);
 
@@ -183,12 +183,12 @@ describe('Recorridos completos', () => {
 
   describe('El estudiante consume la clase', () => {
     test('inicia sesión y ve solo su curso', async () => {
-      const sesion = await request(app)
+      const sesion = await request(servidor)
         .post('/api/auth/login')
         .send({ correo: 'pedro@prueba.gt', contrasena: CONTRASENA });
       tokenEstudiante = sesion.body.token;
 
-      const res = await request(app)
+      const res = await request(servidor)
         .get('/api/courses')
         .set('Authorization', `Bearer ${tokenEstudiante}`);
 
@@ -197,7 +197,7 @@ describe('Recorridos completos', () => {
     });
 
     test('ve el material del curso', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .get(`/api/contents?curso=${idCurso}`)
         .set('Authorization', `Bearer ${tokenEstudiante}`);
 
@@ -224,7 +224,7 @@ describe('Recorridos completos', () => {
         [t.rows[0].id_transcripcion]
       );
 
-      const res = await request(app)
+      const res = await request(servidor)
         .get(`/api/contents/${idContenido}/transcription`)
         .set('Authorization', `Bearer ${tokenEstudiante}`);
 
@@ -244,7 +244,7 @@ describe('Recorridos completos', () => {
     });
 
     test('el historial del asistente trae lo que pinta el chat', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .get(`/api/tutor/consultations?contenido=${idContenido}`)
         .set('Authorization', `Bearer ${tokenEstudiante}`);
 
@@ -256,9 +256,9 @@ describe('Recorridos completos', () => {
   describe('El contrato de los errores', () => {
     test('todo error trae estado y mensaje', async () => {
       const respuestas = await Promise.all([
-        request(app).get('/api/users').set('Authorization', `Bearer ${tokenEstudiante}`),
-        request(app).get('/api/users/999999').set('Authorization', `Bearer ${tokenAdmin}`),
-        request(app).post('/api/auth/login').send({ correo: 'x@y.gt', contrasena: 'mala1234' }),
+        request(servidor).get('/api/users').set('Authorization', `Bearer ${tokenEstudiante}`),
+        request(servidor).get('/api/users/999999').set('Authorization', `Bearer ${tokenAdmin}`),
+        request(servidor).post('/api/auth/login').send({ correo: 'x@y.gt', contrasena: 'mala1234' }),
       ]);
 
       for (const res of respuestas) {
@@ -270,7 +270,7 @@ describe('Recorridos completos', () => {
     });
 
     test('los errores de validación traen el detalle por campo', async () => {
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/users')
         .set('Authorization', `Bearer ${tokenAdmin}`)
         .send({ nombreCompleto: 'X', correo: 'no-es-correo', contrasena: '123' });

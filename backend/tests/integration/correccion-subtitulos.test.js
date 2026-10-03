@@ -7,7 +7,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
 
 describe('Corrección de subtítulos', () => {
   let datos;
@@ -41,12 +41,12 @@ describe('Corrección de subtítulos', () => {
     ({ idTranscripcion, idSubtitulo } = await sembrarTranscripcion());
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   const con = (token) => ({ Authorization: `Bearer ${token}` });
 
   test('corregir un segmento rehace el texto que lee el asistente', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/subtitles/${idSubtitulo}`)
       .set(con(tokenDocente))
       .send({ segmentoTexto: 'Mínimo común múltiplo.' });
@@ -70,7 +70,7 @@ describe('Corrección de subtítulos', () => {
     );
     const ultimo = todos.rows[2].id_subtitulo;
 
-    await request(app)
+    await request(servidor)
       .patch(`/api/subtitles/${ultimo}`)
       .set(con(tokenDocente))
       .send({ segmentoTexto: 'Final.' });
@@ -83,7 +83,7 @@ describe('Corrección de subtítulos', () => {
   });
 
   test('un docente ajeno al curso no puede corregir', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/subtitles/${idSubtitulo}`)
       .set(con(tokenDocenteAjeno))
       .send({ segmentoTexto: 'No debería entrar.' });
@@ -92,7 +92,7 @@ describe('Corrección de subtítulos', () => {
   });
 
   test('el estudiante tampoco', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/subtitles/${idSubtitulo}`)
       .set(con(tokenEstudiante))
       .send({ segmentoTexto: 'No debería entrar.' });
@@ -101,7 +101,7 @@ describe('Corrección de subtítulos', () => {
   });
 
   test('un segmento no puede quedar vacío', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/subtitles/${idSubtitulo}`)
       .set(con(tokenDocente))
       .send({ segmentoTexto: '   ' });
@@ -112,7 +112,7 @@ describe('Corrección de subtítulos', () => {
   });
 
   test('el docente marca la transcripción como revisada', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/transcriptions/${idTranscripcion}`)
       .set(con(tokenDocente))
       .send({ estadoRevision: 'aprobada' });

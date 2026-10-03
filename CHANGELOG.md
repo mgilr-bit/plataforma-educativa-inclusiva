@@ -2,6 +2,10 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.35.1] — 2026-10-03
+### Corregido
+- Las pruebas de integración fallaban una de cada tres o cuatro ejecuciones, cambiando de archivo cada vez. `supertest` levantaba y cerraba un servidor efímero en cada petición, y con decenas seguidas eso falla a veces con `ECONNRESET`; cuando el que se caía era un inicio de sesión, el token quedaba vacío y todas las pruebas de ese archivo respondían 401. Ahora cada archivo levanta un solo servidor y lo cierra al terminar. Verificado con 12 ejecuciones seguidas sin un fallo.
+
 ## [0.35.0] — 2026-10-03
 ### Agregado
 - Resumen de la clase en lenguaje sencillo, generado con Claude a partir de la transcripción. La transcripción literal no es accesibilidad por sí sola: es un docente hablando a 165 palabras por minuto, y para un estudiante sordo señante el español escrito es una segunda lengua. El asistente ya sabía explicar así, pero solo si el estudiante preguntaba.
