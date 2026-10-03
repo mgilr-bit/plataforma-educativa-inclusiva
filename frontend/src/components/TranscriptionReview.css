@@ -1,0 +1,124 @@
+.revision {
+  margin-top: var(--espacio-8);
+  padding-top: var(--espacio-6);
+  border-top: 2px solid var(--color-borde);
+}
+
+.revision__ayuda {
+  max-width: 62ch;
+  color: var(--color-texto-suave);
+}
+
+.revision__cuenta {
+  font-weight: 600;
+}
+
+.revision__error {
+  padding: var(--espacio-3);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radio);
+}
+
+/* Reserva el alto para que el aviso de guardado no empuje la lista hacia
+   abajo: el docente perdería de vista el fragmento que acaba de corregir. */
+.revision__estado-vivo {
+  min-height: 1.5em;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.revision__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.revision__fila {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--espacio-2) var(--espacio-3);
+  align-items: start;
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.revision__cabecera {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.revision__momento {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+}
+
+.revision__marca {
+  padding: 0 var(--espacio-2);
+  font-size: var(--texto-pequeno);
+  color: var(--color-exito);
+  border: 1px solid var(--color-exito);
+  border-radius: var(--radio);
+}
+
+.revision__campo {
+  width: 100%;
+  padding: var(--espacio-2);
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  resize: vertical;
+}
+
+.revision__guardar {
+  /* 44 px de alto minimo: es el tamaño que hace falta para acertar con el
+     dedo sin ampliar la pantalla. */
+  min-height: 44px;
+  padding: 0 var(--espacio-4);
+  background: none;
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+}
+
+.revision__guardar:disabled {
+  color: var(--color-texto-suave);
+  border-color: var(--color-borde);
+}
+
+.revision__cierre {
+  margin-top: var(--espacio-6);
+}
+
+.revision__estados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.revision__estado {
+  min-height: 44px;
+  padding: 0 var(--espacio-4);
+  background-color: var(--color-superficie);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+/* El estado activo no se distingue solo por color: lleva borde grueso, porque
+   quien no distingue colores necesita otra señal. */
+.revision__estado--activo {
+  border: 3px solid var(--color-primario);
+  font-weight: 700;
+}
+
+@media (max-width: 40rem) {
+  .revision__fila {
+    grid-template-columns: 1fr;
+  }
+}

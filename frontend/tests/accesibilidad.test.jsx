@@ -18,6 +18,7 @@ import TeacherPanel from '../src/pages/TeacherPanel';
 import SubtitlePlayer from '../src/components/SubtitlePlayer';
 import TutorChat from '../src/components/TutorChat';
 import GenerateTranscription from '../src/components/GenerateTranscription';
+import TranscriptionReview from '../src/components/TranscriptionReview';
 import UsersAdmin from '../src/pages/UsersAdmin';
 import { api, saveToken } from '../src/api/client';
 
@@ -30,6 +31,7 @@ vi.mock('../src/api/client', async () => {
       consultations: vi.fn(), askTutor: vi.fn(),
       users: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), deactivateUser: vi.fn(),
       transcribe: vi.fn(),
+      updateSubtitle: vi.fn(), updateTranscription: vi.fn(),
     },
   };
 });
@@ -130,6 +132,20 @@ describe('Auditoría de accesibilidad', () => {
     // Se espera a que exista: con el usuario aun sin cargar, el componente no
     // se pinta y auditar un contenedor vacio no probaria nada.
     await screen.findByRole('button', { name: /generar transcripción/i });
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('la revisión de la transcripción no tiene violaciones', async () => {
+    const { container } = envolver(
+      <TranscriptionReview
+        transcription={{ id_transcripcion: 1, estado_revision: 'pendiente' }}
+        subtitles={[
+          { id_subtitulo: 1, segmento_texto: 'Hola', tiempo_inicio: '0.000', tiempo_fin: '1.000', editado_docente: false },
+          { id_subtitulo: 2, segmento_texto: 'Adiós', tiempo_inicio: '65.000', tiempo_fin: '70.000', editado_docente: true },
+        ]}
+        onUpdated={() => {}}
+      />
+    );
     expect(await auditar(container)).toEqual([]);
   });
 

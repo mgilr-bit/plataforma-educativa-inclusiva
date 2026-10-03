@@ -141,6 +141,8 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
 | PATCH | `/api/subtitles/:id` | Administrador o docente titular |
 | POST | `/api/tutor/ask` | Estudiante |
+| PATCH | `/api/transcriptions/:id` | Docente titular o administrador |
+| PATCH | `/api/subtitles/:id` | Docente titular o administrador |
 | GET | `/api/tutor/consultations` | Autenticado (filtrado por rol) |
 | DELETE | `/api/tutor/consultations/:id` | Estudiante (solo las suyas) |
 

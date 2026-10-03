@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.33.0] — 2026-10-03
+### Agregado
+- El docente puede corregir la transcripción. Los endpoints existían desde la fase 2, pero el cliente del frontend no tenía ni los métodos: `estado_revision` se quedaba en «pendiente» para siempre y el estudiante leía «Sin revisar por el docente» sin que eso pudiera cambiar nunca.
+- La corrección va junto a la clase y no en otra pantalla, para que el docente corrija mientras escucha lo que la máquina entendió.
+- Cada campo y cada botón dicen a qué fragmento pertenecen. El momento se ve como «1:05» y se anuncia como «el minuto 1 con 5 segundos», porque un lector de pantalla lee «1:05» como «uno dos puntos cero cinco».
+
+### Corregido
+- Corregir un subtítulo ya rehace el texto completo de la transcripción. El estudiante lee los segmentos y el asistente lee el texto completo: eran dos copias del mismo contenido, así que el docente podía arreglar los subtítulos y el asistente seguía respondiendo con lo que Whisper oyó mal, sin que nadie se enterara.
+- Un fragmento no puede quedar vacío: sería un hueco mudo en los subtítulos, y para quien no oye eso es contenido perdido sin aviso de que falta.
+
 ## [0.32.0] — 2026-10-03
 ### Corregido
 - Las clases largas no se podían transcribir. La plataforma admite 200 MB y la API de transcripción acepta 25, y nada comprobaba el tamaño: el docente subía la clase, esperaba y recibía un error del servidor. No se había notado porque los audios de ejemplo pesan 0.2 MB por minuto; una grabación real de teléfono pesa unos 5 MB por minuto en video.

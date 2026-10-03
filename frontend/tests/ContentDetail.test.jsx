@@ -107,7 +107,10 @@ describe('Material sin transcripción', () => {
     // Se comprueba que el foco esté EN la región, no que el documento la
     // contenga: con document.body enfocado eso también sería cierto, y la
     // prueba pasaría con el traslado de foco roto.
-    const region = await screen.findByRole('region', { name: /transcripción/i });
+    // Nombre exacto: con el docente hay dos regiones cuyo nombre contiene
+    // "transcripción" (la del texto y la de revisarlo), y una expresión
+    // regular las toma a las dos.
+    const region = await screen.findByRole('region', { name: 'Transcripción' });
     await waitFor(() => {
       expect(region).toHaveFocus();
     });

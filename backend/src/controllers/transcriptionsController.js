@@ -410,12 +410,42 @@ async function updateSubtitle(req, res, next) {
     }
 
     valores.push(id);
-    const resultado = await pool.query(
-      `UPDATE subtitulo SET ${asignaciones.join(', ')}
-       WHERE id_subtitulo = $${valores.length}
-       RETURNING id_subtitulo, id_transcripcion, segmento_texto, tiempo_inicio, tiempo_fin, editado_docente`,
-      valores
-    );
+
+    // El mismo contenido vive en dos sitios: el estudiante lee los segmentos y
+    // el asistente lee el texto completo. Si se corrige uno y no el otro, el
+    // docente arregla los subtitulos y el asistente sigue respondiendo con lo
+    // que Whisper oyo mal. Por eso se rehace el texto completo a partir de los
+    // segmentos, que pasan a ser la unica fuente.
+    const cliente = await pool.connect();
+    let resultado;
+    try {
+      await cliente.query('BEGIN');
+
+      resultado = await cliente.query(
+        `UPDATE subtitulo SET ${asignaciones.join(', ')}
+         WHERE id_subtitulo = $${valores.length}
+         RETURNING id_subtitulo, id_transcripcion, segmento_texto, tiempo_inicio, tiempo_fin, editado_docente`,
+        valores
+      );
+
+      if (segmentoTexto !== undefined) {
+        await cliente.query(
+          `UPDATE transcripcion SET texto_completo = (
+             SELECT string_agg(segmento_texto, ' ' ORDER BY tiempo_inicio, id_subtitulo)
+             FROM subtitulo WHERE id_transcripcion = $1
+           )
+           WHERE id_transcripcion = $1`,
+          [resultado.rows[0].id_transcripcion]
+        );
+      }
+
+      await cliente.query('COMMIT');
+    } catch (error) {
+      await cliente.query('ROLLBACK');
+      throw error;
+    } finally {
+      cliente.release();
+    }
 
     res.json({ estado: 'ok', subtitulo: resultado.rows[0] });
   } catch (error) {

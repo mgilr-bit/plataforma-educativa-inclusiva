@@ -222,6 +222,15 @@ export const api = {
     request(`/contents/${contentId}/transcription`, { method: 'POST' }),
 
   transcription: (contentId) => request(`/contents/${contentId}/transcription`),
+
+  // Corregir un segmento rehace tambien el texto completo en el servidor: el
+  // estudiante lee los segmentos y el asistente lee el texto, y si se separan
+  // el asistente contesta con lo que Whisper oyo mal.
+  updateSubtitle: (id, datos) =>
+    request(`/subtitles/${id}`, { method: 'PATCH', body: datos }),
+
+  updateTranscription: (id, datos) =>
+    request(`/transcriptions/${id}`, { method: 'PATCH', body: datos }),
   enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),
 
   // Asistente educativo. idContenido es opcional: si se envia, la respuesta se

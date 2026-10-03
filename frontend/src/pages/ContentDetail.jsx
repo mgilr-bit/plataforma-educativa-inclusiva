@@ -6,7 +6,8 @@ import Layout from '../components/Layout';
 import SubtitlePlayer from '../components/SubtitlePlayer';
 import TutorChat from '../components/TutorChat';
 import GenerateTranscription from '../components/GenerateTranscription';
-import { puedeGenerar } from '../utils/transcripcion';
+import { puedeGenerar, puedeRevisar } from '../utils/transcripcion';
+import TranscriptionReview from '../components/TranscriptionReview';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
@@ -122,6 +123,16 @@ export default function ContentDetail() {
           )}
 
           {puedePreguntar && <TutorChat contentId={Number(id)} />}
+
+          {/* La correccion va debajo de la clase, no en otra pantalla: el
+              docente corrige mientras escucha lo que la maquina entendio. */}
+          {state.transcription && puedeRevisar(user, state.content) && (
+            <TranscriptionReview
+              transcription={state.transcription.transcripcion}
+              subtitles={state.transcription.subtitulos}
+              onUpdated={load}
+            />
+          )}
         </>
       )}
     </Layout>
