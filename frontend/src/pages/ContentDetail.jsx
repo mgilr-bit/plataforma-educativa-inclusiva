@@ -9,6 +9,7 @@ import GenerateTranscription from '../components/GenerateTranscription';
 import { puedeGenerar, puedeRevisar } from '../utils/transcripcion';
 import TranscriptionReview from '../components/TranscriptionReview';
 import ContentSettings from '../components/ContentSettings';
+import ClassSummary from '../components/ClassSummary';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
@@ -94,6 +95,14 @@ export default function ContentDetail() {
                 || state.transcription.transcripcion.estado_revision}
             </p>
           )}
+
+          {/* El resumen va ANTES de la transcripcion: para quien lee con
+              esfuerzo, el texto completo de la clase es justo la barrera. */}
+          <ClassSummary
+            contentId={Number(id)}
+            puedeGestionar={puedeRevisar(user, state.content)}
+            tieneTranscripcion={Boolean(state.transcription)}
+          />
 
           {state.transcription ? (
             <section

@@ -218,6 +218,18 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // El resumen en lenguaje sencillo. Para el estudiante es la puerta de
+  // entrada a la clase, mas que la transcripcion completa.
+  summaries: (contentId) => request(`/contents/${contentId}/summaries`),
+
+  createSummary: (contentId, nivel) =>
+    request(`/contents/${contentId}/summary`, { method: 'POST', body: { nivel } }),
+
+  updateSummary: (id, textoResumen) =>
+    request(`/summaries/${id}`, { method: 'PATCH', body: { textoResumen } }),
+
+  deleteSummary: (id) => request(`/summaries/${id}`, { method: 'DELETE' }),
+
   // Si va archivo, la peticion es multipart; el servidor admite el estado
   // como texto en ese caso.
   updateContent: (id, { title, type, state, file } = {}) => {

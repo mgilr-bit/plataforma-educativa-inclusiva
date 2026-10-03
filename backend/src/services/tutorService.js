@@ -1,6 +1,6 @@
 // Cliente del asistente educativo, construido sobre la Claude API de Anthropic.
-const Anthropic = require('@anthropic-ai/sdk');
 const config = require('../config/claude');
+const { obtenerCliente: crearCliente, traducirError } = require('./claudeClient');
 
 class TutorError extends Error {
   constructor(mensaje, { estado, causa } = {}) {
@@ -37,21 +37,10 @@ Limites que debes respetar:
 - No resuelvas evaluaciones ni tareas calificadas en lugar del estudiante: guialo para que llegue solo a la respuesta.
 - Si te preguntan algo ajeno a lo educativo, redirige con amabilidad hacia el estudio.`;
 
-let clienteMemorizado = null;
-
-// El cliente se crea una sola vez, pero solo cuando hay clave configurada.
+// La construccion del cliente y la traduccion de errores se comparten con el
+// servicio de resumenes, para que no se vayan apartando con el tiempo.
 function obtenerCliente() {
-  if (!config.apiKey) {
-    throw new TutorError('El asistente educativo no esta configurado', { estado: 503 });
-  }
-  if (!clienteMemorizado) {
-    const opciones = { apiKey: config.apiKey };
-    if (config.baseUrl) {
-      opciones.baseURL = config.baseUrl;
-    }
-    clienteMemorizado = new Anthropic(opciones);
-  }
-  return clienteMemorizado;
+  return crearCliente((mensaje, opciones) => new TutorError(mensaje, opciones));
 }
 
 // Arma el bloque de sistema. Las instrucciones y la transcripcion van juntas y
@@ -136,26 +125,7 @@ async function responderConsulta({ pregunta, tituloContenido, transcripcion, his
     if (error instanceof TutorError) {
       throw error;
     }
-    // Clases tipadas del SDK, de la mas especifica a la mas general.
-    if (error instanceof Anthropic.AuthenticationError) {
-      throw new TutorError('La clave del asistente educativo no es valida', { estado: 503, causa: error });
-    }
-    if (error instanceof Anthropic.RateLimitError) {
-      throw new TutorError('El asistente esta saturado. Intente de nuevo en unos minutos.', {
-        estado: 429,
-        causa: error,
-      });
-    }
-    if (error instanceof Anthropic.APIConnectionError) {
-      throw new TutorError('No se pudo contactar el asistente educativo', { estado: 502, causa: error });
-    }
-    if (error instanceof Anthropic.APIError) {
-      throw new TutorError(`El asistente respondio con un error (${error.status})`, {
-        estado: 502,
-        causa: error,
-      });
-    }
-    throw error;
+    throw traducirError(error, (mensaje, opciones) => new TutorError(mensaje, opciones));
   }
 }
 

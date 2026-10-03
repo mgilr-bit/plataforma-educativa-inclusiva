@@ -20,6 +20,7 @@ import TutorChat from '../src/components/TutorChat';
 import GenerateTranscription from '../src/components/GenerateTranscription';
 import TranscriptionReview from '../src/components/TranscriptionReview';
 import ContentSettings from '../src/components/ContentSettings';
+import ClassSummary from '../src/components/ClassSummary';
 import UsersAdmin from '../src/pages/UsersAdmin';
 import { api, saveToken } from '../src/api/client';
 
@@ -34,6 +35,7 @@ vi.mock('../src/api/client', async () => {
       transcribe: vi.fn(),
       updateSubtitle: vi.fn(), updateTranscription: vi.fn(),
       updateContent: vi.fn(), deactivateContent: vi.fn(),
+      summaries: vi.fn(), createSummary: vi.fn(), updateSummary: vi.fn(), deleteSummary: vi.fn(),
     },
   };
 });
@@ -74,6 +76,13 @@ describe('Auditoría de accesibilidad', () => {
     vi.clearAllMocks();
     api.courses.mockResolvedValue({ cursos: [] });
     api.consultations.mockResolvedValue({ consultas: [] });
+    api.summaries.mockResolvedValue({
+      resumenes: [{
+        id_resumen: 1,
+        nivel_simplificacion: 'basico',
+        texto_resumen: '## De que trata\nEl ciclo del agua.\n\n## Palabras nuevas\nciclo: algo que se repite',
+      }],
+    });
     api.users.mockResolvedValue({
       usuarios: [{ id_usuario: 2, nombre_completo: 'Ana Pérez', correo: 'a@b.gt', rol: 'docente', estado: true }],
       paginacion: { total: 1, pagina: 1, limite: 20, paginas: 1 },
@@ -159,6 +168,14 @@ describe('Auditoría de accesibilidad', () => {
         onUpdated={() => {}}
       />
     );
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('el resumen de la clase no tiene violaciones', async () => {
+    const { container } = envolver(
+      <ClassSummary contentId={9} puedeGestionar tieneTranscripcion />
+    );
+    await screen.findByRole('heading', { name: 'De que trata' });
     expect(await auditar(container)).toEqual([]);
   });
 

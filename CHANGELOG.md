@@ -2,6 +2,19 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.35.0] — 2026-10-03
+### Agregado
+- Resumen de la clase en lenguaje sencillo, generado con Claude a partir de la transcripción. La transcripción literal no es accesibilidad por sí sola: es un docente hablando a 165 palabras por minuto, y para un estudiante sordo señante el español escrito es una segunda lengua. El asistente ya sabía explicar así, pero solo si el estudiante preguntaba.
+- El resumen trae tres partes: de qué trata, lo importante, y las palabras nuevas con su significado. Definir el vocabulario es la mitad del trabajo: sin eso el resumen es corto pero igual de ilegible.
+- Tres niveles, con diferencias medibles y no decorativas. Medido sobre la misma clase: el básico salió con 6.3 palabras por oración y el avanzado con 11.9.
+- El estudiante elige con cuál leer. El resumen va arriba de la transcripción, porque para quien lee con esfuerzo el texto completo es justo la barrera.
+- El docente puede corregirlo y borrarlo para generarlo de nuevo. La máquina también se equivoca, y vale lo mismo que con la transcripción: si nadie puede arreglarlo, el error llega al estudiante tal cual.
+- Se pinta con encabezados, listas y una lista de definiciones de verdad, para que un lector de pantalla salte de sección en sección y el glosario se anuncie como lo que es.
+- Se activa la tabla `resumen`, que estaba en el modelo desde el principio sin una sola línea de código que la tocara.
+
+### Cambiado
+- La construcción del cliente de Claude y la traducción de sus errores pasan a `claudeClient.js`, compartidas por el tutor y los resúmenes, para que no se vayan apartando con el tiempo.
+
 ## [0.34.0] — 2026-10-03
 ### Agregado
 - El docente puede corregir el título y el tipo de un material, y retirarlo. Los endpoints existían desde la fase 2, pero el cliente del frontend no tenía los métodos y no había ningún botón: un material subido por equivocación obligaba a crear otro y dejar el anterior rondando.
