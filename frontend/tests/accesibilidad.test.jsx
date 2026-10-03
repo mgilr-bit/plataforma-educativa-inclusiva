@@ -19,6 +19,7 @@ import SubtitlePlayer from '../src/components/SubtitlePlayer';
 import TutorChat from '../src/components/TutorChat';
 import GenerateTranscription from '../src/components/GenerateTranscription';
 import TranscriptionReview from '../src/components/TranscriptionReview';
+import ContentSettings from '../src/components/ContentSettings';
 import UsersAdmin from '../src/pages/UsersAdmin';
 import { api, saveToken } from '../src/api/client';
 
@@ -32,6 +33,7 @@ vi.mock('../src/api/client', async () => {
       users: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), deactivateUser: vi.fn(),
       transcribe: vi.fn(),
       updateSubtitle: vi.fn(), updateTranscription: vi.fn(),
+      updateContent: vi.fn(), deactivateContent: vi.fn(),
     },
   };
 });
@@ -143,6 +145,17 @@ describe('Auditoría de accesibilidad', () => {
           { id_subtitulo: 1, segmento_texto: 'Hola', tiempo_inicio: '0.000', tiempo_fin: '1.000', editado_docente: false },
           { id_subtitulo: 2, segmento_texto: 'Adiós', tiempo_inicio: '65.000', tiempo_fin: '70.000', editado_docente: true },
         ]}
+        onUpdated={() => {}}
+      />
+    );
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('los ajustes del material no tienen violaciones', async () => {
+    const { container } = envolver(
+      <ContentSettings
+        content={{ id_contenido: 9, titulo: 'Clase', tipo: 'audio', url_archivo: '/archivos/a.m4a', estado: true }}
+        tieneTranscripcion={false}
         onUpdated={() => {}}
       />
     );

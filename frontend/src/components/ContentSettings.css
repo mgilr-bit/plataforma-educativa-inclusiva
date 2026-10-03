@@ -1,0 +1,54 @@
+.ajustes {
+  margin-top: var(--espacio-8);
+  padding-top: var(--espacio-6);
+  border-top: 2px solid var(--color-borde);
+}
+
+.ajustes__error {
+  padding: var(--espacio-3);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radio);
+}
+
+/* Alto reservado: si el aviso apareciera de golpe empujaria el formulario y
+   el docente perderia de vista el campo que estaba usando. */
+.ajustes__estado-vivo {
+  min-height: 1.5em;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.ajustes__nota {
+  max-width: 62ch;
+  color: var(--color-texto-suave);
+}
+
+.ajustes__retiro {
+  margin-top: var(--espacio-6);
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-borde);
+}
+
+.ajustes__accion {
+  min-height: 44px;
+  margin-right: var(--espacio-2);
+  padding: 0 var(--espacio-4);
+  background: none;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radio);
+}
+
+.ajustes__confirmar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.ajustes__confirmar p {
+  width: 100%;
+  margin: 0 0 var(--espacio-2);
+  font-weight: 600;
+}

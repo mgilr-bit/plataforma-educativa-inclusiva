@@ -8,6 +8,7 @@ import TutorChat from '../components/TutorChat';
 import GenerateTranscription from '../components/GenerateTranscription';
 import { puedeGenerar, puedeRevisar } from '../utils/transcripcion';
 import TranscriptionReview from '../components/TranscriptionReview';
+import ContentSettings from '../components/ContentSettings';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
@@ -126,6 +127,14 @@ export default function ContentDetail() {
 
           {/* La correccion va debajo de la clase, no en otra pantalla: el
               docente corrige mientras escucha lo que la maquina entendio. */}
+          {puedeRevisar(user, state.content) && (
+            <ContentSettings
+              content={state.content}
+              tieneTranscripcion={Boolean(state.transcription)}
+              onUpdated={load}
+            />
+          )}
+
           {state.transcription && puedeRevisar(user, state.content) && (
             <TranscriptionReview
               transcription={state.transcription.transcripcion}

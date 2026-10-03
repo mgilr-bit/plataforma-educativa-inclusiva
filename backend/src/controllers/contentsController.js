@@ -254,7 +254,7 @@ async function create(req, res, next) {
 // Recupera el contenido junto con el docente del curso, para comprobar permisos.
 async function buscarConDueno(id) {
   const resultado = await pool.query(
-    `SELECT c.id_contenido, cu.id_docente
+    `SELECT c.id_contenido, c.url_archivo, cu.id_docente
      FROM contenido c JOIN curso cu ON cu.id_curso = c.id_curso
      WHERE c.id_contenido = $1`,
     [id]
@@ -269,30 +269,70 @@ async function update(req, res, next) {
     return res.status(400).json({ estado: 'error', mensaje: 'El identificador no es valido' });
   }
 
-  const { titulo, tipo, urlArchivo, duracionSeg, estado } = req.body || {};
+  const cuerpo = req.body || {};
+  const { titulo, tipo, urlArchivo } = cuerpo;
+  const duracionSeg = cuerpo.duracionSeg !== undefined && cuerpo.duracionSeg !== ''
+    ? toPositiveInteger(cuerpo.duracionSeg)
+    : undefined;
   const errores = validarCampos({ titulo, tipo, urlArchivo, duracionSeg }, { esCreacion: false });
 
-  if (estado !== undefined && typeof estado !== 'boolean') {
-    errores.push('El estado debe ser verdadero o falso');
+  // En multipart todo llega como texto, asi que el booleano viene "true" o
+  // "false". Se admiten las dos formas para que el mismo endpoint sirva con
+  // archivo y sin el.
+  let estado;
+  if (cuerpo.estado !== undefined) {
+    if (typeof cuerpo.estado === 'boolean') {
+      estado = cuerpo.estado;
+    } else if (cuerpo.estado === 'true' || cuerpo.estado === 'false') {
+      estado = cuerpo.estado === 'true';
+    } else {
+      errores.push('El estado debe ser verdadero o falso');
+    }
   }
+
   if (errores.length > 0) {
+    await descartarSubida(req.file);
     return res.status(400).json({ estado: 'error', mensaje: 'Datos invalidos', errores });
   }
 
   try {
     const contenido = await buscarConDueno(id);
     if (!contenido) {
+      await descartarSubida(req.file);
       return res.status(404).json({ estado: 'error', mensaje: 'Contenido no encontrado' });
     }
     if (req.user.rol !== ROL_ADMINISTRADOR && contenido.id_docente !== req.user.id) {
+      await descartarSubida(req.file);
       return res.status(403).json({
         estado: 'error',
         mensaje: 'Solo puede modificar el contenido de los cursos que imparte',
       });
     }
 
+    // Cambiar el archivo cuando ya hay transcripcion dejaria el texto hablando
+    // de un audio que ya no esta. El estudiante sordo leeria unos subtitulos
+    // que no corresponden a lo que suena, y no tiene como darse cuenta.
+    if (req.file) {
+      const transcrito = await pool.query(
+        'SELECT 1 FROM transcripcion WHERE id_contenido = $1',
+        [id]
+      );
+      if (transcrito.rowCount > 0) {
+        await descartarSubida(req.file);
+        return res.status(409).json({
+          estado: 'error',
+          mensaje: 'Este material ya tiene transcripción. Para cambiar el archivo, retire este material y suba la clase nueva.',
+        });
+      }
+    }
+
     const asignaciones = [];
     const valores = [];
+
+    if (req.file) {
+      valores.push(`${RUTA_PUBLICA}/${req.file.filename}`);
+      asignaciones.push(`url_archivo = $${valores.length}`);
+    }
 
     if (titulo !== undefined) {
       valores.push(titulo.trim());
@@ -330,8 +370,15 @@ async function update(req, res, next) {
       valores
     );
 
+    // El archivo anterior se borra despues de guardar el nuevo: si se borrara
+    // antes y fallara la escritura, el material quedaria sin nada.
+    if (req.file && contenido.url_archivo?.startsWith(`${RUTA_PUBLICA}/`)) {
+      await descartarSubida({ filename: path.basename(contenido.url_archivo) });
+    }
+
     res.json({ estado: 'ok', contenido: resultado.rows[0] });
   } catch (error) {
+    await descartarSubida(req.file);
     next(error);
   }
 }

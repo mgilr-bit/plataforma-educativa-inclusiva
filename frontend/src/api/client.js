@@ -218,6 +218,29 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // Si va archivo, la peticion es multipart; el servidor admite el estado
+  // como texto en ese caso.
+  updateContent: (id, { title, type, state, file } = {}) => {
+    if (file) {
+      const datos = new FormData();
+      if (title !== undefined) datos.append('titulo', title);
+      if (type !== undefined) datos.append('tipo', type);
+      if (state !== undefined) datos.append('estado', String(state));
+      datos.append('archivo', file);
+      return request(`/contents/${id}`, { method: 'PATCH', formData: datos });
+    }
+
+    const body = {};
+    if (title !== undefined) body.titulo = title;
+    if (type !== undefined) body.tipo = type;
+    if (state !== undefined) body.estado = state;
+    return request(`/contents/${id}`, { method: 'PATCH', body });
+  },
+
+  // Retirar es una baja logica: el estudiante deja de verlo y el docente puede
+  // reponerlo. Un borrado real se llevaria por delante su progreso.
+  deactivateContent: (id) => request(`/contents/${id}`, { method: 'DELETE' }),
+
   transcribe: (contentId) =>
     request(`/contents/${contentId}/transcription`, { method: 'POST' }),
 

@@ -2,6 +2,17 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.34.0] — 2026-10-03
+### Agregado
+- El docente puede corregir el título y el tipo de un material, y retirarlo. Los endpoints existían desde la fase 2, pero el cliente del frontend no tenía los métodos y no había ningún botón: un material subido por equivocación obligaba a crear otro y dejar el anterior rondando.
+- Retirar es baja lógica: el estudiante deja de verlo, el docente lo sigue viendo y puede volver a publicarlo. La transcripción y el progreso se conservan, porque dependen del material con `ON DELETE CASCADE` y un borrado físico se llevaría por delante lo que el estudiante ya estudió.
+- El archivo se puede sustituir mientras el material no tenga transcripción, y el anterior se borra del disco. Con transcripción se niega y se explica: el texto hablaría de un audio que ya no suena, y el estudiante sordo no tiene cómo notarlo.
+- La confirmación del retiro se pregunta dentro de la página y nombra el material. El aviso del navegador no se puede redactar en lenguaje sencillo ni se lleva bien con los lectores de pantalla.
+
+### Corregido
+- `buscarConDueno` no traía `url_archivo`, de modo que al sustituir un archivo el anterior se quedaba en el disco. El encadenamiento opcional se tragaba el `undefined` sin error.
+- `PATCH /api/contents/:id` admite el estado como texto además de como booleano: en una petición multipart todos los campos llegan como texto, y antes la validación los rechazaba.
+
 ## [0.33.0] — 2026-10-03
 ### Agregado
 - El docente puede corregir la transcripción. Los endpoints existían desde la fase 2, pero el cliente del frontend no tenía ni los métodos: `estado_revision` se quedaba en «pendiente» para siempre y el estudiante leía «Sin revisar por el docente» sin que eso pudiera cambiar nunca.
