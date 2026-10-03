@@ -6,7 +6,10 @@ import Layout from '../components/Layout';
 import SubtitlePlayer from '../components/SubtitlePlayer';
 import TutorChat from '../components/TutorChat';
 import GenerateTranscription from '../components/GenerateTranscription';
-import { puedeGenerar } from '../utils/transcripcion';
+import { puedeGenerar, puedeRevisar } from '../utils/transcripcion';
+import TranscriptionReview from '../components/TranscriptionReview';
+import ContentSettings from '../components/ContentSettings';
+import ClassSummary from '../components/ClassSummary';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
@@ -93,6 +96,14 @@ export default function ContentDetail() {
             </p>
           )}
 
+          {/* El resumen va ANTES de la transcripcion: para quien lee con
+              esfuerzo, el texto completo de la clase es justo la barrera. */}
+          <ClassSummary
+            contentId={Number(id)}
+            puedeGestionar={puedeRevisar(user, state.content)}
+            tieneTranscripcion={Boolean(state.transcription)}
+          />
+
           {state.transcription ? (
             <section
               ref={transcripcionRef}
@@ -122,6 +133,24 @@ export default function ContentDetail() {
           )}
 
           {puedePreguntar && <TutorChat contentId={Number(id)} />}
+
+          {/* La correccion va debajo de la clase, no en otra pantalla: el
+              docente corrige mientras escucha lo que la maquina entendio. */}
+          {puedeRevisar(user, state.content) && (
+            <ContentSettings
+              content={state.content}
+              tieneTranscripcion={Boolean(state.transcription)}
+              onUpdated={load}
+            />
+          )}
+
+          {state.transcription && puedeRevisar(user, state.content) && (
+            <TranscriptionReview
+              transcription={state.transcription.transcripcion}
+              subtitles={state.transcription.subtitulos}
+              onUpdated={load}
+            />
+          )}
         </>
       )}
     </Layout>

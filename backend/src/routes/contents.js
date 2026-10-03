@@ -24,7 +24,15 @@ router.post(
   manejarErroresDeSubida,
   create
 );
-router.patch('/contents/:id', authorize('administrador', 'docente'), update);
+// El archivo tambien se puede cambiar: un material subido por equivocacion no
+// obliga a crear otro y dejar el anterior rondando.
+router.patch(
+  '/contents/:id',
+  authorize('administrador', 'docente'),
+  subida.single('archivo'),
+  manejarErroresDeSubida,
+  update
+);
 router.delete('/contents/:id', authorize('administrador', 'docente'), deactivate);
 
 module.exports = router;

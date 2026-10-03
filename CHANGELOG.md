@@ -2,6 +2,50 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.35.0] — 2026-10-03
+### Agregado
+- Resumen de la clase en lenguaje sencillo, generado con Claude a partir de la transcripción. La transcripción literal no es accesibilidad por sí sola: es un docente hablando a 165 palabras por minuto, y para un estudiante sordo señante el español escrito es una segunda lengua. El asistente ya sabía explicar así, pero solo si el estudiante preguntaba.
+- El resumen trae tres partes: de qué trata, lo importante, y las palabras nuevas con su significado. Definir el vocabulario es la mitad del trabajo: sin eso el resumen es corto pero igual de ilegible.
+- Tres niveles, con diferencias medibles y no decorativas. Medido sobre la misma clase: el básico salió con 6.3 palabras por oración y el avanzado con 11.9.
+- El estudiante elige con cuál leer. El resumen va arriba de la transcripción, porque para quien lee con esfuerzo el texto completo es justo la barrera.
+- El docente puede corregirlo y borrarlo para generarlo de nuevo. La máquina también se equivoca, y vale lo mismo que con la transcripción: si nadie puede arreglarlo, el error llega al estudiante tal cual.
+- Se pinta con encabezados, listas y una lista de definiciones de verdad, para que un lector de pantalla salte de sección en sección y el glosario se anuncie como lo que es.
+- Se activa la tabla `resumen`, que estaba en el modelo desde el principio sin una sola línea de código que la tocara.
+
+### Cambiado
+- La construcción del cliente de Claude y la traducción de sus errores pasan a `claudeClient.js`, compartidas por el tutor y los resúmenes, para que no se vayan apartando con el tiempo.
+
+## [0.34.0] — 2026-10-03
+### Agregado
+- El docente puede corregir el título y el tipo de un material, y retirarlo. Los endpoints existían desde la fase 2, pero el cliente del frontend no tenía los métodos y no había ningún botón: un material subido por equivocación obligaba a crear otro y dejar el anterior rondando.
+- Retirar es baja lógica: el estudiante deja de verlo, el docente lo sigue viendo y puede volver a publicarlo. La transcripción y el progreso se conservan, porque dependen del material con `ON DELETE CASCADE` y un borrado físico se llevaría por delante lo que el estudiante ya estudió.
+- El archivo se puede sustituir mientras el material no tenga transcripción, y el anterior se borra del disco. Con transcripción se niega y se explica: el texto hablaría de un audio que ya no suena, y el estudiante sordo no tiene cómo notarlo.
+- La confirmación del retiro se pregunta dentro de la página y nombra el material. El aviso del navegador no se puede redactar en lenguaje sencillo ni se lleva bien con los lectores de pantalla.
+
+### Corregido
+- `buscarConDueno` no traía `url_archivo`, de modo que al sustituir un archivo el anterior se quedaba en el disco. El encadenamiento opcional se tragaba el `undefined` sin error.
+- `PATCH /api/contents/:id` admite el estado como texto además de como booleano: en una petición multipart todos los campos llegan como texto, y antes la validación los rechazaba.
+
+## [0.33.0] — 2026-10-03
+### Agregado
+- El docente puede corregir la transcripción. Los endpoints existían desde la fase 2, pero el cliente del frontend no tenía ni los métodos: `estado_revision` se quedaba en «pendiente» para siempre y el estudiante leía «Sin revisar por el docente» sin que eso pudiera cambiar nunca.
+- La corrección va junto a la clase y no en otra pantalla, para que el docente corrija mientras escucha lo que la máquina entendió.
+- Cada campo y cada botón dicen a qué fragmento pertenecen. El momento se ve como «1:05» y se anuncia como «el minuto 1 con 5 segundos», porque un lector de pantalla lee «1:05» como «uno dos puntos cero cinco».
+
+### Corregido
+- Corregir un subtítulo ya rehace el texto completo de la transcripción. El estudiante lee los segmentos y el asistente lee el texto completo: eran dos copias del mismo contenido, así que el docente podía arreglar los subtítulos y el asistente seguía respondiendo con lo que Whisper oyó mal, sin que nadie se enterara.
+- Un fragmento no puede quedar vacío: sería un hueco mudo en los subtítulos, y para quien no oye eso es contenido perdido sin aviso de que falta.
+
+## [0.32.0] — 2026-10-03
+### Corregido
+- Las clases largas no se podían transcribir. La plataforma admite 200 MB y la API de transcripción acepta 25, y nada comprobaba el tamaño: el docente subía la clase, esperaba y recibía un error del servidor. No se había notado porque los audios de ejemplo pesan 0.2 MB por minuto; una grabación real de teléfono pesa unos 5 MB por minuto en video.
+
+### Agregado
+- Antes de transcribir, el servidor extrae solo la voz y la comprime a un canal y 32 kbps. Son unos 14 MB por hora, de modo que una clase de 45 minutos entra de sobra. El video se descarta entero, que es de donde venía casi todo el peso. Una prueba real: 36 MB quedaron en 0.9 MB en 2.4 segundos.
+- Las grabaciones que aún así no caben se parten en trozos, y cada uno lleva el desplazamiento que sitúa sus tiempos dentro de la clase completa. Sin eso, los subtítulos del segundo trozo empezarían otra vez en cero.
+- El tamaño se comprueba sobre el trozo ya extraído en lugar de confiar en el cálculo: el bitrate real no es el nominal y cada trozo carga su propia cabecera, así que la cuenta se queda corta. Un trozo un kilobyte por encima lo rechaza la API igual que uno de 40 MB.
+- `ffmpeg-static` como dependencia: trae el binario en el propio paquete, así que el despliegue en Railway no necesita configuración de build ni paquetes del sistema.
+
 ## [0.31.0] — 2026-10-03
 ### Agregado
 - Botón «Generar transcripción» en la pantalla del material. El endpoint existía desde la fase 2, pero ningún punto de la interfaz lo llamaba: el docente subía la clase y ahí se quedaba. Sin transcripción no hay texto, no hay subtítulos y el asistente no tiene de qué agarrarse, de modo que para un estudiante sordo ese material no servía de nada. Se detectó porque tres audios llevaban semanas subidos con cero transcripciones.

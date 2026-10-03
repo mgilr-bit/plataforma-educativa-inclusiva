@@ -48,6 +48,10 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Datos de ejemplo y arranque con un solo comando — 2026-09-08 — Issue #72
 - [x] Privacidad de las consultas al asistente: aviso y borrado por el estudiante — 2026-09-26 — Issue #82
 - [x] Generar la transcripción desde la interfaz del docente — 2026-10-03 — Issue #84
+- [x] Transcribir clases largas: comprimir y partir el audio — 2026-10-03 — Issue #86
+- [x] Corrección de la transcripción por el docente — 2026-10-03 — Issue #87
+- [x] Corregir y retirar materiales desde la interfaz — 2026-10-03 — Issue #89
+- [x] Resumen de la clase en lenguaje sencillo — 2026-10-03 — Issue #90
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas

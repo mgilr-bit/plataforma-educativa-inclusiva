@@ -11,12 +11,18 @@ const TIPOS_TRANSCRIBIBLES = ['audio', 'video'];
 // seria prometer algo que termina en error.
 const PREFIJO_GUARDADO = '/archivos/';
 
+// Corregir no depende del formato del material: aunque el archivo venga de
+// otro sitio, el texto ya existe y hay que poder arreglarlo.
+export function puedeRevisar(user, content) {
+  if (!user || !content) return false;
+  return user.rol === 'administrador'
+    || (user.rol === 'docente' && user.id_usuario === content.id_docente);
+}
+
 export function puedeGenerar(user, content) {
   if (!user || !content) return false;
 
-  const esTitular = user.rol === 'administrador'
-    || (user.rol === 'docente' && user.id_usuario === content.id_docente);
-  if (!esTitular) return false;
+  if (!puedeRevisar(user, content)) return false;
 
   return TIPOS_TRANSCRIBIBLES.includes(content.tipo)
     && typeof content.url_archivo === 'string'

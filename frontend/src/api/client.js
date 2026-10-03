@@ -218,10 +218,54 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // El resumen en lenguaje sencillo. Para el estudiante es la puerta de
+  // entrada a la clase, mas que la transcripcion completa.
+  summaries: (contentId) => request(`/contents/${contentId}/summaries`),
+
+  createSummary: (contentId, nivel) =>
+    request(`/contents/${contentId}/summary`, { method: 'POST', body: { nivel } }),
+
+  updateSummary: (id, textoResumen) =>
+    request(`/summaries/${id}`, { method: 'PATCH', body: { textoResumen } }),
+
+  deleteSummary: (id) => request(`/summaries/${id}`, { method: 'DELETE' }),
+
+  // Si va archivo, la peticion es multipart; el servidor admite el estado
+  // como texto en ese caso.
+  updateContent: (id, { title, type, state, file } = {}) => {
+    if (file) {
+      const datos = new FormData();
+      if (title !== undefined) datos.append('titulo', title);
+      if (type !== undefined) datos.append('tipo', type);
+      if (state !== undefined) datos.append('estado', String(state));
+      datos.append('archivo', file);
+      return request(`/contents/${id}`, { method: 'PATCH', formData: datos });
+    }
+
+    const body = {};
+    if (title !== undefined) body.titulo = title;
+    if (type !== undefined) body.tipo = type;
+    if (state !== undefined) body.estado = state;
+    return request(`/contents/${id}`, { method: 'PATCH', body });
+  },
+
+  // Retirar es una baja logica: el estudiante deja de verlo y el docente puede
+  // reponerlo. Un borrado real se llevaria por delante su progreso.
+  deactivateContent: (id) => request(`/contents/${id}`, { method: 'DELETE' }),
+
   transcribe: (contentId) =>
     request(`/contents/${contentId}/transcription`, { method: 'POST' }),
 
   transcription: (contentId) => request(`/contents/${contentId}/transcription`),
+
+  // Corregir un segmento rehace tambien el texto completo en el servidor: el
+  // estudiante lee los segmentos y el asistente lee el texto, y si se separan
+  // el asistente contesta con lo que Whisper oyo mal.
+  updateSubtitle: (id, datos) =>
+    request(`/subtitles/${id}`, { method: 'PATCH', body: datos }),
+
+  updateTranscription: (id, datos) =>
+    request(`/transcriptions/${id}`, { method: 'PATCH', body: datos }),
   enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),
 
   // Asistente educativo. idContenido es opcional: si se envia, la respuesta se

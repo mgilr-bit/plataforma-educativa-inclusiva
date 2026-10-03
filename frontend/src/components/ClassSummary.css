@@ -1,0 +1,126 @@
+/* Va arriba de la clase y tiene que verse como lo principal, no como una nota
+   al margen: para muchos estudiantes es por donde van a entrar. */
+.resumen {
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-6);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-left: 5px solid var(--color-primario);
+  border-radius: var(--radio-grande);
+}
+
+.resumen__error {
+  padding: var(--espacio-3);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radio);
+}
+
+.resumen__estado-vivo {
+  min-height: 1.5em;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.resumen__niveles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-4);
+}
+
+.resumen__nivel {
+  min-height: 44px;
+  padding: 0 var(--espacio-4);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+/* El nivel elegido no se distingue solo por color. */
+.resumen__nivel--activo {
+  border: 3px solid var(--color-primario);
+  font-weight: 700;
+}
+
+/* Medida de linea corta y renglones holgados: es lo que mas ayuda a quien lee
+   con esfuerzo, mas que el tamano de la letra. */
+.resumen__cuerpo {
+  max-width: 58ch;
+  line-height: 1.7;
+}
+
+.resumen__cuerpo h3 {
+  margin: var(--espacio-6) 0 var(--espacio-2);
+}
+
+.resumen__cuerpo ul {
+  padding-left: var(--espacio-6);
+}
+
+.resumen__cuerpo li {
+  margin-bottom: var(--espacio-2);
+}
+
+.resumen__glosario {
+  margin: 0;
+}
+
+.resumen__termino {
+  display: grid;
+  grid-template-columns: minmax(8rem, auto) 1fr;
+  gap: var(--espacio-2) var(--espacio-3);
+  padding: var(--espacio-2) 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.resumen__termino dt {
+  font-weight: 700;
+}
+
+.resumen__termino dd {
+  margin: 0;
+}
+
+.resumen__campo {
+  width: 100%;
+  padding: var(--espacio-2);
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  resize: vertical;
+}
+
+.resumen__gestion,
+.resumen__generar {
+  margin-top: var(--espacio-4);
+  padding-top: var(--espacio-3);
+  border-top: 1px solid var(--color-borde);
+}
+
+.resumen__ayuda {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.resumen__accion {
+  min-height: 44px;
+  margin-right: var(--espacio-2);
+  padding: 0 var(--espacio-4);
+  background: none;
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+}
+
+@media (max-width: 40rem) {
+  .resumen__termino {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
