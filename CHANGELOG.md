@@ -2,6 +2,13 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.31.0] — 2026-10-03
+### Agregado
+- Botón «Generar transcripción» en la pantalla del material. El endpoint existía desde la fase 2, pero ningún punto de la interfaz lo llamaba: el docente subía la clase y ahí se quedaba. Sin transcripción no hay texto, no hay subtítulos y el asistente no tiene de qué agarrarse, de modo que para un estudiante sordo ese material no servía de nada. Se detectó porque tres audios llevaban semanas subidos con cero transcripciones.
+- El botón se ofrece solo a quien puede usarlo: el docente titular del curso y el administrador, y solo cuando el material es audio o video con el archivo guardado en la plataforma. Para un enlace de otro sitio el servidor no puede leer el archivo, así que ofrecerlo terminaría siempre en error.
+- Al estudiante se le sigue explicando la espera; al docente titular no, porque hablarle de «cuando el docente la genere» es hablarle de sí mismo en tercera persona.
+- Al terminar, el foco pasa a la transcripción. El botón que se pulsó desaparece, y sin ese traslado quien navega con teclado vuelve al principio del documento.
+
 ## [0.29.0] — 2026-09-26
 ### Corregido
 - El docente no podía inscribir estudiantes: la pantalla llenaba el desplegable con el listado general de usuarios, al que no tiene acceso, así que quedaba vacío y deshabilitado sin explicar por qué.
