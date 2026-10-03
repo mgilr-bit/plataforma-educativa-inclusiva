@@ -8,6 +8,7 @@ const pool = require('../config/db');
 const { DIRECTORIO, RUTA_PUBLICA } = require('../config/storage');
 const { toPositiveInteger } = require('../utils/validators');
 const { transcribeAudio, WhisperError } = require('../services/whisperService');
+const { prepararParaTranscripcion, AudioError } = require('../services/audioService');
 
 const ROL_ADMINISTRADOR = 'administrador';
 const ESTADOS_REVISION = ['pendiente', 'revisada', 'aprobada'];
@@ -108,9 +109,31 @@ async function create(req, res, next) {
       });
     }
 
-    const resultado = await transcribeAudio(adjunto.buffer, adjunto.nombre, {
-      idioma: (req.body || {}).idioma,
-    });
+    // Una clase larga no cabe en una sola peticion a Whisper. Casi siempre
+    // vuelve una sola parte; cuando son varias, cada una trae el
+    // desplazamiento que situa sus tiempos dentro de la clase completa.
+    const partes = await prepararParaTranscripcion(adjunto.buffer, adjunto.nombre);
+
+    const resultado = { texto: '', segmentos: [], idioma: null, duracionSeg: 0 };
+    for (const parte of partes) {
+      const trozo = await transcribeAudio(parte.buffer, parte.nombre, {
+        idioma: (req.body || {}).idioma,
+      });
+
+      resultado.texto = resultado.texto
+        ? `${resultado.texto} ${trozo.texto}`.trim()
+        : trozo.texto;
+      resultado.idioma = resultado.idioma || trozo.idioma;
+      resultado.duracionSeg = parte.desplazamiento + (trozo.duracionSeg || 0);
+
+      for (const segmento of trozo.segmentos) {
+        resultado.segmentos.push({
+          ...segmento,
+          inicio: Number(segmento.inicio) + parte.desplazamiento,
+          fin: Number(segmento.fin) + parte.desplazamiento,
+        });
+      }
+    }
 
     if (!resultado.texto) {
       return res.status(422).json({
@@ -157,7 +180,7 @@ async function create(req, res, next) {
       cliente.release();
     }
   } catch (error) {
-    if (error instanceof WhisperError) {
+    if (error instanceof WhisperError || error instanceof AudioError) {
       return res.status(error.estado).json({ estado: 'error', mensaje: error.message });
     }
     next(error);

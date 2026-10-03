@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.32.0] — 2026-10-03
+### Corregido
+- Las clases largas no se podían transcribir. La plataforma admite 200 MB y la API de transcripción acepta 25, y nada comprobaba el tamaño: el docente subía la clase, esperaba y recibía un error del servidor. No se había notado porque los audios de ejemplo pesan 0.2 MB por minuto; una grabación real de teléfono pesa unos 5 MB por minuto en video.
+
+### Agregado
+- Antes de transcribir, el servidor extrae solo la voz y la comprime a un canal y 32 kbps. Son unos 14 MB por hora, de modo que una clase de 45 minutos entra de sobra. El video se descarta entero, que es de donde venía casi todo el peso. Una prueba real: 36 MB quedaron en 0.9 MB en 2.4 segundos.
+- Las grabaciones que aún así no caben se parten en trozos, y cada uno lleva el desplazamiento que sitúa sus tiempos dentro de la clase completa. Sin eso, los subtítulos del segundo trozo empezarían otra vez en cero.
+- El tamaño se comprueba sobre el trozo ya extraído en lugar de confiar en el cálculo: el bitrate real no es el nominal y cada trozo carga su propia cabecera, así que la cuenta se queda corta. Un trozo un kilobyte por encima lo rechaza la API igual que uno de 40 MB.
+- `ffmpeg-static` como dependencia: trae el binario en el propio paquete, así que el despliegue en Railway no necesita configuración de build ni paquetes del sistema.
+
 ## [0.31.0] — 2026-10-03
 ### Agregado
 - Botón «Generar transcripción» en la pantalla del material. El endpoint existía desde la fase 2, pero ningún punto de la interfaz lo llamaba: el docente subía la clase y ahí se quedaba. Sin transcripción no hay texto, no hay subtítulos y el asistente no tiene de qué agarrarse, de modo que para un estudiante sordo ese material no servía de nada. Se detectó porque tres audios llevaban semanas subidos con cero transcripciones.
