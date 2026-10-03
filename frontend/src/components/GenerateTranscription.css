@@ -1,0 +1,34 @@
+/* Ocupa el lugar del estado vacio, asi que conserva su aire: el docente ve
+   que falta algo y, a la vez, que puede resolverlo el mismo. */
+.generar {
+  padding: var(--espacio-6);
+  margin-bottom: var(--espacio-6);
+  text-align: center;
+  background-color: var(--color-fondo);
+  border: 2px dashed var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+.generar__titulo {
+  margin: 0 0 var(--espacio-2);
+}
+
+.generar__ayuda {
+  max-width: 48ch;
+  margin: 0 auto var(--espacio-4);
+  color: var(--color-texto-suave);
+}
+
+/* Reserva el alto del aviso para que al aparecer no empuje el boton: quien
+   fue a pulsarlo lo encontraria movido. */
+.generar__estado {
+  min-height: 1.5em;
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.generar__error {
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-error);
+}

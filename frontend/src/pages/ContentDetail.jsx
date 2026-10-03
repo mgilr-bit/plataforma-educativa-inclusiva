@@ -1,10 +1,12 @@
 // Pantalla de un material: reproductor, subtitulos y transcripcion.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import Layout from '../components/Layout';
 import SubtitlePlayer from '../components/SubtitlePlayer';
 import TutorChat from '../components/TutorChat';
+import GenerateTranscription from '../components/GenerateTranscription';
+import { puedeGenerar } from '../utils/transcripcion';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import './Panel.css';
@@ -20,6 +22,11 @@ export default function ContentDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const [state, setState] = useState({ loading: true });
+  // Tras generarla, el foco tiene que ir a parar a la transcripcion: el boton
+  // que se pulso desaparece, y quien navega con teclado se quedaria sin punto
+  // de partida en medio de la pagina.
+  const transcripcionRef = useRef(null);
+  const recienGenerada = useRef(false);
 
   // El asistente registra las consultas contra el estudiante que pregunta,
   // asi que solo se ofrece a ese rol.
@@ -45,6 +52,13 @@ export default function ContentDetail() {
   }
 
   useEffect(load, [id]);
+
+  useEffect(() => {
+    if (state.transcription && recienGenerada.current) {
+      recienGenerada.current = false;
+      transcripcionRef.current?.focus();
+    }
+  }, [state.transcription]);
 
   // Mientras carga se anuncia el respaldo; al llegar el dato, su nombre.
   usePageTitle(state.loading ? 'Material' : (state.content?.titulo || 'Material'));
@@ -80,15 +94,31 @@ export default function ContentDetail() {
           )}
 
           {state.transcription ? (
-            <SubtitlePlayer
-              content={state.content}
-              subtitles={state.transcription.subtitulos}
-            />
+            <section
+              ref={transcripcionRef}
+              tabIndex={-1}
+              aria-labelledby="titulo-transcripcion"
+            >
+              <SubtitlePlayer
+                content={state.content}
+                subtitles={state.transcription.subtitulos}
+              />
+            </section>
           ) : (
-            <EmptyState
-              title="Este material todavía no tiene transcripción"
-              description="Cuando el docente la genere, el texto y los subtítulos aparecerán aquí."
-            />
+            <>
+              {/* El boton se ofrece solo a quien puede generarla. Al resto se
+                  le explica la espera, que es lo unico que le sirve saber. */}
+              <GenerateTranscription
+                content={state.content}
+                onGenerated={() => { recienGenerada.current = true; load(); }}
+              />
+              {!puedeGenerar(user, state.content) && (
+                <EmptyState
+                  title="Este material todavía no tiene transcripción"
+                  description="Cuando el docente la genere, el texto y los subtítulos aparecerán aquí."
+                />
+              )}
+            </>
           )}
 
           {puedePreguntar && <TutorChat contentId={Number(id)} />}

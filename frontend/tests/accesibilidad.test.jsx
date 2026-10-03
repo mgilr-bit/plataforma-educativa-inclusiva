@@ -17,6 +17,7 @@ import StudentPanel from '../src/pages/StudentPanel';
 import TeacherPanel from '../src/pages/TeacherPanel';
 import SubtitlePlayer from '../src/components/SubtitlePlayer';
 import TutorChat from '../src/components/TutorChat';
+import GenerateTranscription from '../src/components/GenerateTranscription';
 import UsersAdmin from '../src/pages/UsersAdmin';
 import { api, saveToken } from '../src/api/client';
 
@@ -28,6 +29,7 @@ vi.mock('../src/api/client', async () => {
       profile: vi.fn(), courses: vi.fn(), login: vi.fn(),
       consultations: vi.fn(), askTutor: vi.fn(),
       users: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), deactivateUser: vi.fn(),
+      transcribe: vi.fn(),
     },
   };
 });
@@ -112,6 +114,22 @@ describe('Auditoría de accesibilidad', () => {
     const { container } = envolver(<UsersAdmin />);
     // Se espera a que la tabla exista: auditarla vacía no probaría nada.
     await screen.findByRole('table');
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('el botón de generar la transcripción no tiene violaciones', async () => {
+    const { container } = envolver(
+      <GenerateTranscription
+        content={{
+          id_contenido: 9, id_docente: 1, titulo: 'Clase',
+          tipo: 'audio', url_archivo: '/archivos/a.m4a',
+        }}
+        onGenerated={() => {}}
+      />
+    );
+    // Se espera a que exista: con el usuario aun sin cargar, el componente no
+    // se pinta y auditar un contenedor vacio no probaria nada.
+    await screen.findByRole('button', { name: /generar transcripción/i });
     expect(await auditar(container)).toEqual([]);
   });
 
