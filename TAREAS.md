@@ -46,6 +46,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Gestión de usuarios desde la interfaz — 2026-09-08 — Issue #69
 - [x] Gestión de cursos e inscripciones desde la interfaz — 2026-09-08 — Issue #70
 - [x] Datos de ejemplo y arranque con un solo comando — 2026-09-08 — Issue #72
+- [x] Privacidad de las consultas al asistente: aviso y borrado por el estudiante — 2026-09-26 — Issue #82
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas

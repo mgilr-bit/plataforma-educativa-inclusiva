@@ -1,6 +1,6 @@
 // Rutas del asistente educativo.
 const { Router } = require('express');
-const { ask, list } = require('../controllers/tutorController');
+const { ask, list, remove } = require('../controllers/tutorController');
 const { authenticate, authorize } = require('../middleware/auth');
 
 const router = Router();
@@ -12,5 +12,8 @@ router.post('/tutor/ask', authorize('estudiante'), ask);
 
 // El historial lo consultan los tres roles, con distinto alcance.
 router.get('/tutor/consultations', list);
+
+// Borrar es potestad de quien pregunto, no del docente.
+router.delete('/tutor/consultations/:id', authorize('estudiante'), remove);
 
 module.exports = router;

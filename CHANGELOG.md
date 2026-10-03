@@ -2,6 +2,12 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.30.0] — 2026-09-26
+### Agregado
+- El chat con el asistente avisa al estudiante que su docente puede ver las preguntas, y para qué le sirven. Se guardaban desde el principio, pero nadie se lo decía: quien lo descubre después deja de preguntar con confianza, y ahí se pierde el propósito de la herramienta.
+- `DELETE /api/tutor/consultations/:id` y el botón correspondiente en el chat: el estudiante puede borrar cualquier pregunta suya. Solo puede borrar quien preguntó —ni el docente ni el administrador—, y el borrado es físico: si fuera una marca, el docente seguiría viéndola mientras el estudiante cree que la eliminó.
+- El nombre accesible del botón lleva la pregunta que borra («Borrar la pregunta: ¿Qué es una fracción?»), porque con lector de pantalla varios botones «Borrar» seguidos son indistinguibles.
+
 ## [0.29.0] — 2026-09-26
 ### Corregido
 - El docente no podía inscribir estudiantes: la pantalla llenaba el desplegable con el listado general de usuarios, al que no tiene acceso, así que quedaba vacío y deshabilitado sin explicar por qué.

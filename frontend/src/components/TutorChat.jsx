@@ -6,6 +6,7 @@
 // enterarse de que llego una respuesta sin tener que ir a buscarla.
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
+import Icon from './Icon';
 import './TutorChat.css';
 
 const LARGO_MINIMO = 3;
@@ -17,6 +18,7 @@ export default function TutorChat({ contentId }) {
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [asking, setAsking] = useState(false);
   const [error, setError] = useState(null);
+  const [borrando, setBorrando] = useState(null);
   // Se recupera el foco despues de que el campo vuelva a estar habilitado:
   // un elemento deshabilitado no puede recibirlo.
   const [refocus, setRefocus] = useState(false);
@@ -46,6 +48,20 @@ export default function TutorChat({ contentId }) {
       .finally(() => { if (active) setLoadingHistory(false); });
     return () => { active = false; };
   }, [contentId]);
+
+  async function borrar(intercambio) {
+    setError(null);
+    setBorrando(intercambio.id_consulta);
+    try {
+      await api.deleteConsultation(intercambio.id_consulta);
+      setExchanges((previas) => previas.filter((i) => i.id_consulta !== intercambio.id_consulta));
+    } catch (err) {
+      setError(err.message);
+      window.requestAnimationFrame(() => errorRef.current?.focus());
+    } finally {
+      setBorrando(null);
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -87,6 +103,19 @@ export default function TutorChat({ contentId }) {
         con el contenido de la transcripción.
       </p>
 
+      {/* El estudiante debe saber quien lee sus preguntas. Si lo descubre
+          despues, deja de preguntar con confianza, y ahi se pierde el
+          proposito del asistente. Se explica ademas para que sirve, para que
+          no se lea como vigilancia. */}
+      <p className="tutor__aviso">
+        <Icon nombre="personas" tamano={18} />
+        <span>
+          Su docente puede ver estas preguntas. Le sirven para saber qué
+          explicar mejor en clase. Si prefiere, puede borrar cualquier
+          pregunta suya.
+        </span>
+      </p>
+
       {error && (
         <div className="alerta-error" role="alert" tabIndex={-1} ref={errorRef}>
           {error}
@@ -115,6 +144,19 @@ export default function TutorChat({ contentId }) {
                   pasos numerados, y aplastarlos arruinaria la explicacion. */}
               <p className="tutor__texto">{intercambio.respuesta}</p>
             </div>
+
+            {/* La pregunta va en el nombre del boton: quien recorre los
+                botones con lector de pantalla oiria "Borrar" repetido sin
+                saber cual borra. */}
+            <button
+              type="button"
+              className="tutor__borrar"
+              onClick={() => borrar(intercambio)}
+              disabled={borrando === intercambio.id_consulta}
+              aria-label={`Borrar la pregunta: ${intercambio.pregunta}`}
+            >
+              {borrando === intercambio.id_consulta ? 'Borrando…' : 'Borrar esta pregunta'}
+            </button>
             </li>
           ))}
         </ol>
