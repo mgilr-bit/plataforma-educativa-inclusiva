@@ -5,7 +5,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
 
 describe('Borrado de consultas al asistente', () => {
   let datos;
@@ -32,14 +32,14 @@ describe('Borrado de consultas al asistente', () => {
     tokenDocente = await iniciarSesion('docente1@prueba.gt');
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   const con = (token) => ({ Authorization: `Bearer ${token}` });
 
   test('el estudiante borra su propia consulta', async () => {
     const id = await sembrarConsulta(datos.estudiante);
 
-    const res = await request(app)
+    const res = await request(servidor)
       .delete(`/api/tutor/consultations/${id}`)
       .set(con(tokenEstudiante));
 
@@ -50,14 +50,14 @@ describe('Borrado de consultas al asistente', () => {
   test('el borrado es fisico: el docente deja de verla', async () => {
     const id = await sembrarConsulta(datos.estudiante);
 
-    await request(app).delete(`/api/tutor/consultations/${id}`).set(con(tokenEstudiante));
+    await request(servidor).delete(`/api/tutor/consultations/${id}`).set(con(tokenEstudiante));
 
     // Si fuera una marca logica, el docente seguiria leyendola mientras el
     // estudiante cree que la elimino. Eso es peor que no ofrecer el borrado.
     const fila = await pool.query('SELECT 1 FROM consulta_tutor WHERE id_consulta = $1', [id]);
     assert.equal(fila.rowCount, 0);
 
-    const vistaDocente = await request(app)
+    const vistaDocente = await request(servidor)
       .get('/api/tutor/consultations')
       .set(con(tokenDocente));
     const ids = (vistaDocente.body.consultas || []).map((c) => c.id_consulta);
@@ -67,7 +67,7 @@ describe('Borrado de consultas al asistente', () => {
   test('otro estudiante no puede borrarla, y no se le confirma que existe', async () => {
     const id = await sembrarConsulta(datos.estudiante);
 
-    const res = await request(app)
+    const res = await request(servidor)
       .delete(`/api/tutor/consultations/${id}`)
       .set(con(tokenEstudianteAjeno));
 
@@ -80,7 +80,7 @@ describe('Borrado de consultas al asistente', () => {
   test('el docente no puede borrar la consulta de su estudiante', async () => {
     const id = await sembrarConsulta(datos.estudiante);
 
-    const res = await request(app)
+    const res = await request(servidor)
       .delete(`/api/tutor/consultations/${id}`)
       .set(con(tokenDocente));
 
@@ -92,7 +92,7 @@ describe('Borrado de consultas al asistente', () => {
   test('sin sesion no se borra nada', async () => {
     const id = await sembrarConsulta(datos.estudiante);
 
-    const res = await request(app).delete(`/api/tutor/consultations/${id}`);
+    const res = await request(servidor).delete(`/api/tutor/consultations/${id}`);
 
     assert.equal(res.status, 401);
     const fila = await pool.query('SELECT 1 FROM consulta_tutor WHERE id_consulta = $1', [id]);
@@ -100,7 +100,7 @@ describe('Borrado de consultas al asistente', () => {
   });
 
   test('un identificador que no es numero se rechaza sin tocar la base', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .delete('/api/tutor/consultations/abc')
       .set(con(tokenEstudiante));
 

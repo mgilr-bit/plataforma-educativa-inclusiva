@@ -8,7 +8,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const request = require('supertest');
 const { DIRECTORIO } = require('../../src/config/storage');
-const { app, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
 
 // Un m4a mínimo: no tiene que sonar, solo pasar el filtro de formato y
 // quedar escrito en el disco.
@@ -27,12 +27,12 @@ describe('Edición y retiro de materiales', () => {
     tokenEstudiante = await iniciarSesion('alumno1@prueba.gt');
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   const con = (token) => ({ Authorization: `Bearer ${token}` });
 
   async function crearConArchivo() {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/contents')
       .set(con(tokenDocente))
       .field('idCurso', String(datos.curso))
@@ -43,7 +43,7 @@ describe('Edición y retiro de materiales', () => {
   }
 
   test('el docente corrige el título de su material', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocente))
       .send({ titulo: 'Título corregido' });
@@ -57,7 +57,7 @@ describe('Edición y retiro de materiales', () => {
     const anterior = path.basename(material.url_archivo);
     assert.ok(fs.existsSync(path.join(DIRECTORIO, anterior)), 'el archivo original debe existir');
 
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/contents/${material.id_contenido}`)
       .set(con(tokenDocente))
       .attach('archivo', Buffer.from('otro audio distinto'), 'nueva.m4a');
@@ -81,7 +81,7 @@ describe('Edición y retiro de materiales', () => {
       [material.id_contenido]
     );
 
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/contents/${material.id_contenido}`)
       .set(con(tokenDocente))
       .attach('archivo', Buffer.from('audio nuevo'), 'nueva.m4a');
@@ -104,7 +104,7 @@ describe('Edición y retiro de materiales', () => {
   });
 
   test('retirar un material lo esconde del estudiante pero no lo borra', async () => {
-    const retiro = await request(app)
+    const retiro = await request(servidor)
       .delete(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocente));
 
@@ -121,17 +121,17 @@ describe('Edición y retiro de materiales', () => {
     assert.equal(fila.rowCount, 1);
     assert.equal(fila.rows[0].estado, false);
 
-    const comoEstudiante = await request(app).get('/api/contents').set(con(tokenEstudiante));
+    const comoEstudiante = await request(servidor).get('/api/contents').set(con(tokenEstudiante));
     const ids = comoEstudiante.body.contenidos.map((c) => c.id_contenido);
     assert.ok(!ids.includes(datos.contenido), 'el estudiante no debe verlo');
 
-    const comoDocente = await request(app).get('/api/contents').set(con(tokenDocente));
+    const comoDocente = await request(servidor).get('/api/contents').set(con(tokenDocente));
     const idsDocente = comoDocente.body.contenidos.map((c) => c.id_contenido);
     assert.ok(idsDocente.includes(datos.contenido), 'el docente sí, para poder reponerlo');
   });
 
   test('un material retirado se puede volver a publicar', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocente))
       .send({ estado: true });
@@ -141,7 +141,7 @@ describe('Edición y retiro de materiales', () => {
   });
 
   test('en multipart el estado llega como texto y se entiende igual', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocente))
       .field('estado', 'false');
@@ -149,27 +149,27 @@ describe('Edición y retiro de materiales', () => {
     assert.equal(res.status, 200);
     assert.equal(res.body.contenido.estado, false);
 
-    await request(app)
+    await request(servidor)
       .patch(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocente))
       .send({ estado: true });
   });
 
   test('un docente ajeno no puede editar ni retirar', async () => {
-    const edicion = await request(app)
+    const edicion = await request(servidor)
       .patch(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocenteAjeno))
       .send({ titulo: 'No debería' });
     assert.equal(edicion.status, 403);
 
-    const retiro = await request(app)
+    const retiro = await request(servidor)
       .delete(`/api/contents/${datos.contenido}`)
       .set(con(tokenDocenteAjeno));
     assert.equal(retiro.status, 403);
   });
 
   test('el estudiante tampoco', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .delete(`/api/contents/${datos.contenido}`)
       .set(con(tokenEstudiante));
     assert.equal(res.status, 403);

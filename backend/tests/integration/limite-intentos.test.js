@@ -7,7 +7,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, CONTRASENA } = require('../helpers/datos');
+const { servidor, cerrar, sembrarEscenario, CONTRASENA } = require('../helpers/datos');
 const { MAXIMO_INTENTOS_LOGIN } = require('../../src/middleware/rateLimit');
 
 describe('Limite de intentos de inicio de sesion', () => {
@@ -19,13 +19,13 @@ describe('Limite de intentos de inicio de sesion', () => {
 
   after(async () => {
     process.env.NODE_ENV = 'test';
-    await pool.end();
+    await cerrar();
   });
 
   test('corta la fuerza bruta tras agotar los intentos', async () => {
     const fallidos = [];
     for (let i = 0; i < MAXIMO_INTENTOS_LOGIN; i += 1) {
-      const res = await request(app)
+      const res = await request(servidor)
         .post('/api/auth/login')
         .send({ correo: 'admin@prueba.gt', contrasena: `equivocada-${i}` });
       fallidos.push(res.status);
@@ -35,7 +35,7 @@ describe('Limite de intentos de inicio de sesion', () => {
     assert.ok(fallidos.every((codigo) => codigo === 401), `codigos: ${fallidos.join(',')}`);
 
     // El siguiente ya se rechaza sin llegar a comprobar la contrasena.
-    const bloqueado = await request(app)
+    const bloqueado = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: 'otra-mas' });
 
@@ -46,7 +46,7 @@ describe('Limite de intentos de inicio de sesion', () => {
   test('el bloqueo tambien alcanza a la contrasena correcta', async () => {
     // Importa que sea asi: si el atacante acierta despues de agotar la cuota,
     // no debe entrar hasta que pase la ventana.
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: CONTRASENA });
 
@@ -54,7 +54,7 @@ describe('Limite de intentos de inicio de sesion', () => {
   });
 
   test('anuncia el limite en las cabeceras estandar', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: 'x' });
 

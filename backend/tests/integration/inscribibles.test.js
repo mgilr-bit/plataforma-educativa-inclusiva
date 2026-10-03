@@ -6,7 +6,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
 
 describe('Estudiantes disponibles para inscribir', () => {
   let datos;
@@ -21,12 +21,12 @@ describe('Estudiantes disponibles para inscribir', () => {
     tokenEstudiante = await iniciarSesion('alumno1@prueba.gt');
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   const con = (token) => ({ Authorization: `Bearer ${token}` });
 
   test('el docente titular ve a quién puede inscribir', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .get(`/api/courses/${datos.curso}/available-students`)
       .set(con(tokenDocente));
 
@@ -38,7 +38,7 @@ describe('Estudiantes disponibles para inscribir', () => {
   });
 
   test('no ofrece a quien ya está inscrito', async () => {
-    const disponibles = await request(app)
+    const disponibles = await request(servidor)
       .get(`/api/courses/${datos.curso}/available-students`)
       .set(con(tokenDocente));
 
@@ -47,21 +47,21 @@ describe('Estudiantes disponibles para inscribir', () => {
   });
 
   test('un docente ajeno al curso no puede consultarlo', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .get(`/api/courses/${datos.curso}/available-students`)
       .set(con(tokenDocenteAjeno));
     assert.equal(res.status, 403);
   });
 
   test('el estudiante no puede consultarlo', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .get(`/api/courses/${datos.curso}/available-students`)
       .set(con(tokenEstudiante));
     assert.equal(res.status, 403);
   });
 
   test('no expone el hash ni el rol de las cuentas', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .get(`/api/courses/${datos.curso}/available-students`)
       .set(con(tokenDocente));
 

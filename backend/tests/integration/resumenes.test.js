@@ -5,7 +5,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
 
 describe('Resúmenes en lenguaje sencillo', () => {
   let datos;
@@ -29,12 +29,12 @@ describe('Resúmenes en lenguaje sencillo', () => {
     idResumen = res.rows[0].id_resumen;
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   const con = (token) => ({ Authorization: `Bearer ${token}` });
 
   test('el estudiante puede leerlo', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .get(`/api/contents/${datos.contenido}/summaries`)
       .set(con(tokenEstudiante));
 
@@ -46,21 +46,21 @@ describe('Resúmenes en lenguaje sencillo', () => {
   });
 
   test('el estudiante no puede generarlo ni borrarlo', async () => {
-    const generar = await request(app)
+    const generar = await request(servidor)
       .post(`/api/contents/${datos.contenido}/summary`)
       .set(con(tokenEstudiante))
       .send({ nivel: 'medio' });
     // Generar cuesta saldo del asistente.
     assert.equal(generar.status, 403);
 
-    const borrar = await request(app)
+    const borrar = await request(servidor)
       .delete(`/api/summaries/${idResumen}`)
       .set(con(tokenEstudiante));
     assert.equal(borrar.status, 403);
   });
 
   test('un nivel inventado se rechaza antes de llamar al modelo', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post(`/api/contents/${datos.contenido}/summary`)
       .set(con(tokenDocente))
       .send({ nivel: 'facilito' });
@@ -70,7 +70,7 @@ describe('Resúmenes en lenguaje sencillo', () => {
   });
 
   test('no se repite el mismo nivel dos veces', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post(`/api/contents/${datos.contenido}/summary`)
       .set(con(tokenDocente))
       .send({ nivel: 'basico' });
@@ -82,7 +82,7 @@ describe('Resúmenes en lenguaje sencillo', () => {
   });
 
   test('sin transcripción no se genera, y se dice por qué', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post(`/api/contents/${datos.contenido}/summary`)
       .set(con(tokenDocente))
       .send({ nivel: 'medio' });
@@ -93,7 +93,7 @@ describe('Resúmenes en lenguaje sencillo', () => {
   });
 
   test('el docente titular corrige el resumen', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/summaries/${idResumen}`)
       .set(con(tokenDocente))
       .send({ textoResumen: '## De que trata\nTexto corregido por el docente.' });
@@ -105,7 +105,7 @@ describe('Resúmenes en lenguaje sencillo', () => {
   });
 
   test('no se puede dejar vacío', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .patch(`/api/summaries/${idResumen}`)
       .set(con(tokenDocente))
       .send({ textoResumen: '   ' });
@@ -113,20 +113,20 @@ describe('Resúmenes en lenguaje sencillo', () => {
   });
 
   test('un docente ajeno no puede corregirlo ni borrarlo', async () => {
-    const corregir = await request(app)
+    const corregir = await request(servidor)
       .patch(`/api/summaries/${idResumen}`)
       .set(con(tokenDocenteAjeno))
       .send({ textoResumen: 'No debería' });
     assert.equal(corregir.status, 403);
 
-    const borrar = await request(app)
+    const borrar = await request(servidor)
       .delete(`/api/summaries/${idResumen}`)
       .set(con(tokenDocenteAjeno));
     assert.equal(borrar.status, 403);
   });
 
   test('borrarlo lo quita de verdad, para poder generar otro', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .delete(`/api/summaries/${idResumen}`)
       .set(con(tokenDocente));
 
