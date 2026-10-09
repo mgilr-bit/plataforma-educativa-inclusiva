@@ -13,6 +13,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createVttUrl } from '../utils/webvtt';
 import './SubtitlePlayer.css';
+import { urlDeArchivo } from '../api/client';
 
 // Los tiempos llegan como texto desde la API.
 function toSeconds(value) {
@@ -64,7 +65,7 @@ export default function SubtitlePlayer({ content, subtitles }) {
         <Medio
           ref={mediaRef}
           className="reproductor__medio"
-          src={content.url_archivo}
+          src={urlDeArchivo(content.url_archivo)}
           controls
           onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
           onError={() => setMediaError(true)}

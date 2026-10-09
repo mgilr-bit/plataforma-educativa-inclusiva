@@ -2,6 +2,11 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.35.2] — 2026-10-09
+### Corregido
+- No se podía reproducir ningún archivo subido. El reproductor usaba la ruta guardada tal cual, pero lo que se guarda es relativo al servidor de la API (`/archivos/...`), no a la página: en desarrollo son dos puertos distintos y en producción serán dos dominios distintos. El navegador pedía el archivo al servidor de la página, recibía el `index.html` de la aplicación y mostraba «No se pudo reproducir el archivo». El único material que funcionaba era el que apunta a una dirección completa de otro sitio.
+- Ninguna prueba lo detectaba porque todos los fixtures del reproductor usaban direcciones absolutas, que no es lo que produce una subida real.
+
 ## [0.35.1] — 2026-10-03
 ### Corregido
 - Las pruebas de integración fallaban una de cada tres o cuatro ejecuciones, cambiando de archivo cada vez. `supertest` levantaba y cerraba un servidor efímero en cada petición, y con decenas seguidas eso falla a veces con `ECONNRESET`; cuando el que se caía era un inicio de sesión, el token quedaba vacío y todas las pruebas de ese archivo respondían 401. Ahora cada archivo levanta un solo servidor y lo cierra al terminar. Verificado con 12 ejecuciones seguidas sin un fallo.
