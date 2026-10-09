@@ -14,6 +14,8 @@ const SUBTITULOS = [
 ];
 
 const VIDEO = { id_contenido: 1, titulo: 'Fracciones', tipo: 'video', url_archivo: 'https://ejemplo.gt/c.mp4' };
+// Lo que produce una subida real: una ruta relativa al servidor de la API.
+const VIDEO_SUBIDO = { id_contenido: 3, titulo: 'Fracciones', tipo: 'video', url_archivo: '/archivos/abc.mp4' };
 const SIN_ARCHIVO = { id_contenido: 2, titulo: 'Apunte', tipo: 'documento', url_archivo: null };
 
 beforeEach(() => {
@@ -101,5 +103,16 @@ describe('Reproductor con subtítulos', () => {
     const lista = screen.getByRole('list', { name: /transcripción/i });
     expect(lista.tagName).toBe('OL');
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
+  });
+
+  test('un archivo subido se pide al servidor de la API, no al de la página', () => {
+    const { container } = render(<SubtitlePlayer content={VIDEO_SUBIDO} subtitles={SUBTITULOS} />);
+
+    // La ruta guardada es relativa a la API. Si se usa tal cual, el navegador
+    // la pide al origen de la página, que devuelve el index.html de la
+    // aplicación: el reproductor recibe HTML y avisa de que no se pudo
+    // reproducir. Le pasaba a todos los archivos subidos.
+    const video = container.querySelector('video');
+    expect(video.getAttribute('src')).toBe('http://localhost:4000/archivos/abc.mp4');
   });
 });

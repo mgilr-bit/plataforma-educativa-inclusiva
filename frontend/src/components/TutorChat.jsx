@@ -153,9 +153,16 @@ export default function TutorChat({ contentId }) {
               className="tutor__borrar"
               onClick={() => borrar(intercambio)}
               disabled={borrando === intercambio.id_consulta}
-              aria-label={`Borrar la pregunta: ${intercambio.pregunta}`}
             >
+              {/* El nombre se compone en vez de declararse con aria-label.
+                  Con aria-label el nombre era «Borrar la pregunta: ...»
+                  mientras en pantalla se leia «Borrar esta pregunta», de modo
+                  que el texto visible no estaba contenido en el nombre: quien
+                  maneja la plataforma por voz dice lo que ve y no acertaba el
+                  boton. El texto visible va primero y la pregunta despues,
+                  oculta, que es lo que distingue un boton de otro. */}
               {borrando === intercambio.id_consulta ? 'Borrando…' : 'Borrar esta pregunta'}
+              <span className="sr-only">: {intercambio.pregunta}</span>
             </button>
             </li>
           ))}

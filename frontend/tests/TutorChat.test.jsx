@@ -125,11 +125,13 @@ describe('Chat con el asistente', () => {
 
     // Con lector de pantalla, varios botones "Borrar" seguidos son
     // indistinguibles: el nombre accesible tiene que llevar la pregunta.
+    // Y el texto visible va delante, contenido en el nombre tal cual: quien
+    // maneja la plataforma por voz dice lo que ve.
     expect(
-      await screen.findByRole('button', { name: 'Borrar la pregunta: ¿Qué es una fracción?' })
+      await screen.findByRole('button', { name: 'Borrar esta pregunta: ¿Qué es una fracción?' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Borrar la pregunta: ¿Y cómo sumo dos?' })
+      screen.getByRole('button', { name: 'Borrar esta pregunta: ¿Y cómo sumo dos?' })
     ).toBeInTheDocument();
   });
 
@@ -140,7 +142,7 @@ describe('Chat con el asistente', () => {
     render(<TutorChat contentId={1} />);
 
     await usuario.click(
-      await screen.findByRole('button', { name: 'Borrar la pregunta: ¿Qué es una fracción?' })
+      await screen.findByRole('button', { name: 'Borrar esta pregunta: ¿Qué es una fracción?' })
     );
 
     expect(api.deleteConsultation).toHaveBeenCalledWith(1);
@@ -158,7 +160,7 @@ describe('Chat con el asistente', () => {
     render(<TutorChat contentId={1} />);
 
     await usuario.click(
-      await screen.findByRole('button', { name: 'Borrar la pregunta: ¿Qué es una fracción?' })
+      await screen.findByRole('button', { name: 'Borrar esta pregunta: ¿Qué es una fracción?' })
     );
 
     // Quitarla de la pantalla sin haberla borrado le haria creer que ya no

@@ -20,6 +20,12 @@ Todas las entregas relevantes del proyecto se documentan aquí, de la más recie
 - El enlace «Saltar al contenido» asomaba por arriba de la pantalla. Se escondía con un desplazamiento fijo de 3 rem, pero el enlace crece con la escala de texto y en «Muy grande» quedaba a la vista. Ahora se esconde con `translateY(-100%)`, que es su propia altura sea cual sea.
 - Los controles de accesibilidad no estaban dentro de ningún punto de referencia; ahora son una `<section>` con nombre.
 - Los botones de la transcripción incumplían «etiqueta en el nombre» (WCAG 2.5.3): el nombre accesible decía «Ir al minuto 0:00: Buenas tardes…» y en pantalla se leía «0:00 Buenas tardes…», de modo que el texto visible no estaba contenido en el nombre y quien maneja la plataforma por voz no acertaba el botón.
+- El botón de borrar una consulta al asistente tenía el mismo defecto: el nombre decía «Borrar la pregunta: …» y en pantalla se leía «Borrar esta pregunta». Apareció al auditar una clase que ya tenía consultas; las páginas sin ninguna no lo mostraban.
+
+## [0.35.2] — 2026-10-09
+### Corregido
+- No se podía reproducir ningún archivo subido. El reproductor usaba la ruta guardada tal cual, pero lo que se guarda es relativo al servidor de la API (`/archivos/...`), no a la página: en desarrollo son dos puertos distintos y en producción serán dos dominios distintos. El navegador pedía el archivo al servidor de la página, recibía el `index.html` de la aplicación y mostraba «No se pudo reproducir el archivo». El único material que funcionaba era el que apunta a una dirección completa de otro sitio.
+- Ninguna prueba lo detectaba porque todos los fixtures del reproductor usaban direcciones absolutas, que no es lo que produce una subida real.
 
 ## [0.35.1] — 2026-10-03
 ### Corregido
