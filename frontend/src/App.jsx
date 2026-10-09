@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PreferencesProvider } from './context/PreferencesContext';
 import { AuthProvider } from './context/AuthContext';
 import AccessibilityBar from './components/AccessibilityBar';
+import AppHeader from './components/AppHeader';
 import ProtectedRoute from './components/ProtectedRoute';
 import RouteFocus from './components/RouteFocus';
 import Home from './pages/Home';
@@ -30,6 +31,10 @@ export default function App() {
           </a>
 
           <AccessibilityBar />
+
+          {/* Fuera de <main>: el punto de referencia "banner" no puede quedar
+              anidado dentro del contenido. */}
+          <AppHeader />
 
           <main id="contenido" ref={mainRef} className="content" tabIndex={-1}>
             <Routes>

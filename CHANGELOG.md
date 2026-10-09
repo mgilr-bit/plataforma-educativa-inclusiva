@@ -2,6 +2,19 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.36.0] — 2026-10-09
+### Cambiado
+- Tipografía propia: Lexend, diseñada para mejorar la fluidez de lectura con formas simplificadas y más aire entre letras. No es una elección estética: muchos estudiantes sordos señantes leen el español como segunda lengua y por debajo de su grado. Se sirve desde el propio proyecto y no desde Google Fonts, porque la conexión en San Juan Sacatepéquez no siempre acompaña y porque pedirla a un tercero enviaría la dirección IP de cada estudiante —menores de edad— a un servicio ajeno al establecimiento. Es variable: 73 KB para todos los pesos.
+- El marco de la aplicación y la medida de lectura dejan de ser lo mismo. Antes todo estaba encerrado en 70 caracteres, incluida la rejilla de cursos y las tablas, lo que dejaba la aplicación en una tira estrecha con medio monitor vacío al lado. Ahora el marco es ancho y la medida de 70 caracteres se aplica solo al texto que se lee seguido; las pantallas de lectura centran su columna.
+- Cabecera con superficie propia, símbolo de marca y la sesión a la derecha. La marca aparece también en el inicio de sesión, que es la única pantalla sin cabecera.
+- El estado de revisión de una transcripción pasa a ser una etiqueta con color y borde propios; como texto gris menudo bajo el título, nadie lo leía.
+
+### Corregido
+- El `<header>` estaba dentro de `<main>`: el punto de referencia «banner» quedaba anidado dentro del contenido. No se había detectado porque las pruebas auditan componentes sueltos y no la aplicación montada.
+- El enlace «Saltar al contenido» asomaba por arriba de la pantalla. Se escondía con un desplazamiento fijo de 3 rem, pero el enlace crece con la escala de texto y en «Muy grande» quedaba a la vista. Ahora se esconde con `translateY(-100%)`, que es su propia altura sea cual sea.
+- Los controles de accesibilidad no estaban dentro de ningún punto de referencia; ahora son una `<section>` con nombre.
+- Los botones de la transcripción incumplían «etiqueta en el nombre» (WCAG 2.5.3): el nombre accesible decía «Ir al minuto 0:00: Buenas tardes…» y en pantalla se leía «0:00 Buenas tardes…», de modo que el texto visible no estaba contenido en el nombre y quien maneja la plataforma por voz no acertaba el botón.
+
 ## [0.35.1] — 2026-10-03
 ### Corregido
 - Las pruebas de integración fallaban una de cada tres o cuatro ejecuciones, cambiando de archivo cada vez. `supertest` levantaba y cerraba un servidor efímero en cada petición, y con decenas seguidas eso falla a veces con `ECONNRESET`; cuando el que se caía era un inicio de sesión, el token quedaba vacío y todas las pruebas de ese archivo respondían 401. Ahora cada archivo levanta un solo servidor y lo cierra al terminar. Verificado con 12 ejecuciones seguidas sin un fallo.

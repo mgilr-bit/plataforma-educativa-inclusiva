@@ -29,9 +29,11 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--espacio-4);
-  max-width: 72rem;
+  /* Mismo ancho y mismo margen lateral que la cabecera: si no coinciden, las
+     dos barras se ven desalineadas y eso se nota mas que cualquier otra cosa. */
+  max-width: var(--ancho-contenido);
   margin: 0 auto;
-  padding: var(--espacio-2) var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-6);
   /* Tamano propio, independiente de --escala-texto. */
   font-size: 0.8125rem;
 }

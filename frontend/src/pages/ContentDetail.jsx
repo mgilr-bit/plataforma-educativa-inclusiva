@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import Layout from '../components/Layout';
 import SubtitlePlayer from '../components/SubtitlePlayer';
 import TutorChat from '../components/TutorChat';
 import GenerateTranscription from '../components/GenerateTranscription';
@@ -67,7 +66,10 @@ export default function ContentDetail() {
   usePageTitle(state.loading ? 'Material' : (state.content?.titulo || 'Material'));
 
   return (
-    <Layout>
+    // Columna centrada: esta pantalla es para leer, y el texto tiene su medida.
+    // Dejarla pegada a la izquierda en una pantalla ancha abre medio metro de
+    // vacio a la derecha y se ve como un error de maquetacion.
+    <div className="pagina-lectura">
       <nav aria-label="Ruta de navegación" className="migas">
         <Link to="/panel">Mis cursos</Link>
         <span aria-hidden="true"> › </span>
@@ -90,7 +92,12 @@ export default function ContentDetail() {
           <h1>{state.content.titulo}</h1>
 
           {state.transcription && (
-            <p className="tarjeta__detalle">
+            // El estado dice si lo que se lee ya paso por el docente o sigue
+            // siendo lo que entendio la maquina. Como texto gris menudo nadie
+            // lo leia.
+            <p
+              className={`etiqueta-estado etiqueta-estado--${state.transcription.transcripcion.estado_revision}`}
+            >
               {REVISION[state.transcription.transcripcion.estado_revision]
                 || state.transcription.transcripcion.estado_revision}
             </p>
@@ -153,6 +160,6 @@ export default function ContentDetail() {
           )}
         </>
       )}
-    </Layout>
+    </div>
   );
 }

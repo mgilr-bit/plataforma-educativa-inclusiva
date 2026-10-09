@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/FormField';
+import Icon from '../components/Icon';
 import './Login.css';
 import usePageTitle from '../hooks/usePageTitle';
 
@@ -86,6 +87,18 @@ export default function Login() {
 
   return (
     <div className="login">
+      {/* La marca en la puerta de entrada: es la unica pantalla sin cabecera,
+          y sin ella el formulario podria ser el de cualquier sitio. */}
+      <p className="login__marca">
+        <span className="login__simbolo" aria-hidden="true">
+          <Icon nombre="libro" tamano={24} />
+        </span>
+        <span>
+          Plataforma Educativa
+          <span className="login__lema">Educación inclusiva</span>
+        </span>
+      </p>
+
       <h1>Iniciar sesión</h1>
       <p>Ingrese con el correo que le proporcionó su establecimiento.</p>
 

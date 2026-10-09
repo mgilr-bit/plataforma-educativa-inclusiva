@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
-import Layout from '../components/Layout';
 import NewCourseForm from '../components/NewCourseForm';
 import { useAuth } from '../context/AuthContext';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
@@ -28,7 +27,7 @@ export default function TeacherPanel() {
   useEffect(load, []);
 
   return (
-    <Layout>
+    <>
       <h1>{esAdministrador ? 'Cursos' : 'Mis cursos'}</h1>
       <p>
         {esAdministrador
@@ -70,6 +69,6 @@ export default function TeacherPanel() {
           ))}
         </ul>
       )}
-    </Layout>
+    </>
   );
 }

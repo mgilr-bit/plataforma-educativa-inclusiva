@@ -35,7 +35,14 @@
   --interlineado: 1.6;
   --interlineado-titulo: 1.25;
 
-  --familia-texto: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Lexend primero; si tarda o no carga, el sistema cubre sin texto invisible.
+     El porque de la eleccion esta en tipografia.css. */
+  --familia-texto: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Lexend tiene mas aire entre letras que una fuente de sistema, lo cual es
+     bueno en el cuerpo del texto y de sobra en los titulos grandes. */
+  --tracking-titulo: -0.02em;
+  --tracking-titulo-mayor: -0.03em;
 
   /* --- Espaciado y formas ---------------------------------------------- */
   --espacio-1: 0.25rem;
@@ -45,6 +52,13 @@
   --espacio-6: 1.5rem;
   --espacio-8: 2rem;
   --espacio-12: 3rem;
+
+  /* Ancho del marco de la aplicacion. No es la medida de lectura: esa es
+     mucho mas corta y se aplica solo al texto que se lee seguido. */
+  --ancho-contenido: 76rem;
+  /* Renglon corto para texto corrido. Pasados unos 70 caracteres, el ojo
+     pierde el salto de linea, y eso pesa mas cuando se lee en segunda lengua. */
+  --medida-lectura: 70ch;
 
   --radio: 0.375rem;
   --radio-grande: 0.75rem;

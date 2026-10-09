@@ -60,7 +60,10 @@ describe('Reproductor con subtítulos', () => {
 
     // "0:07" a secas no dice qué es ni qué pasa al pulsarlo. Se comprueba el
     // nombre accesible completo, que es lo que anuncia el lector de pantalla.
-    expect(screen.getByRole('button', { name: /ir al minuto 0:07: con distinto denominador/i })).toBeInTheDocument();
+    // El nombre se compone y el texto visible queda contenido en él tal cual,
+    // que es lo que exige «etiqueta en el nombre»: quien maneja la plataforma
+    // por voz dice lo que ve.
+    expect(screen.getByRole('button', { name: 'Ir al minuto 0:07 con distinto denominador.' })).toBeInTheDocument();
   });
 
   test('sin archivo reproducible, la transcripción sigue siendo legible', () => {

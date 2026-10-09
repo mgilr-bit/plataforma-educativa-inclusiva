@@ -1,6 +1,7 @@
 /* Va arriba de la clase y tiene que verse como lo principal, no como una nota
    al margen: para muchos estudiantes es por donde van a entrar. */
 .resumen {
+  max-width: var(--medida-lectura);
   margin-bottom: var(--espacio-6);
   padding: var(--espacio-6);
   background-color: var(--color-superficie);

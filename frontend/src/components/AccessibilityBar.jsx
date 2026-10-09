@@ -17,7 +17,11 @@ export default function AccessibilityBar() {
   const highContrastOn = contrast === 'alto';
 
   return (
-    <div className="barra-a11y">
+    // <section> con nombre: asi es un punto de referencia propio y no queda
+    // contenido suelto fuera de todos ellos. Quien navega por landmarks la
+    // encuentra sin recorrer la pagina, que es justo lo que necesita quien
+    // viene a agrandar la letra.
+    <section className="barra-a11y" aria-label="Preferencias de accesibilidad">
       <div className="barra-a11y__interior">
         {/* Radios nativos por debajo del aspecto de control segmentado: el
             grupo entero es una sola parada del tabulador y se recorre con las
@@ -62,6 +66,6 @@ export default function AccessibilityBar() {
           <span className="sr-only">{highContrastOn ? ': activado' : ': desactivado'}</span>
         </button>
       </div>
-    </div>
+    </section>
   );
 }

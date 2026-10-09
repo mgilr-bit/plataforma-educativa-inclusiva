@@ -52,6 +52,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Corrección de la transcripción por el docente — 2026-10-03 — Issue #87
 - [x] Corregir y retirar materiales desde la interfaz — 2026-10-03 — Issue #89
 - [x] Resumen de la clase en lenguaje sencillo — 2026-10-03 — Issue #90
+- [x] Diseño: tipografía, marco de la aplicación y jerarquía — 2026-10-09 — Issue #93
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas
