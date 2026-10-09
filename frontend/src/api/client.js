@@ -7,6 +7,31 @@
 // que viajan a la API van en espanol porque asi esta definido su contrato.
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+
+/**
+ * Resuelve la direccion de un archivo subido.
+ *
+ * En la base se guarda una ruta relativa al servidor de la API
+ * ("/archivos/..."), no a la pagina. Son cosas distintas: en desarrollo la
+ * pagina vive en el 5173 y la API en el 4000, y en produccion la pagina esta
+ * en Vercel y la API en Railway. Usar la ruta tal cual hace que el navegador
+ * pida el archivo al servidor de la pagina, que responde con el index.html de
+ * la aplicacion; el reproductor recibe HTML en vez de video y avisa de que no
+ * se pudo reproducir.
+ *
+ * Resolver con URL cubre los dos casos de una vez: una ruta que empieza por
+ * "/" cuelga del origen de la API, y una direccion completa de otro sitio se
+ * devuelve intacta.
+ */
+export function urlDeArchivo(ruta) {
+  if (!ruta) return null;
+  try {
+    return new URL(ruta, BASE_URL).href;
+  } catch {
+    // BASE_URL relativo: la API y la pagina las sirve el mismo servidor.
+    return new URL(ruta, window.location.origin).href;
+  }
+}
 const TOKEN_KEY = 'plataforma.token';
 
 // El token se guarda en localStorage para que la sesion sobreviva a recargar la
