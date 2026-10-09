@@ -1,7 +1,6 @@
 // Gestion de usuarios. Solo la ve el administrador.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api/client';
-import Layout from '../components/Layout';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import NewUserForm from '../components/NewUserForm';
 import './UsersAdmin.css';
@@ -50,7 +49,7 @@ export default function UsersAdmin() {
   }
 
   return (
-    <Layout>
+    <>
       <h1>Usuarios</h1>
       <p>Aquí da de alta a los docentes y estudiantes del establecimiento.</p>
 
@@ -157,6 +156,6 @@ export default function UsersAdmin() {
           </table>
         </>
       )}
-    </Layout>
+    </>
   );
 }

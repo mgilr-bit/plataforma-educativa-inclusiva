@@ -112,13 +112,22 @@ export default function SubtitlePlayer({ content, subtitles }) {
                   type="button"
                   className="transcripcion__salto"
                   onClick={() => saltarA(segmento.tiempo_inicio)}
-                  // El nombre accesible se declara entero: compuesto por
-                  // partes, el algoritmo las pega sin espacios.
-                  aria-label={`Ir al minuto ${formatMinutes(segmento.tiempo_inicio)}: ${segmento.segmento_texto}`}
                 >
+                  {/* El nombre accesible se compone, no se declara con
+                      aria-label. Con aria-label el nombre decia "Ir al minuto
+                      0:00: Buenas tardes..." mientras en pantalla se leia
+                      "0:00 Buenas tardes...", y el texto visible dejaba de
+                      estar contenido en el nombre: quien maneja la plataforma
+                      por voz dice lo que ve y no acertaba el boton.
+                      El prefijo oculto va delante y el espacio es explicito,
+                      porque al componer el nombre las partes se pegan: un
+                      espacio dentro del <span> se descarta, fuera cuenta. */}
+                  <span className="sr-only">Ir al minuto</span>
+                  {' '}
                   <span className="transcripcion__tiempo">
                     {formatMinutes(segmento.tiempo_inicio)}
                   </span>
+                  {' '}
                   <span className="transcripcion__texto">{segmento.segmento_texto}</span>
                 </button>
               ) : (

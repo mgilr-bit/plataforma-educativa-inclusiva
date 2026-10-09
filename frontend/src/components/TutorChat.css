@@ -1,4 +1,5 @@
 .tutor {
+  max-width: var(--medida-lectura);
   margin-top: var(--espacio-12);
   padding: var(--espacio-6);
   background-color: var(--color-superficie);

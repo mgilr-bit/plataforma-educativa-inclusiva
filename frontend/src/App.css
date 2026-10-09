@@ -1,7 +1,23 @@
+/* El marco de la aplicacion es ancho; la medida de lectura es otra cosa y se
+   aplica solo donde hay texto corrido. Encerrar tambien las rejillas y las
+   tablas en 70ch dejaba la aplicacion en una tira estrecha en medio de la
+   pantalla, y eso es lo que la hacia parecer un documento y no una
+   herramienta. */
 .content {
-  max-width: 70ch; /* Renglones cortos: se leen con menos esfuerzo. */
+  max-width: var(--ancho-contenido);
   margin: 0 auto;
-  padding: var(--espacio-8) var(--espacio-4);
+  padding: var(--espacio-8) var(--espacio-6);
+}
+
+/* Texto que se lee seguido: transcripcion, resumen, respuestas del asistente. */
+.medida-lectura {
+  max-width: var(--medida-lectura);
+}
+
+@media (max-width: 48rem) {
+  .content {
+    padding: var(--espacio-6) var(--espacio-4);
+  }
 }
 
 /* El contenedor recibe el foco al usar el salto de contenido, pero no debe
@@ -9,3 +25,26 @@
 .content:focus {
   outline: none;
 }
+
+/* Pantallas cuyo fin es leer: la columna se centra en vez de quedar pegada a
+   la izquierda con medio ancho vacío al lado. */
+.pagina-lectura {
+  max-width: var(--medida-lectura);
+  margin-inline: auto;
+}
+
+/* Etiqueta de estado. El color no es la única señal: lleva texto y un borde
+   propio, para quien no distingue colores. */
+.etiqueta-estado {
+  display: inline-block;
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-1) var(--espacio-3);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: var(--texto-pequeno);
+  font-weight: 600;
+}
+
+.etiqueta-estado--pendiente { color: var(--color-texto-suave); }
+.etiqueta-estado--revisada  { color: var(--color-primario); }
+.etiqueta-estado--aprobada  { color: var(--color-exito); }

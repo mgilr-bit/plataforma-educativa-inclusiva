@@ -22,7 +22,10 @@
   color: var(--color-texto-suave);
 }
 
+/* Renglon corto aunque el marco de la aplicacion sea ancho: aqui se lee
+   seguido, y pasados unos 70 caracteres el ojo pierde el salto de linea. */
 .transcripcion {
+  max-width: var(--medida-lectura);
   list-style: none;
   margin: 0;
   padding: 0;

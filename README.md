@@ -1,6 +1,8 @@
-# Plataforma Educativa Inclusiva con IA
+# Aula Todos
 
-Plataforma web de apoyo educativo para estudiantes con discapacidad auditiva en San Juan Sacatepéquez, Guatemala.
+> Clases accesibles para estudiantes con menor capacidad auditiva.
+
+Plataforma web de apoyo educativo para estudiantes con discapacidad auditiva en San Juan Sacatepéquez, Guatemala. Proyecto de graduación de Ingeniería en Sistemas, Universidad Mariano Gálvez.
 
 **Proyecto de graduación** — Ingeniería en Sistemas de Información y Ciencias de la Computación
 Universidad Mariano Gálvez de Guatemala, Sede San Juan Sacatepéquez

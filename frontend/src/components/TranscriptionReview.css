@@ -1,4 +1,5 @@
 .revision {
+  max-width: var(--medida-lectura);
   margin-top: var(--espacio-8);
   padding-top: var(--espacio-6);
   border-top: 2px solid var(--color-borde);
