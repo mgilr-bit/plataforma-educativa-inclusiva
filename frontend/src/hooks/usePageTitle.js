@@ -7,7 +7,7 @@
 // siempre lo mismo al cambiar de pestana.
 import { useEffect } from 'react';
 
-const SUFIJO = 'Plataforma Educativa Inclusiva';
+const SUFIJO = 'Aula Todos';
 
 export default function usePageTitle(titulo) {
   useEffect(() => {

@@ -2,6 +2,12 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.37.0] — 2026-10-09
+### Cambiado
+- La plataforma se llama **Aula Todos**, con el lema «Clases accesibles para estudiantes con menor capacidad auditiva». Antes se presentaba como «Plataforma Educativa Inclusiva», que describía la categoría pero no nombraba nada. El nombre aparece en la cabecera, el inicio de sesión, el título de cada pestaña y el README.
+- En pantallas de menos de 75 rem el lema se retira de la cabecera y deja el sitio a la navegación; sigue completo en el inicio de sesión y en el título de la pestaña.
+- No se renombran el repositorio, las carpetas ni el paquete: cambiarlos rompería la dirección de GitHub, los despliegues y los enlaces de la documentación sin que se vea nada distinto.
+
 ## [0.36.0] — 2026-10-09
 ### Cambiado
 - Tipografía propia: Lexend, diseñada para mejorar la fluidez de lectura con formas simplificadas y más aire entre letras. No es una elección estética: muchos estudiantes sordos señantes leen el español como segunda lengua y por debajo de su grado. Se sirve desde el propio proyecto y no desde Google Fonts, porque la conexión en San Juan Sacatepéquez no siempre acompaña y porque pedirla a un tercero enviaría la dirección IP de cada estudiante —menores de edad— a un servicio ajeno al establecimiento. Es variable: 73 KB para todos los pesos.

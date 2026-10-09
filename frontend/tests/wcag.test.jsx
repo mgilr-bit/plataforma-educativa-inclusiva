@@ -70,7 +70,7 @@ describe('2.4.2 Cada pantalla tiene su propio título', () => {
     // En una pestaña estrecha solo se ven los primeros caracteres: ahí debe
     // estar lo que distingue una pantalla de otra.
     await waitFor(() => expect(document.title.startsWith('Iniciar sesión')).toBe(true));
-    expect(document.title).toMatch(/plataforma educativa inclusiva/i);
+    expect(document.title).toMatch(/aula todos/i);
   });
 });
 

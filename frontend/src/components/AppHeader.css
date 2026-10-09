@@ -120,6 +120,15 @@
   color: var(--color-primario);
 }
 
+/* El lema es largo y en pantallas medianas se come el sitio de la navegacion.
+   Ahi se retira: el nombre carga solo con la identidad, y el lema completo
+   sigue en el inicio de sesion y en el titulo de la pestaña. */
+@media (max-width: 75rem) {
+  .cabecera__lema {
+    display: none;
+  }
+}
+
 @media (max-width: 48rem) {
   .cabecera__fila {
     gap: var(--espacio-3);

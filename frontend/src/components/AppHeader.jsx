@@ -35,8 +35,8 @@ export default function AppHeader() {
             <Icon nombre="libro" tamano={20} />
           </span>
           <span className="cabecera__nombre">
-            Plataforma Educativa
-            <span className="cabecera__lema">Educación inclusiva</span>
+            Aula Todos
+            <span className="cabecera__lema">Clases accesibles para estudiantes con menor capacidad auditiva</span>
           </span>
         </Link>
 

@@ -94,8 +94,8 @@ export default function Login() {
           <Icon nombre="libro" tamano={24} />
         </span>
         <span>
-          Plataforma Educativa
-          <span className="login__lema">Educación inclusiva</span>
+          Aula Todos
+          <span className="login__lema">Clases accesibles para estudiantes con menor capacidad auditiva</span>
         </span>
       </p>
 
