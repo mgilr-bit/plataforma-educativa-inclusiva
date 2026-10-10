@@ -1,0 +1,59 @@
+/* Las pestañas envuelven en vez de empujar el ancho mínimo de la página. En
+   una pantalla de 320 px las tres en fila forzaban desplazamiento horizontal,
+   que el criterio de reflujo (WCAG 1.4.10) no admite. Envolver es preferible a
+   desplazarlas en horizontal: así ninguna queda fuera de la vista. */
+.pestanas__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+  border-bottom: 2px solid var(--color-borde);
+}
+
+.pestanas__boton {
+  padding: var(--espacio-3) var(--espacio-4);
+  background: none;
+  border: none;
+  /* La barra inferior se dibuja siempre, transparente, para que al activarse
+     no cambie el alto y las pestañas no se muevan. */
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  color: var(--color-texto-suave);
+  font: inherit;
+  font-weight: 600;
+}
+
+.pestanas__boton:hover {
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+}
+
+/* La pestaña abierta se distingue por color, peso y barra: el color por sí
+   solo deja fuera a quien no lo percibe. */
+.pestanas__boton--activa {
+  color: var(--color-primario);
+  border-bottom-color: var(--color-primario);
+}
+
+.pestanas__panel {
+  padding-top: var(--espacio-6);
+}
+
+/* En pantalla estrecha el relleno lateral de cada pestaña es lo que hace que
+   no quepan. */
+@media (max-width: 30rem) {
+  .pestanas__boton {
+    padding-left: var(--espacio-2);
+    padding-right: var(--espacio-2);
+  }
+}
+
+/* El panel es enfocable pero no debe dibujar un contorno al llegar desde su
+   pestaña: no es un control, solo el destino del tabulador. */
+.pestanas__panel:focus {
+  outline: none;
+}
+
+.pestanas__panel:focus-visible {
+  outline: var(--borde-foco) solid var(--color-foco);
+  outline-offset: 4px;
+}

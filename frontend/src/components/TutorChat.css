@@ -1,3 +1,13 @@
+/* El titulo lo pone la pestaña. */
+.tutor > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .tutor {
   max-width: var(--medida-lectura);
   margin-top: var(--espacio-12);

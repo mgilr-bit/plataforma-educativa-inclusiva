@@ -15,7 +15,10 @@ import AccessibilityBar from '../src/components/AccessibilityBar';
 import Login from '../src/pages/Login';
 import StudentPanel from '../src/pages/StudentPanel';
 import TeacherPanel from '../src/pages/TeacherPanel';
-import SubtitlePlayer from '../src/components/SubtitlePlayer';
+import MediaPlayer from '../src/components/MediaPlayer';
+import TranscriptList from '../src/components/TranscriptList';
+import Tabs from '../src/components/Tabs';
+import useReproductor from '../src/hooks/useReproductor';
 import TutorChat from '../src/components/TutorChat';
 import GenerateTranscription from '../src/components/GenerateTranscription';
 import TranscriptionReview from '../src/components/TranscriptionReview';
@@ -112,11 +115,30 @@ describe('Auditoría de accesibilidad', () => {
   });
 
   test('el reproductor con subtítulos no tiene violaciones', async () => {
+    const CONTENIDO = { id_contenido: 1, titulo: 'Clase', tipo: 'video', url_archivo: '/archivos/a.mp4' };
+    const SUBS = [{ id_subtitulo: 1, segmento_texto: 'Hola', tiempo_inicio: '0.000', tiempo_fin: '1.000' }];
+
+    function Clase() {
+      const reproductor = useReproductor({ content: CONTENIDO, subtitles: SUBS });
+      return (
+        <>
+          <MediaPlayer content={CONTENIDO} reproductor={reproductor} />
+          <TranscriptList subtitles={SUBS} reproductor={reproductor} />
+        </>
+      );
+    }
+
+    const { container } = envolver(<Clase />);
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('las pestañas no tienen violaciones', async () => {
     const { container } = envolver(
-      <SubtitlePlayer
-        content={{ id_contenido: 1, titulo: 'Clase', tipo: 'video', url_archivo: 'https://x.gt/a.mp4' }}
-        subtitles={[
-          { id_subtitulo: 1, segmento_texto: 'Hola', tiempo_inicio: '0.000', tiempo_fin: '1.000' },
+      <Tabs
+        etiqueta="Secciones del material"
+        pestanas={[
+          { id: 'uno', titulo: 'Resumen', contenido: <p>Resumen</p> },
+          { id: 'dos', titulo: 'Transcripción', contenido: <p>Transcripción</p> },
         ]}
       />
     );

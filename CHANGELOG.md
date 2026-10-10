@@ -2,6 +2,18 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.38.0] — 2026-10-10
+### Cambiado
+- La pantalla de una clase pasa a dos columnas: el video a un lado y el material escrito al otro, con pestañas para Resumen, Transcripción y Tutor. Antes iba todo apilado, y en una clase de trece minutos la transcripción quedaba a una pantalla de distancia del video que describe.
+- El video se queda fijo mientras se lee la transcripción. Es la razón de ser de las dos columnas: que el texto y lo que describe estén a la vista a la vez. Se prefirió fijar el video antes que recortar el panel con su propio desplazamiento, porque un área desplazable dentro de otra es incómoda con el dedo y la plataforma se usará en tableta.
+- Cabecera oscura, con los contrastes medidos: 13.65:1 el texto principal y 7.25:1 el secundario, ambos por encima del nivel AAA. En alto contraste pasa a negra con borde blanco.
+- `SubtitlePlayer` se divide en `MediaPlayer` y `TranscriptList`, que comparten estado por el hook `useReproductor`: en la pantalla ocupan columnas distintas y necesitan lo mismo —por qué segundo va la reproducción y cómo saltar a un momento—.
+- Los controles del video siguen siendo los del navegador. Unos propios se ven más a medida, pero hay que rehacer a mano el teclado, el foco y los nombres accesibles, y es la causa más común de reproductores inaccesibles.
+
+### Corregido
+- Las tres pestañas en una fila no cabían en 320 px y forzaban desplazamiento horizontal, que el criterio de reflujo (WCAG 1.4.10) no admite. Ahora envuelven, que es preferible a desplazarlas: así ninguna queda fuera de la vista.
+- Sin transcripción, la pantalla abre directamente la pestaña de la transcripción, donde está el botón de generarla. Abrir el resumen dejaba lo único accionable escondido detrás de una pestaña que había que descubrir.
+
 ## [0.37.0] — 2026-10-09
 ### Cambiado
 - La plataforma se llama **Aula Todos**, con el lema «Clases accesibles para estudiantes con menor capacidad auditiva». Antes se presentaba como «Plataforma Educativa Inclusiva», que describía la categoría pero no nombraba nada. El nombre aparece en la cabecera, el inicio de sesión, el título de cada pestaña y el README.

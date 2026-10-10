@@ -21,6 +21,15 @@
   --color-borde: #767e86;          /*  4.12:1, supera el 3:1 exigido a controles */
   --color-foco: #a34a00;           /*  5.94:1 */
 
+  /* --- Cabecera --------------------------------------------------------- */
+  /* Superficie oscura propia: separa el marco de la aplicacion del contenido.
+     Los contrastes estan medidos contra ese fondo, no supuestos. */
+  --color-cabecera: #102f4e;
+  --color-cabecera-texto: #ffffff;       /* 13.65:1 */
+  --color-cabecera-suave: #aebfd0;       /*  7.25:1, AAA */
+  --color-cabecera-acento: #ffffff;
+  --color-cabecera-borde: #2d5277;
+
   /* --- Tipografía ------------------------------------------------------- */
   /* Todo se deriva de --escala-texto, que el usuario ajusta. */
   --escala-texto: 1;
@@ -101,4 +110,12 @@
   --sombra-1: none;
   --sombra-2: none;
   --sombra-3: none;
+
+  /* En alto contraste la cabecera es negra como el resto, y se separa con un
+     borde blanco en vez de con un cambio de tono. */
+  --color-cabecera: #000000;
+  --color-cabecera-texto: #ffffff;       /* 21.00:1 */
+  --color-cabecera-suave: #e0e0e0;
+  --color-cabecera-acento: #ffd84d;      /* 15.18:1 */
+  --color-cabecera-borde: #ffffff;
 }
