@@ -2,6 +2,17 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.42.0] — 2026-10-10
+### Agregado
+- El inicio de sesión pasa a dos columnas: el formulario y, al lado, un panel que dice qué es esta plataforma y qué hace. Era un formulario solo en medio de una página en blanco, y es la primera —y a veces la única— pantalla que ve alguien que llega sin saber.
+- El fondo del panel lleva figuras geométricas dibujadas en SVG, no una fotografía. Una fotografía habría que traerla de algún sitio con su licencia, pesaría cientos de kilobytes en una conexión que no siempre acompaña, y el texto encima dejaría de tener el contraste medido. Las figuras son decorativas y se ocultan a los lectores de pantalla.
+- En alto contraste las figuras se apagan: sobre negro puro son ruido, y ese tema se gobierna con bordes nítidos y no con veladuras.
+
+### Decisiones
+- El formulario va primero en el orden del documento aunque se vea a la derecha: quien entra con teclado o lector de pantalla viene a iniciar sesión, no a leer la presentación.
+- Por debajo de 60 rem el panel se retira. En un teléfono, empujar el formulario media pantalla hacia abajo con un panel decorativo es estorbar.
+- Contraste medido sobre el panel con las figuras puestas: 13.65:1 el nombre y 7.25:1 el lema y los detalles, los tres por encima de AAA.
+
 ## [0.41.1] — 2026-10-10
 ### Cambiado
 - Las cuentas de ejemplo pasan de `@umg.edu.gt` a `@gmail.com`, tanto en la base como en el guion de datos de ejemplo, el README y el ejemplo del mensaje de error del inicio de sesión. Es más parecido al correo que de verdad usa un estudiante de básico, que es con quien se va a probar la plataforma.

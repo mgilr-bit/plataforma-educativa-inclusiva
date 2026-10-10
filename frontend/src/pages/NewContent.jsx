@@ -39,9 +39,9 @@ function pasosIniciales(tipo) {
   });
   return [
     { id: 'subida', titulo: 'Archivo subido', estado: 'pendiente' },
-    { id: 'transcripcion', ...siNo('Transcripción (Whisper)') },
+    { id: 'transcripcion', ...siNo('Transcripción') },
     { id: 'subtitulos', ...siNo('Subtítulos sincronizados') },
-    { id: 'resumen', ...siNo('Resumen en lenguaje sencillo (Claude)') },
+    { id: 'resumen', ...siNo('Resumen en lenguaje sencillo') },
     {
       id: 'revision',
       titulo: 'Revisión del docente',
