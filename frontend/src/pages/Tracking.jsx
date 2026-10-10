@@ -10,6 +10,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
+import { guardarArchivo } from '../utils/descargar';
 import usePageTitle from '../hooks/usePageTitle';
 import './Tracking.css';
 
@@ -30,6 +31,7 @@ export default function Tracking() {
   const [error, setError] = useState(null);
   const [sugerencia, setSugerencia] = useState(null);
   const [pensando, setPensando] = useState(false);
+  const [exportando, setExportando] = useState(false);
 
   useEffect(() => {
     api.courses()
@@ -49,6 +51,19 @@ export default function Tracking() {
       .catch((err) => setError(err.message))
       .finally(() => setCargando(false));
   }, [idCurso, desde, hasta]);
+
+  async function exportar() {
+    setExportando(true);
+    setError(null);
+    try {
+      const { blob, nombre } = await api.exportTracking(idCurso, { desde, hasta });
+      guardarArchivo(blob, nombre);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setExportando(false);
+    }
+  }
 
   async function pedirSugerencia() {
     setPensando(true);
@@ -102,16 +117,19 @@ export default function Tracking() {
           />
         </div>
 
-        {/* Enlace y no boton: descarga un archivo, y un enlace permite
-            abrirlo en otra pestaña o guardarlo donde se quiera. */}
+        {/* Boton y no enlace. Un enlace lo sigue el navegador, y la
+            navegacion no lleva la cabecera de autenticacion: el archivo lo
+            pide este cliente, que si pone el token, y se guarda desde
+            memoria. */}
         {idCurso && (
-          <a
+          <button
+            type="button"
             className="seguimiento__exportar"
-            href={api.trackingExportUrl(idCurso, { desde, hasta })}
-            download
+            onClick={exportar}
+            disabled={exportando}
           >
-            Exportar a hoja de cálculo
-          </a>
+            {exportando ? 'Preparando…' : 'Exportar a hoja de cálculo'}
+          </button>
         )}
       </div>
 

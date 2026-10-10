@@ -315,12 +315,44 @@ export const api = {
   },
 
   // La exportacion no pasa por request(): devuelve un archivo, no JSON.
-  trackingExportUrl: (courseId, { desde, hasta } = {}) => {
+  //
+  // Y no puede ser un enlace normal. Un enlace lo sigue el navegador, y la
+  // navegacion no lleva la cabecera de autenticacion: el token vive en
+  // localStorage y solo lo pone este cliente. Un enlace devolvia "Falta el
+  // token de autenticacion".
+  //
+  // Pasarlo por la direccion lo resolveria, pero el token acabaria en los
+  // registros del servidor y en el historial del navegador. Aqui se manejan
+  // datos de menores: se descarga con la cabecera y se guarda desde memoria.
+  exportTracking: async (courseId, { desde, hasta } = {}) => {
     const q = new URLSearchParams();
     if (desde) q.set('desde', desde);
     if (hasta) q.set('hasta', hasta);
     const cola = q.toString() ? `?${q}` : '';
-    return `${BASE_URL}/courses/${courseId}/tracking/export${cola}`;
+
+    const token = readToken();
+    const respuesta = await fetch(`${BASE_URL}/courses/${courseId}/tracking/export${cola}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    if (!respuesta.ok) {
+      if (respuesta.status === 401 && onUnauthorized) onUnauthorized();
+      let mensaje = `La API respondió ${respuesta.status}`;
+      try {
+        mensaje = (await respuesta.json()).mensaje || mensaje;
+      } catch {
+        // La respuesta de error tampoco era JSON.
+      }
+      throw new ApiError(mensaje, { status: respuesta.status });
+    }
+
+    // El nombre lo decide el servidor; si no viene, uno razonable.
+    const cabecera = respuesta.headers.get('Content-Disposition') || '';
+    const encontrado = /filename="?([^"]+)"?/.exec(cabecera);
+    return {
+      blob: await respuesta.blob(),
+      nombre: encontrado ? encontrado[1] : 'seguimiento.csv',
+    };
   },
 
   // El resumen en lenguaje sencillo. Para el estudiante es la puerta de

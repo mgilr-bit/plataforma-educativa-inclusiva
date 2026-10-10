@@ -50,6 +50,11 @@ app.use(cors({
     error.code = 'ORIGEN_NO_PERMITIDO';
     return callback(error);
   },
+  // Sin esto, el navegador oculta Content-Disposition en una peticion entre
+  // origenes distintos -la pagina vive en otro dominio que la API-, y la
+  // descarga del seguimiento se guardaba siempre como "seguimiento.csv". Con
+  // varios cursos, el docente acababa con archivos que no puede distinguir.
+  exposedHeaders: ['Content-Disposition'],
 }));
 
 app.use(express.json({ limit: LIMITE_CUERPO }));

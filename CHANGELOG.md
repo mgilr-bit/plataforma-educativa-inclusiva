@@ -2,6 +2,11 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.40.1] — 2026-10-10
+### Corregido
+- El botón de exportar el seguimiento devolvía «Falta el token de autenticación». Se había hecho como un enlace de descarga, y una navegación del navegador no lleva la cabecera `Authorization`: el token vive en `localStorage` y solo lo añade el cliente de la API, así que nunca podía funcionar. Ahora el archivo se pide con la sesión y se guarda desde memoria. No se pasa el token por la dirección a propósito: acabaría en los registros del servidor y en el historial, y aquí se manejan datos de menores de edad.
+- El archivo se guardaba siempre como «seguimiento.csv». El navegador oculta `Content-Disposition` entre orígenes distintos —la página vive en otro dominio que la API— salvo que el servidor la exponga. Con varios cursos, el docente acababa con archivos que no podía distinguir.
+
 ## [0.40.0] — 2026-10-10
 ### Agregado
 - Panel de seguimiento por estudiante: avance, última visita y consultas al asistente de cada uno, con filtro por periodo. El docente no tenía forma de saber quién entró al curso y quién no. Importa especialmente aquí, porque un estudiante sordo puede no preguntar por pena y el avance es a veces la única señal de que algo no va bien.

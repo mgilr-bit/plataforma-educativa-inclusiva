@@ -180,6 +180,22 @@ describe('Progreso y seguimiento', () => {
     assert.match(res.text, /"Fracciones; decimales";1/);
   });
 
+  test('el nombre del archivo es visible desde otro origen', async () => {
+    const res = await request(servidor)
+      .get(`/api/courses/${datos.curso}/tracking/export`)
+      .set(con(tokenDocente))
+      .set('Origin', 'http://localhost:5173');
+
+    // Sin exponer la cabecera, el navegador la oculta en una petición entre
+    // orígenes distintos —la página vive en otro dominio que la API— y la
+    // descarga se guardaba siempre como «seguimiento.csv». Con varios cursos,
+    // el docente acaba con archivos que no puede distinguir.
+    assert.match(
+      res.headers['access-control-expose-headers'] || '',
+      /Content-Disposition/i
+    );
+  });
+
   test('un docente ajeno tampoco puede exportar', async () => {
     const res = await request(servidor)
       .get(`/api/courses/${datos.curso}/tracking/export`)

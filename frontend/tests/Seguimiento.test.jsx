@@ -15,7 +15,7 @@ vi.mock('../src/api/client', async () => {
     ...real,
     api: {
       courses: vi.fn(), tracking: vi.fn(), suggestion: vi.fn(),
-      trackingExportUrl: vi.fn(() => 'http://localhost:4000/api/courses/1/tracking/export'),
+      exportTracking: vi.fn(),
     },
   };
 });
@@ -80,13 +80,31 @@ describe('Panel de seguimiento', () => {
     expect(screen.getByText('1 consulta')).toBeInTheDocument();
   });
 
-  test('exportar es un enlace de descarga, no un botón', async () => {
+  test('exportar pide el archivo con la sesión, no con un enlace', async () => {
+    api.exportTracking.mockResolvedValue({
+      blob: new Blob(['Estudiante;Avance'], { type: 'text/csv' }),
+      nombre: 'seguimiento.csv',
+    });
+    const usuario = userEvent.setup();
     montar();
 
-    // Un enlace permite abrirlo en otra pestaña o guardarlo donde se quiera.
-    const enlace = await screen.findByRole('link', { name: /exportar a hoja de cálculo/i });
-    expect(enlace).toHaveAttribute('download');
-    expect(enlace).toHaveAttribute('href', expect.stringContaining('/tracking/export'));
+    await usuario.click(await screen.findByRole('button', { name: /exportar a hoja de cálculo/i }));
+
+    // Con un enlace, el navegador navega y no lleva la cabecera de
+    // autenticación: devolvía «Falta el token de autenticación». Y pasar el
+    // token por la dirección lo dejaría en los registros del servidor y en el
+    // historial, con datos de menores de por medio.
+    expect(api.exportTracking).toHaveBeenCalledWith('1', { desde: '', hasta: '' });
+  });
+
+  test('si falla la exportación, se dice', async () => {
+    api.exportTracking.mockRejectedValue(new Error('La API respondió 500'));
+    const usuario = userEvent.setup();
+    montar();
+
+    await usuario.click(await screen.findByRole('button', { name: /exportar a hoja de cálculo/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/respondió 500/i);
   });
 
   test('la sugerencia se pide a propósito, no al cargar', async () => {
