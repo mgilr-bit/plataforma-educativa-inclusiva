@@ -56,6 +56,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Vista del estudiante: dos columnas y pestañas — 2026-10-10 — Issue #97
 - [x] Vista del docente: carga con procesamiento automático — 2026-10-10 — Issue #99
 - [x] Panel de seguimiento por estudiante — 2026-10-10 — Issue #100
+- [x] Panel de administración: barra lateral, búsqueda y paginación — 2026-10-10 — Issue #102
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas

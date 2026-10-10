@@ -64,14 +64,14 @@ async function main() {
     );
 
     const admin = await crearUsuario(cliente, {
-      nombre: 'Milton Gil', correo: 'admin@umg.edu.gt', idRol: 1, clave: CONTRASENAS.administrador,
+      nombre: 'Milton Gil', correo: 'admin@gmail.com', idRol: 1, clave: CONTRASENAS.administrador,
     });
 
     const docentes = {};
     for (const [clave, nombre, correo] of [
-      ['ana', 'Ana Pérez García', 'ana@umg.edu.gt'],
-      ['luis', 'Luis Morales Sicán', 'luis@umg.edu.gt'],
-      ['carmen', 'Carmen Xiloj Curruchiche', 'carmen@umg.edu.gt'],
+      ['ana', 'Ana Pérez García', 'ana@gmail.com'],
+      ['luis', 'Luis Morales Sicán', 'luis@gmail.com'],
+      ['carmen', 'Carmen Xiloj Curruchiche', 'carmen@gmail.com'],
     ]) {
       docentes[clave] = await crearUsuario(cliente, {
         nombre, correo, idRol: 2, clave: CONTRASENAS.docente,
@@ -80,14 +80,14 @@ async function main() {
 
     const estudiantes = [];
     for (const [nombre, correo] of [
-      ['Pedro López Chile', 'pedro@umg.edu.gt'],
-      ['Sofía Ramírez Boc', 'sofia@umg.edu.gt'],
-      ['Diego Sactic Pirir', 'diego@umg.edu.gt'],
-      ['María Cumez Tuy', 'maria@umg.edu.gt'],
-      ['José Chalí Raxón', 'jose@umg.edu.gt'],
-      ['Lucía Tzoc Ajú', 'lucia@umg.edu.gt'],
-      ['Andrés Quiej Sucuc', 'andres@umg.edu.gt'],
-      ['Elena Patzán Yol', 'elena@umg.edu.gt'],
+      ['Pedro López Chile', 'pedro@gmail.com'],
+      ['Sofía Ramírez Boc', 'sofia@gmail.com'],
+      ['Diego Sactic Pirir', 'diego@gmail.com'],
+      ['María Cumez Tuy', 'maria@gmail.com'],
+      ['José Chalí Raxón', 'jose@gmail.com'],
+      ['Lucía Tzoc Ajú', 'lucia@gmail.com'],
+      ['Andrés Quiej Sucuc', 'andres@gmail.com'],
+      ['Elena Patzán Yol', 'elena@gmail.com'],
     ]) {
       estudiantes.push(await crearUsuario(cliente, {
         nombre, correo, idRol: 3, clave: CONTRASENAS.estudiante,
@@ -196,12 +196,12 @@ async function main() {
     console.log('  Materiales      : 5 (uno retirado)');
     console.log('  Transcripción   : 5 subtítulos, uno corregido por la docente');
     console.log('\nCuentas para probar:\n');
-    console.log(`  Administrador   admin@umg.edu.gt      ${CONTRASENAS.administrador}`);
-    console.log(`  Docente         ana@umg.edu.gt        ${CONTRASENAS.docente}`);
-    console.log(`  Docente         luis@umg.edu.gt       ${CONTRASENAS.docente}`);
-    console.log(`  Estudiante      pedro@umg.edu.gt      ${CONTRASENAS.estudiante}`);
-    console.log(`  Estudiante      sofia@umg.edu.gt      ${CONTRASENAS.estudiante}`);
-    console.log(`  Desactivada     elena@umg.edu.gt      ${CONTRASENAS.estudiante}`);
+    console.log(`  Administrador   admin@gmail.com      ${CONTRASENAS.administrador}`);
+    console.log(`  Docente         ana@gmail.com        ${CONTRASENAS.docente}`);
+    console.log(`  Docente         luis@gmail.com       ${CONTRASENAS.docente}`);
+    console.log(`  Estudiante      pedro@gmail.com      ${CONTRASENAS.estudiante}`);
+    console.log(`  Estudiante      sofia@gmail.com      ${CONTRASENAS.estudiante}`);
+    console.log(`  Desactivada     elena@gmail.com      ${CONTRASENAS.estudiante}`);
     console.log('\nSon credenciales de desarrollo. No las use en un despliegue real.');
     console.log(`  (administrador id ${admin})`);
   } catch (error) {

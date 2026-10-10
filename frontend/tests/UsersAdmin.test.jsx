@@ -22,8 +22,8 @@ const ADMIN = { id_usuario: 1, nombre_completo: 'Milton Gil', rol: 'administrado
 
 const CUENTAS = {
   usuarios: [
-    { id_usuario: 2, nombre_completo: 'Ana Pérez', correo: 'ana@umg.edu.gt', rol: 'docente', estado: true },
-    { id_usuario: 6, nombre_completo: 'Pedro López', correo: 'pedro@umg.edu.gt', rol: 'estudiante', estado: false },
+    { id_usuario: 2, nombre_completo: 'Ana Pérez', correo: 'ana@gmail.com', rol: 'docente', estado: true },
+    { id_usuario: 6, nombre_completo: 'Pedro López', correo: 'pedro@gmail.com', rol: 'estudiante', estado: false },
   ],
   paginacion: { total: 2, pagina: 1, limite: 20, paginas: 1 },
 };
@@ -36,6 +36,12 @@ function montar() {
       <AuthProvider><UsersAdmin /></AuthProvider>
     </MemoryRouter>
   );
+}
+
+// El alta ya no está siempre a la vista: ocupaba media pantalla por encima de
+// la tabla, que es lo que se viene a consultar. Se abre con el botón.
+async function abrirAlta(usuario) {
+  await usuario.click(await screen.findByRole('button', { name: /nuevo usuario/i }));
 }
 
 describe('Gestión de usuarios', () => {
@@ -92,6 +98,7 @@ describe('Gestión de usuarios', () => {
   test('el alta valida antes de llamar a la API', async () => {
     const usuario = userEvent.setup();
     montar();
+    await abrirAlta(usuario);
 
     await usuario.click(await screen.findByRole('button', { name: /crear cuenta/i }));
 
@@ -103,16 +110,17 @@ describe('Gestión de usuarios', () => {
     api.createUser.mockResolvedValue({ usuario: { id_usuario: 9, nombre_completo: 'Luis Morales' } });
     const usuario = userEvent.setup();
     montar();
+    await abrirAlta(usuario);
 
     await usuario.type(await screen.findByLabelText(/nombre completo/i), 'Luis Morales');
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'luis@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'luis@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña inicial/i), 'Docente456');
     await usuario.selectOptions(screen.getByLabelText(/rol de la cuenta/i), '2');
     await usuario.click(screen.getByRole('button', { name: /crear cuenta/i }));
 
     await waitFor(() => {
       expect(api.createUser).toHaveBeenCalledWith({
-        fullName: 'Luis Morales', email: 'luis@umg.edu.gt',
+        fullName: 'Luis Morales', email: 'luis@gmail.com',
         password: 'Docente456', roleId: 2,
       });
     });
@@ -125,9 +133,10 @@ describe('Gestión de usuarios', () => {
     );
     const usuario = userEvent.setup();
     montar();
+    await abrirAlta(usuario);
 
     await usuario.type(await screen.findByLabelText(/nombre completo/i), 'Ana Pérez');
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña inicial/i), 'Clave12345');
     await usuario.click(screen.getByRole('button', { name: /crear cuenta/i }));
 
@@ -150,5 +159,46 @@ describe('Etiquetas de la pantalla', () => {
     const etiquetas = Array.from(document.querySelectorAll('label')).map((l) => l.textContent.trim());
     const repetidas = etiquetas.filter((e, i) => etiquetas.indexOf(e) !== i);
     expect(repetidas).toEqual([]);
+  });
+
+  test('el alta no ocupa la pantalla hasta que se pide', async () => {
+    montar();
+
+    // Estaba siempre desplegada, por encima de la tabla que es lo que se
+    // viene a consultar.
+    await screen.findByRole('button', { name: /nuevo usuario/i });
+    expect(screen.queryByLabelText(/nombre completo/i)).not.toBeInTheDocument();
+  });
+
+  test('al abrir el alta, el foco entra en ella', async () => {
+    const usuario = userEvent.setup();
+    montar();
+    await abrirAlta(usuario);
+
+    // Si el foco se quedara en el botón, quien usa teclado tendría que
+    // recorrer la pantalla entera para encontrar el formulario que acaba de
+    // abrir.
+    const campo = await screen.findByLabelText(/nombre completo/i);
+    expect(document.activeElement).toContainElement(campo);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  test('el botón dice si el formulario está abierto', async () => {
+    const usuario = userEvent.setup();
+    montar();
+
+    const boton = await screen.findByRole('button', { name: /nuevo usuario/i });
+    expect(boton).toHaveAttribute('aria-expanded', 'false');
+
+    await usuario.click(boton);
+    expect(screen.getByRole('button', { name: /cerrar el formulario/i }))
+      .toHaveAttribute('aria-expanded', 'true');
+  });
+
+  test('el estado de la cuenta se lee con palabras, no solo con el color', async () => {
+    montar();
+
+    // Quien no distingue el verde del rojo necesita leerlo.
+    expect(await screen.findByText('Activo')).toBeInTheDocument();
   });
 });

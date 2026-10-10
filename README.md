@@ -93,12 +93,12 @@ Deja un escenario coherente: un establecimiento, tres docentes, ocho estudiantes
 
 | Rol | Correo | Contraseña |
 |---|---|---|
-| Administrador | `admin@umg.edu.gt` | `Admin12345` |
-| Docente | `ana@umg.edu.gt` | `Docente12345` |
-| Docente | `luis@umg.edu.gt` | `Docente12345` |
-| Estudiante | `pedro@umg.edu.gt` | `Estudiante12345` |
-| Estudiante | `sofia@umg.edu.gt` | `Estudiante12345` |
-| Cuenta desactivada | `elena@umg.edu.gt` | `Estudiante12345` |
+| Administrador | `admin@gmail.com` | `Admin12345` |
+| Docente | `ana@gmail.com` | `Docente12345` |
+| Docente | `luis@gmail.com` | `Docente12345` |
+| Estudiante | `pedro@gmail.com` | `Estudiante12345` |
+| Estudiante | `sofia@gmail.com` | `Estudiante12345` |
+| Cuenta desactivada | `elena@gmail.com` | `Estudiante12345` |
 
 Son credenciales de desarrollo, escritas en el repositorio a propósito. **Nunca deben usarse en un despliegue real.**
 
@@ -143,6 +143,7 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
 | PATCH | `/api/subtitles/:id` | Administrador o docente titular |
 | POST | `/api/tutor/ask` | Estudiante |
+| GET | `/api/settings` | Administrador |
 | PUT | `/api/contents/:id/progress` | Estudiante inscrito |
 | GET | `/api/courses/:id/tracking` | Docente titular o administrador |
 | GET | `/api/courses/:id/tracking/export` | Docente titular o administrador |

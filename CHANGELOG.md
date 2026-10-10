@@ -2,6 +2,30 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.41.1] — 2026-10-10
+### Cambiado
+- Las cuentas de ejemplo pasan de `@umg.edu.gt` a `@gmail.com`, tanto en la base como en el guion de datos de ejemplo, el README y el ejemplo del mensaje de error del inicio de sesión. Es más parecido al correo que de verdad usa un estudiante de básico, que es con quien se va a probar la plataforma.
+- Se mantiene a propósito un `@umg.edu.gt` en las pruebas del validador de correo: es el único caso que cubre un dominio de dos niveles, que es el formato de un establecimiento guatemalteco. Queda anotado para que no se cambie por un `.com`.
+
+## [0.41.0] — 2026-10-10
+### Agregado
+- Barra lateral de administración con las secciones Usuarios, Cursos y Configuración. Es un `<nav>` propio con su nombre, para que quien navega por puntos de referencia distinga la navegación de la sección de la del sitio.
+- Paginación en la gestión de usuarios: el backend ya la devolvía en `paginacion` y la pantalla la ignoraba, de modo que solo se veían los primeros veinte.
+- Pantalla de Configuración, de solo lectura, con los límites reales con los que opera la plataforma: tamaño máximo de archivo, formatos admitidos, modelos de IA en uso, duración de la sesión e intentos de inicio de sesión. Los valores los lee del servidor, no son constantes repetidas en la interfaz.
+
+### Cambiado
+- El alta de usuarios se abre a propósito con un botón. Ocupaba media pantalla siempre, por encima de la tabla que es lo que se viene a consultar. Al abrirla, el foco entra en el formulario.
+- La tabla de usuarios muestra la inicial en un círculo —no fotografías, que de menores de edad no conviene guardar—, el estado como etiqueta con texto y borde propio, y el pie dice cuántas cuentas se ven de cuántas hay.
+- Buscar, filtrar por rol y filtrar por estado comparten una sola barra, en vez de un bloque aparte que separaba la búsqueda de la tabla.
+
+### Corregido
+- La cabecera no envolvía sus enlaces: con el administrador son cuatro y en un teléfono forzaban desplazamiento horizontal, contra el criterio de reflujo (WCAG 1.4.10).
+- La rejilla de Configuración usaba `minmax(20rem, 1fr)`, cuyo mínimo supera el ancho de un teléfono y estiraba la página. Ahora el mínimo nunca excede el contenedor.
+- Los elementos de la rejilla de administración no se encogían por debajo del ancho de su contenido, de modo que la tabla arrastraba toda la página.
+
+### Fuera de alcance
+- Las secciones Establecimientos y Bitácora del boceto, y la columna Establecimiento de la tabla, piden tablas recortadas del alcance. Siguen como trabajo futuro y hay que retirarlas del diagrama ER.
+
 ## [0.40.1] — 2026-10-10
 ### Corregido
 - El botón de exportar el seguimiento devolvía «Falta el token de autenticación». Se había hecho como un enlace de descarga, y una navegación del navegador no lleva la cabecera `Authorization`: el token vive en `localStorage` y solo lo añade el cliente de la API, así que nunca podía funcionar. Ahora el archivo se pide con la sesión y se guarda desde memoria. No se pasa el token por la dirección a propósito: acabaría en los registros del servidor y en el historial, y aquí se manejan datos de menores de edad.
