@@ -24,6 +24,7 @@ import GenerateTranscription from '../src/components/GenerateTranscription';
 import TranscriptionReview from '../src/components/TranscriptionReview';
 import ContentSettings from '../src/components/ContentSettings';
 import ClassSummary from '../src/components/ClassSummary';
+import Tracking from '../src/pages/Tracking';
 import UsersAdmin from '../src/pages/UsersAdmin';
 import { api, saveToken } from '../src/api/client';
 
@@ -39,6 +40,9 @@ vi.mock('../src/api/client', async () => {
       updateSubtitle: vi.fn(), updateTranscription: vi.fn(),
       updateContent: vi.fn(), deactivateContent: vi.fn(),
       summaries: vi.fn(), createSummary: vi.fn(), updateSummary: vi.fn(), deleteSummary: vi.fn(),
+      saveProgress: vi.fn().mockResolvedValue({ estado: 'ok' }),
+      tracking: vi.fn(), suggestion: vi.fn(),
+      trackingExportUrl: vi.fn(() => '/exportar'),
     },
   };
 });
@@ -79,6 +83,12 @@ describe('Auditoría de accesibilidad', () => {
     vi.clearAllMocks();
     api.courses.mockResolvedValue({ cursos: [] });
     api.consultations.mockResolvedValue({ consultas: [] });
+    api.tracking.mockResolvedValue({
+      curso: { id_curso: 1, nombre: 'Matemática I' },
+      materiales: 2,
+      estudiantes: [{ id_usuario: 6, nombre_completo: 'Pedro López', avance: 27, ultima_visita: '2026-10-10T12:00:00Z', consultas: 5 }],
+      temas: [{ id_contenido: 1, titulo: 'Fracciones', consultas: 4 }],
+    });
     api.summaries.mockResolvedValue({
       resumenes: [{
         id_resumen: 1,
@@ -198,6 +208,13 @@ describe('Auditoría de accesibilidad', () => {
       <ClassSummary contentId={9} puedeGestionar tieneTranscripcion />
     );
     await screen.findByRole('heading', { name: 'De que trata' });
+    expect(await auditar(container)).toEqual([]);
+  });
+
+  test('el panel de seguimiento no tiene violaciones', async () => {
+    api.courses.mockResolvedValue({ cursos: [{ id_curso: 1, nombre: 'Matemática I', grado: 'Primero' }] });
+    const { container } = envolver(<Tracking />);
+    await screen.findByRole('table');
     expect(await auditar(container)).toEqual([]);
   });
 

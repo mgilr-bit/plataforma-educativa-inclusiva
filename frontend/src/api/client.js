@@ -293,6 +293,36 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // Progreso del estudiante en un material.
+  saveProgress: (contentId, porcentaje) =>
+    request(`/contents/${contentId}/progress`, { method: 'PUT', body: { porcentaje } }),
+
+  // Seguimiento del curso, para el docente.
+  tracking: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return request(`/courses/${courseId}/tracking${cola}`);
+  },
+
+  suggestion: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return request(`/courses/${courseId}/tracking/suggestion${cola}`, { method: 'POST' });
+  },
+
+  // La exportacion no pasa por request(): devuelve un archivo, no JSON.
+  trackingExportUrl: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return `${BASE_URL}/courses/${courseId}/tracking/export${cola}`;
+  },
+
   // El resumen en lenguaje sencillo. Para el estudiante es la puerta de
   // entrada a la clase, mas que la transcripcion completa.
   summaries: (contentId) => request(`/contents/${contentId}/summaries`),

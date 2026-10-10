@@ -14,6 +14,7 @@ import CourseDetail from './pages/CourseDetail';
 import ContentDetail from './pages/ContentDetail';
 import UsersAdmin from './pages/UsersAdmin';
 import NewContent from './pages/NewContent';
+import Tracking from './pages/Tracking';
 import './styles/global.css';
 import './App.css';
 
@@ -62,6 +63,14 @@ export default function App() {
                 element={(
                   <ProtectedRoute>
                     <ContentDetail />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/seguimiento"
+                element={(
+                  <ProtectedRoute roles={['docente', 'administrador']}>
+                    <Tracking />
                   </ProtectedRoute>
                 )}
               />

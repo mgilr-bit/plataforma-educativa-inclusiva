@@ -51,6 +51,7 @@ export default function useReproductor({ content, subtitles }) {
 
   return {
     mediaRef,
+    currentTime,
     esAudio,
     tieneMedio,
     vttUrl,

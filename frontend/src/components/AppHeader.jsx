@@ -29,6 +29,7 @@ export default function AppHeader() {
     // Cargar una clase es lo que mas hace un docente; estaba escondido dentro
     // de la pantalla de cada curso.
     ...(esDocente ? [{ a: '/contenidos/nuevo', texto: 'Cargar clase' }] : []),
+    ...(esDocente ? [{ a: '/seguimiento', texto: 'Seguimiento' }] : []),
     ...(user.rol === 'administrador' ? [{ a: '/usuarios', texto: 'Usuarios' }] : []),
   ];
 

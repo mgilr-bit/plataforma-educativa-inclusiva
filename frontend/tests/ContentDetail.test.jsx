@@ -21,6 +21,7 @@ vi.mock('../src/api/client', async () => {
       transcribe: vi.fn(),
       consultations: vi.fn().mockResolvedValue({ consultas: [] }),
       summaries: vi.fn().mockResolvedValue({ resumenes: [] }),
+      saveProgress: vi.fn().mockResolvedValue({ estado: 'ok' }),
       createSummary: vi.fn(),
       askTutor: vi.fn(),
     },
@@ -71,6 +72,7 @@ function montar(usuario) {
 beforeEach(() => {
   vi.clearAllMocks();
   api.summaries.mockResolvedValue({ resumenes: [] });
+  api.saveProgress.mockResolvedValue({ estado: 'ok' });
   api.consultations.mockResolvedValue({ consultas: [] });
   URL.createObjectURL = vi.fn(() => 'blob:prueba');
   URL.revokeObjectURL = vi.fn();

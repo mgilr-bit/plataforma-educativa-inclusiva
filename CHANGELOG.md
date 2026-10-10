@@ -2,6 +2,25 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.40.0] — 2026-10-10
+### Agregado
+- Panel de seguimiento por estudiante: avance, última visita y consultas al asistente de cada uno, con filtro por periodo. El docente no tenía forma de saber quién entró al curso y quién no. Importa especialmente aquí, porque un estudiante sordo puede no preguntar por pena y el avance es a veces la única señal de que algo no va bien.
+- Gráfico de temas con más consultas: muchas preguntas sobre una misma clase señalan el tema que no quedó claro. Se dibuja como lista de definiciones con el número al lado, de modo que el dato se lee igual con lector de pantalla y la barra solo lo acompaña.
+- **Sugerencia pedagógica** generada por Claude a partir de esos mismos datos. Los números no dicen qué hacer; esto propone acciones concretas con lo que la plataforma ya sabe hacer: publicar un refuerzo, revisar una transcripción, generar un resumen más sencillo, buscar a un estudiante. Se pide a propósito y no al cargar, porque cuesta saldo del asistente.
+- Exportación a hoja de cálculo, con punto y coma y BOM para que Excel abra las columnas y los acentos sin pedir nada.
+- Se registra el progreso del estudiante al abrir una clase y conforme avanza en ella. De un video o un audio se mide hasta dónde llegó la reproducción; de un documento, abrirlo es haberlo recibido.
+- Se activa la tabla `progreso`, que estaba en el modelo desde el principio sin una sola línea de código que la tocara.
+
+### Decisiones
+- El avance del curso promedia sobre **todos** los materiales, contando como cero los no abiertos. Promediando solo lo visitado, quien abrió una clase de diez aparecería casi al día.
+- Volver a abrir un material no hace retroceder el avance: se guarda el punto más lejano alcanzado, no el actual.
+- Quien nunca entró aparece en la tabla con cero, no desaparece: es justo a quien hay que buscar.
+- El docente no deja rastro de avance al abrir sus propias clases para revisarlas.
+- La columna «Evaluaciones» del boceto queda fuera: ese módulo se recortó del alcance y llenarla sería inventar datos.
+
+### Corregido
+- La tabla de cuatro columnas estiraba toda la página en un teléfono. El desplazamiento va ahora dentro de la tabla —el criterio de reflujo exceptúa las tablas de datos— y su contenedor es enfocable para poder desplazarla con teclado.
+
 ## [0.39.0] — 2026-10-10
 ### Agregado
 - Pantalla propia para cargar una clase, con el curso como campo en vez de contexto implícito, y enlace «Cargar clase» en la cabecera. Antes había que entrar al curso para encontrarlo.

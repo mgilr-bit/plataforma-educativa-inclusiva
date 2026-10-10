@@ -6,6 +6,7 @@ import MediaPlayer from '../components/MediaPlayer';
 import TranscriptList from '../components/TranscriptList';
 import Tabs from '../components/Tabs';
 import useReproductor from '../hooks/useReproductor';
+import useProgreso from '../hooks/useProgreso';
 import TutorChat from '../components/TutorChat';
 import GenerateTranscription from '../components/GenerateTranscription';
 import { puedeGenerar, puedeRevisar } from '../utils/transcripcion';
@@ -39,6 +40,31 @@ export default function ContentDetail() {
   const reproductor = useReproductor({
     content: state.content || { tipo: 'texto', url_archivo: null },
     subtitles: subtitulos,
+  });
+
+  // Cuanto de la clase ha consumido el estudiante.
+  //
+  // De un video o un audio, hasta donde llego la reproduccion. De un documento
+  // o un texto no hay nada que medir: abrirlo es haberlo recibido.
+  const esReproducible = ['video', 'audio'].includes(state.content?.tipo);
+  const duracion = reproductor.mediaRef.current?.duration;
+  const porcentaje = !state.content
+    ? 0
+    : !esReproducible
+      ? 100
+      : Math.min(100, Math.max(
+        1,
+        Number.isFinite(duracion) && duracion > 0
+          ? Math.round((reproductor.currentTime / duracion) * 100)
+          : 1
+      ));
+
+  useProgreso({
+    contentId: state.content ? Number(id) : null,
+    // Solo el estudiante deja rastro: el docente abre sus propias clases para
+    // revisarlas, y eso no es progreso de nadie.
+    activo: user?.rol === 'estudiante',
+    porcentaje,
   });
   const recienGenerada = useRef(false);
 
