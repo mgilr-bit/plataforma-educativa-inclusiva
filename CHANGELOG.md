@@ -2,6 +2,18 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.39.0] — 2026-10-10
+### Agregado
+- Pantalla propia para cargar una clase, con el curso como campo en vez de contexto implícito, y enlace «Cargar clase» en la cabecera. Antes había que entrar al curso para encontrarlo.
+- **Procesamiento automático**: al publicar, la plataforma transcribe con Whisper y resume con Claude sin que haya que pulsar nada más. Antes eran tres botones en tres pantallas distintas para una sola tarea. Medido de punta a punta por la interfaz: una clase de 40 segundos queda subida, transcrita, subtitulada y resumida en 10 segundos.
+- Panel con el estado de cada paso —subida, transcripción, subtítulos, resumen, revisión—, con el estado en palabras además del color, y anunciado en `aria-live` para quien no mira la pantalla fija.
+- Barra de avance real de la subida. `fetch` no publica el progreso, así que la subida con archivo pasa a `XMLHttpRequest`. Importa con la conexión de un establecimiento rural: sin barra, el docente no sabe si sube o si se colgó, y vuelve a intentarlo.
+- Arrastrar y soltar el archivo, sin que deje de poder elegirse con teclado: el `<input type="file">` sigue a la vista y con su etiqueta, porque esconderlo tras la zona de arrastre es la causa habitual de que no se pueda elegir archivo sin ratón.
+- El tiempo que tarda la transcripción se muestra medido sobre clases reales de la plataforma: una hora de clase, unos cinco minutos.
+
+### Corregido
+- El campo de archivo nativo y los `input` de texto arrastraban un ancho mínimo que forzaba desplazamiento horizontal en un teléfono, contra el criterio de reflujo (WCAG 1.4.10).
+
 ## [0.38.0] — 2026-10-10
 ### Cambiado
 - La pantalla de una clase pasa a dos columnas: el video a un lado y el material escrito al otro, con pestañas para Resumen, Transcripción y Tutor. Antes iba todo apilado, y en una clase de trece minutos la transcripción quedaba a una pantalla de distancia del video que describe.

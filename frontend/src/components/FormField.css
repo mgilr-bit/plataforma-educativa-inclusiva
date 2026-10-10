@@ -19,6 +19,9 @@
 }
 
 .form-field__input {
+  /* Sin esto, el atributo "size" por omisión de un input da un ancho mínimo
+     de unos 20 caracteres, que no cabe en un teléfono. */
+  min-width: 0;
   width: 100%;
   min-height: var(--area-minima);
   padding: var(--espacio-3);

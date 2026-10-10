@@ -1,0 +1,77 @@
+/* Formulario a un lado y el avance del procesamiento al otro: lo que se hace
+   y lo que está pasando, a la vez. */
+.carga {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--espacio-6);
+  align-items: start;
+}
+
+.carga__formulario {
+  max-width: var(--medida-lectura);
+  padding: var(--espacio-6);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+/* Curso y tipo caben juntos y se leen como lo que son: dos datos de la misma
+   decisión. */
+.carga__fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--espacio-4);
+}
+
+.carga__avance {
+  margin: var(--espacio-4) 0;
+}
+
+.carga__avance-texto {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-1);
+  font-size: var(--texto-pequeno);
+}
+
+.carga__avance progress {
+  width: 100%;
+  height: 0.75rem;
+}
+
+.carga__listo {
+  margin-top: var(--espacio-4);
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border-left: 4px solid var(--color-exito);
+  border-radius: var(--radio);
+}
+
+.carga__otra {
+  min-height: var(--area-minima);
+  padding: 0 var(--espacio-3);
+  background: none;
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+}
+
+/* El avance del procesamiento acompaña al formulario mientras se desplaza:
+   es lo que el docente mira mientras espera. */
+@media (min-width: 64.0625rem) {
+  .carga__proceso {
+    position: sticky;
+    top: calc(3.5rem + var(--espacio-4));
+  }
+}
+
+@media (max-width: 64rem) {
+  .carga {
+    grid-template-columns: 1fr;
+  }
+
+  .carga__fila {
+    grid-template-columns: 1fr;
+  }
+}

@@ -22,8 +22,13 @@ export default function AppHeader() {
   // presentan solos.
   if (!user) return null;
 
+  const esDocente = user.rol === 'docente' || user.rol === 'administrador';
+
   const enlaces = [
     { a: '/panel', texto: 'Mis cursos' },
+    // Cargar una clase es lo que mas hace un docente; estaba escondido dentro
+    // de la pantalla de cada curso.
+    ...(esDocente ? [{ a: '/contenidos/nuevo', texto: 'Cargar clase' }] : []),
     ...(user.rol === 'administrador' ? [{ a: '/usuarios', texto: 'Usuarios' }] : []),
   ];
 

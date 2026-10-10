@@ -86,6 +86,53 @@ export class ApiError extends Error {
   }
 }
 
+// Sube un formulario informando del avance.
+//
+// Va con XMLHttpRequest y no con fetch porque fetch no publica el progreso de
+// subida. Importa: una clase grabada pesa decenas de megabytes y la conexion
+// de un establecimiento rural no siempre acompaña. Sin barra de avance, el
+// docente no sabe si esta subiendo o si se colgo, y vuelve a intentarlo.
+function subirConAvance(path, formData, alAvanzar) {
+  return new Promise((resolver, rechazar) => {
+    const peticion = new XMLHttpRequest();
+    peticion.open('POST', `${BASE_URL}${path}`);
+
+    const token = readToken();
+    if (token) peticion.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    peticion.upload.addEventListener('progress', (evento) => {
+      if (evento.lengthComputable) {
+        alAvanzar(Math.round((evento.loaded / evento.total) * 100));
+      }
+    });
+
+    peticion.addEventListener('load', () => {
+      let datos = {};
+      try {
+        datos = JSON.parse(peticion.responseText);
+      } catch {
+        // Una respuesta que no es JSON ya es un error de por si.
+      }
+      if (peticion.status >= 200 && peticion.status < 300) {
+        resolver(datos);
+        return;
+      }
+      if (peticion.status === 401 && onUnauthorized) onUnauthorized();
+      rechazar(new ApiError(datos.mensaje || `La API respondió ${peticion.status}`, {
+        status: peticion.status,
+        details: datos.errores,
+      }));
+    });
+
+    peticion.addEventListener('error', () =>
+      rechazar(new ApiError('No se pudo conectar con el servidor', { status: 0 })));
+    peticion.addEventListener('abort', () =>
+      rechazar(new ApiError('La subida se canceló', { status: 0 })));
+
+    peticion.send(formData);
+  });
+}
+
 async function request(path, { method = 'GET', body, formData, authenticated = true } = {}) {
   const headers = {};
 
@@ -219,7 +266,7 @@ export const api = {
   // Con archivo adjunto la peticion viaja como multipart; sin el, como JSON.
   // El navegador fija por si mismo el limite del formulario, asi que no hay que
   // poner Content-Type a mano: hacerlo rompe la peticion.
-  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file }) => {
+  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file, onProgress }) => {
     if (file) {
       const datos = new FormData();
       datos.append('idCurso', String(courseId));
@@ -227,7 +274,10 @@ export const api = {
       datos.append('tipo', type);
       if (durationSeconds) datos.append('duracionSeg', String(durationSeconds));
       datos.append('archivo', file);
-      return request('/contents', { method: 'POST', formData: datos });
+      // Con callback de avance se usa XHR; sin el, el camino normal.
+      return onProgress
+        ? subirConAvance('/contents', datos, onProgress)
+        : request('/contents', { method: 'POST', formData: datos });
     }
 
     return request('/contents', {
