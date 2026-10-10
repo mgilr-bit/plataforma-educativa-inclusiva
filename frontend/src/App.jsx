@@ -15,6 +15,7 @@ import ContentDetail from './pages/ContentDetail';
 import UsersAdmin from './pages/UsersAdmin';
 import NewContent from './pages/NewContent';
 import Tracking from './pages/Tracking';
+import Settings from './pages/Settings';
 import './styles/global.css';
 import './App.css';
 
@@ -79,6 +80,14 @@ export default function App() {
                 element={(
                   <ProtectedRoute roles={['docente', 'administrador']}>
                     <NewContent />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/configuracion"
+                element={(
+                  <ProtectedRoute roles={['administrador']}>
+                    <Settings />
                   </ProtectedRoute>
                 )}
               />

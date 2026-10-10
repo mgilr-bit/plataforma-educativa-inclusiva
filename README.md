@@ -143,6 +143,7 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
 | PATCH | `/api/subtitles/:id` | Administrador o docente titular |
 | POST | `/api/tutor/ask` | Estudiante |
+| GET | `/api/settings` | Administrador |
 | PUT | `/api/contents/:id/progress` | Estudiante inscrito |
 | GET | `/api/courses/:id/tracking` | Docente titular o administrador |
 | GET | `/api/courses/:id/tracking/export` | Docente titular o administrador |
