@@ -75,7 +75,7 @@ describe('Pantalla de inicio de sesión', () => {
     const usuario = userEvent.setup();
     montar();
 
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña/i), 'Docente123');
     await usuario.click(screen.getByRole('button', { name: /entrar/i }));
 
@@ -89,7 +89,7 @@ describe('Pantalla de inicio de sesión', () => {
     const usuario = userEvent.setup();
     montar();
 
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña/i), 'Docente123');
     await usuario.click(screen.getByRole('button', { name: /entrar/i }));
 
@@ -103,12 +103,12 @@ describe('Pantalla de inicio de sesión', () => {
     const usuario = userEvent.setup();
     montar();
 
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), '  ana@umg.edu.gt  ');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), '  ana@gmail.com  ');
     await usuario.type(screen.getByLabelText(/contraseña/i), 'Docente123');
     await usuario.click(screen.getByRole('button', { name: /entrar/i }));
 
     await waitFor(() => {
-      expect(api.login).toHaveBeenCalledWith('ana@umg.edu.gt', 'Docente123');
+      expect(api.login).toHaveBeenCalledWith('ana@gmail.com', 'Docente123');
     });
   });
 
@@ -118,7 +118,7 @@ describe('Pantalla de inicio de sesión', () => {
     const usuario = userEvent.setup();
     montar();
 
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña/i), 'Docente123');
     await usuario.click(screen.getByRole('button', { name: /entrar/i }));
 

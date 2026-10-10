@@ -22,8 +22,8 @@ const ADMIN = { id_usuario: 1, nombre_completo: 'Milton Gil', rol: 'administrado
 
 const CUENTAS = {
   usuarios: [
-    { id_usuario: 2, nombre_completo: 'Ana Pérez', correo: 'ana@umg.edu.gt', rol: 'docente', estado: true },
-    { id_usuario: 6, nombre_completo: 'Pedro López', correo: 'pedro@umg.edu.gt', rol: 'estudiante', estado: false },
+    { id_usuario: 2, nombre_completo: 'Ana Pérez', correo: 'ana@gmail.com', rol: 'docente', estado: true },
+    { id_usuario: 6, nombre_completo: 'Pedro López', correo: 'pedro@gmail.com', rol: 'estudiante', estado: false },
   ],
   paginacion: { total: 2, pagina: 1, limite: 20, paginas: 1 },
 };
@@ -113,14 +113,14 @@ describe('Gestión de usuarios', () => {
     await abrirAlta(usuario);
 
     await usuario.type(await screen.findByLabelText(/nombre completo/i), 'Luis Morales');
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'luis@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'luis@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña inicial/i), 'Docente456');
     await usuario.selectOptions(screen.getByLabelText(/rol de la cuenta/i), '2');
     await usuario.click(screen.getByRole('button', { name: /crear cuenta/i }));
 
     await waitFor(() => {
       expect(api.createUser).toHaveBeenCalledWith({
-        fullName: 'Luis Morales', email: 'luis@umg.edu.gt',
+        fullName: 'Luis Morales', email: 'luis@gmail.com',
         password: 'Docente456', roleId: 2,
       });
     });
@@ -136,7 +136,7 @@ describe('Gestión de usuarios', () => {
     await abrirAlta(usuario);
 
     await usuario.type(await screen.findByLabelText(/nombre completo/i), 'Ana Pérez');
-    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@umg.edu.gt');
+    await usuario.type(screen.getByLabelText(/correo electrónico/i), 'ana@gmail.com');
     await usuario.type(screen.getByLabelText(/contraseña inicial/i), 'Clave12345');
     await usuario.click(screen.getByRole('button', { name: /crear cuenta/i }));
 

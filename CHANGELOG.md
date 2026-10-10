@@ -2,6 +2,11 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.41.1] — 2026-10-10
+### Cambiado
+- Las cuentas de ejemplo pasan de `@umg.edu.gt` a `@gmail.com`, tanto en la base como en el guion de datos de ejemplo, el README y el ejemplo del mensaje de error del inicio de sesión. Es más parecido al correo que de verdad usa un estudiante de básico, que es con quien se va a probar la plataforma.
+- Se mantiene a propósito un `@umg.edu.gt` en las pruebas del validador de correo: es el único caso que cubre un dominio de dos niveles, que es el formato de un establecimiento guatemalteco. Queda anotado para que no se cambie por un `.com`.
+
 ## [0.41.0] — 2026-10-10
 ### Agregado
 - Barra lateral de administración con las secciones Usuarios, Cursos y Configuración. Es un `<nav>` propio con su nombre, para que quien navega por puntos de referencia distinga la navegación de la sección de la del sitio.

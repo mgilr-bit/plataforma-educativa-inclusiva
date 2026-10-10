@@ -46,7 +46,7 @@ export default function Login() {
     if (!email.trim()) {
       errors.email = 'Escriba su correo electrónico.';
     } else if (!email.includes('@')) {
-      errors.email = 'El correo debe incluir una arroba, por ejemplo: nombre@umg.edu.gt';
+      errors.email = 'El correo debe incluir una arroba, por ejemplo: nombre@gmail.com';
     }
     if (!password) {
       errors.password = 'Escriba su contraseña.';
