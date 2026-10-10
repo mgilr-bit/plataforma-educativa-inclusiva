@@ -2,6 +2,54 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.40.1] — 2026-10-10
+### Corregido
+- El botón de exportar el seguimiento devolvía «Falta el token de autenticación». Se había hecho como un enlace de descarga, y una navegación del navegador no lleva la cabecera `Authorization`: el token vive en `localStorage` y solo lo añade el cliente de la API, así que nunca podía funcionar. Ahora el archivo se pide con la sesión y se guarda desde memoria. No se pasa el token por la dirección a propósito: acabaría en los registros del servidor y en el historial, y aquí se manejan datos de menores de edad.
+- El archivo se guardaba siempre como «seguimiento.csv». El navegador oculta `Content-Disposition` entre orígenes distintos —la página vive en otro dominio que la API— salvo que el servidor la exponga. Con varios cursos, el docente acababa con archivos que no podía distinguir.
+
+## [0.40.0] — 2026-10-10
+### Agregado
+- Panel de seguimiento por estudiante: avance, última visita y consultas al asistente de cada uno, con filtro por periodo. El docente no tenía forma de saber quién entró al curso y quién no. Importa especialmente aquí, porque un estudiante sordo puede no preguntar por pena y el avance es a veces la única señal de que algo no va bien.
+- Gráfico de temas con más consultas: muchas preguntas sobre una misma clase señalan el tema que no quedó claro. Se dibuja como lista de definiciones con el número al lado, de modo que el dato se lee igual con lector de pantalla y la barra solo lo acompaña.
+- **Sugerencia pedagógica** generada por Claude a partir de esos mismos datos. Los números no dicen qué hacer; esto propone acciones concretas con lo que la plataforma ya sabe hacer: publicar un refuerzo, revisar una transcripción, generar un resumen más sencillo, buscar a un estudiante. Se pide a propósito y no al cargar, porque cuesta saldo del asistente.
+- Exportación a hoja de cálculo, con punto y coma y BOM para que Excel abra las columnas y los acentos sin pedir nada.
+- Se registra el progreso del estudiante al abrir una clase y conforme avanza en ella. De un video o un audio se mide hasta dónde llegó la reproducción; de un documento, abrirlo es haberlo recibido.
+- Se activa la tabla `progreso`, que estaba en el modelo desde el principio sin una sola línea de código que la tocara.
+
+### Decisiones
+- El avance del curso promedia sobre **todos** los materiales, contando como cero los no abiertos. Promediando solo lo visitado, quien abrió una clase de diez aparecería casi al día.
+- Volver a abrir un material no hace retroceder el avance: se guarda el punto más lejano alcanzado, no el actual.
+- Quien nunca entró aparece en la tabla con cero, no desaparece: es justo a quien hay que buscar.
+- El docente no deja rastro de avance al abrir sus propias clases para revisarlas.
+- La columna «Evaluaciones» del boceto queda fuera: ese módulo se recortó del alcance y llenarla sería inventar datos.
+
+### Corregido
+- La tabla de cuatro columnas estiraba toda la página en un teléfono. El desplazamiento va ahora dentro de la tabla —el criterio de reflujo exceptúa las tablas de datos— y su contenedor es enfocable para poder desplazarla con teclado.
+
+## [0.39.0] — 2026-10-10
+### Agregado
+- Pantalla propia para cargar una clase, con el curso como campo en vez de contexto implícito, y enlace «Cargar clase» en la cabecera. Antes había que entrar al curso para encontrarlo.
+- **Procesamiento automático**: al publicar, la plataforma transcribe con Whisper y resume con Claude sin que haya que pulsar nada más. Antes eran tres botones en tres pantallas distintas para una sola tarea. Medido de punta a punta por la interfaz: una clase de 40 segundos queda subida, transcrita, subtitulada y resumida en 10 segundos.
+- Panel con el estado de cada paso —subida, transcripción, subtítulos, resumen, revisión—, con el estado en palabras además del color, y anunciado en `aria-live` para quien no mira la pantalla fija.
+- Barra de avance real de la subida. `fetch` no publica el progreso, así que la subida con archivo pasa a `XMLHttpRequest`. Importa con la conexión de un establecimiento rural: sin barra, el docente no sabe si sube o si se colgó, y vuelve a intentarlo.
+- Arrastrar y soltar el archivo, sin que deje de poder elegirse con teclado: el `<input type="file">` sigue a la vista y con su etiqueta, porque esconderlo tras la zona de arrastre es la causa habitual de que no se pueda elegir archivo sin ratón.
+- El tiempo que tarda la transcripción se muestra medido sobre clases reales de la plataforma: una hora de clase, unos cinco minutos.
+
+### Corregido
+- El campo de archivo nativo y los `input` de texto arrastraban un ancho mínimo que forzaba desplazamiento horizontal en un teléfono, contra el criterio de reflujo (WCAG 1.4.10).
+
+## [0.38.0] — 2026-10-10
+### Cambiado
+- La pantalla de una clase pasa a dos columnas: el video a un lado y el material escrito al otro, con pestañas para Resumen, Transcripción y Tutor. Antes iba todo apilado, y en una clase de trece minutos la transcripción quedaba a una pantalla de distancia del video que describe.
+- El video se queda fijo mientras se lee la transcripción. Es la razón de ser de las dos columnas: que el texto y lo que describe estén a la vista a la vez. Se prefirió fijar el video antes que recortar el panel con su propio desplazamiento, porque un área desplazable dentro de otra es incómoda con el dedo y la plataforma se usará en tableta.
+- Cabecera oscura, con los contrastes medidos: 13.65:1 el texto principal y 7.25:1 el secundario, ambos por encima del nivel AAA. En alto contraste pasa a negra con borde blanco.
+- `SubtitlePlayer` se divide en `MediaPlayer` y `TranscriptList`, que comparten estado por el hook `useReproductor`: en la pantalla ocupan columnas distintas y necesitan lo mismo —por qué segundo va la reproducción y cómo saltar a un momento—.
+- Los controles del video siguen siendo los del navegador. Unos propios se ven más a medida, pero hay que rehacer a mano el teclado, el foco y los nombres accesibles, y es la causa más común de reproductores inaccesibles.
+
+### Corregido
+- Las tres pestañas en una fila no cabían en 320 px y forzaban desplazamiento horizontal, que el criterio de reflujo (WCAG 1.4.10) no admite. Ahora envuelven, que es preferible a desplazarlas: así ninguna queda fuera de la vista.
+- Sin transcripción, la pantalla abre directamente la pestaña de la transcripción, donde está el botón de generarla. Abrir el resumen dejaba lo único accionable escondido detrás de una pestaña que había que descubrir.
+
 ## [0.37.0] — 2026-10-09
 ### Cambiado
 - La plataforma se llama **Aula Todos**, con el lema «Clases accesibles para estudiantes con menor capacidad auditiva». Antes se presentaba como «Plataforma Educativa Inclusiva», que describía la categoría pero no nombraba nada. El nombre aparece en la cabecera, el inicio de sesión, el título de cada pestaña y el README.

@@ -2,7 +2,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import SubtitlePlayer from '../components/SubtitlePlayer';
+import MediaPlayer from '../components/MediaPlayer';
+import TranscriptList from '../components/TranscriptList';
+import Tabs from '../components/Tabs';
+import useReproductor from '../hooks/useReproductor';
+import useProgreso from '../hooks/useProgreso';
 import TutorChat from '../components/TutorChat';
 import GenerateTranscription from '../components/GenerateTranscription';
 import { puedeGenerar, puedeRevisar } from '../utils/transcripcion';
@@ -28,6 +32,40 @@ export default function ContentDetail() {
   // que se pulso desaparece, y quien navega con teclado se quedaria sin punto
   // de partida en medio de la pagina.
   const transcripcionRef = useRef(null);
+
+  // El hook va aqui y no dentro del render condicional: los hooks no pueden
+  // llamarse dentro de un if. Con el material aun sin cargar recibe valores
+  // vacios y no hace nada.
+  const subtitulos = state.transcription?.subtitulos || [];
+  const reproductor = useReproductor({
+    content: state.content || { tipo: 'texto', url_archivo: null },
+    subtitles: subtitulos,
+  });
+
+  // Cuanto de la clase ha consumido el estudiante.
+  //
+  // De un video o un audio, hasta donde llego la reproduccion. De un documento
+  // o un texto no hay nada que medir: abrirlo es haberlo recibido.
+  const esReproducible = ['video', 'audio'].includes(state.content?.tipo);
+  const duracion = reproductor.mediaRef.current?.duration;
+  const porcentaje = !state.content
+    ? 0
+    : !esReproducible
+      ? 100
+      : Math.min(100, Math.max(
+        1,
+        Number.isFinite(duracion) && duracion > 0
+          ? Math.round((reproductor.currentTime / duracion) * 100)
+          : 1
+      ));
+
+  useProgreso({
+    contentId: state.content ? Number(id) : null,
+    // Solo el estudiante deja rastro: el docente abre sus propias clases para
+    // revisarlas, y eso no es progreso de nadie.
+    activo: user?.rol === 'estudiante',
+    porcentaje,
+  });
   const recienGenerada = useRef(false);
 
   // El asistente registra las consultas contra el estudiante que pregunta,
@@ -66,10 +104,9 @@ export default function ContentDetail() {
   usePageTitle(state.loading ? 'Material' : (state.content?.titulo || 'Material'));
 
   return (
-    // Columna centrada: esta pantalla es para leer, y el texto tiene su medida.
-    // Dejarla pegada a la izquierda en una pantalla ancha abre medio metro de
-    // vacio a la derecha y se ve como un error de maquetacion.
-    <div className="pagina-lectura">
+    // Ya no es una columna estrecha: el video y el panel ocupan el ancho, y
+    // la medida de lectura la impone cada bloque de texto por dentro.
+    <div>
       <nav aria-label="Ruta de navegación" className="migas">
         <Link to="/panel">Mis cursos</Link>
         <span aria-hidden="true"> › </span>
@@ -103,43 +140,74 @@ export default function ContentDetail() {
             </p>
           )}
 
-          {/* El resumen va ANTES de la transcripcion: para quien lee con
-              esfuerzo, el texto completo de la clase es justo la barrera. */}
-          <ClassSummary
-            contentId={Number(id)}
-            puedeGestionar={puedeRevisar(user, state.content)}
-            tieneTranscripcion={Boolean(state.transcription)}
-          />
+          {/* La clase en dos columnas: el video a un lado y el material
+              escrito al otro, visibles a la vez. Antes iba todo apilado y la
+              transcripcion quedaba a una pantalla de distancia del video que
+              describe. */}
+          <div className="clase">
+            <div className="clase__medio">
+              <MediaPlayer content={state.content} reproductor={reproductor} />
+            </div>
 
-          {state.transcription ? (
-            <section
+            <div
+              className="clase__panel"
               ref={transcripcionRef}
               tabIndex={-1}
-              aria-labelledby="titulo-transcripcion"
+              role="region"
+              aria-label="Material de la clase"
             >
-              <SubtitlePlayer
-                content={state.content}
-                subtitles={state.transcription.subtitulos}
+              <Tabs
+                etiqueta="Secciones del material"
+                // Sin transcripcion, la pestaña util es la de la transcripcion:
+                // ahi esta el boton de generarla y la explicacion de la espera.
+                // Abrir el resumen dejaria lo unico accionable escondido detras
+                // de una pestaña que hay que descubrir.
+                inicial={state.transcription ? 'resumen' : 'transcripcion'}
+                pestanas={[
+                  {
+                    id: 'resumen',
+                    titulo: 'Resumen',
+                    // El resumen abre primero: para quien lee con esfuerzo, el
+                    // texto completo de la clase es justo la barrera.
+                    contenido: (
+                      <ClassSummary
+                        contentId={Number(id)}
+                        puedeGestionar={puedeRevisar(user, state.content)}
+                        tieneTranscripcion={Boolean(state.transcription)}
+                      />
+                    ),
+                  },
+                  {
+                    id: 'transcripcion',
+                    titulo: 'Transcripción',
+                    contenido: state.transcription ? (
+                      <TranscriptList subtitles={subtitulos} reproductor={reproductor} />
+                    ) : (
+                      <>
+                        {/* El boton se ofrece solo a quien puede generarla. Al
+                            resto se le explica la espera. */}
+                        <GenerateTranscription
+                          content={state.content}
+                          onGenerated={() => { recienGenerada.current = true; load(); }}
+                        />
+                        {!puedeGenerar(user, state.content) && (
+                          <EmptyState
+                            title="Este material todavía no tiene transcripción"
+                            description="Cuando el docente la genere, el texto y los subtítulos aparecerán aquí."
+                          />
+                        )}
+                      </>
+                    ),
+                  },
+                  puedePreguntar && {
+                    id: 'tutor',
+                    titulo: 'Tutor',
+                    contenido: <TutorChat contentId={Number(id)} />,
+                  },
+                ]}
               />
-            </section>
-          ) : (
-            <>
-              {/* El boton se ofrece solo a quien puede generarla. Al resto se
-                  le explica la espera, que es lo unico que le sirve saber. */}
-              <GenerateTranscription
-                content={state.content}
-                onGenerated={() => { recienGenerada.current = true; load(); }}
-              />
-              {!puedeGenerar(user, state.content) && (
-                <EmptyState
-                  title="Este material todavía no tiene transcripción"
-                  description="Cuando el docente la genere, el texto y los subtítulos aparecerán aquí."
-                />
-              )}
-            </>
-          )}
-
-          {puedePreguntar && <TutorChat contentId={Number(id)} />}
+            </div>
+          </div>
 
           {/* La correccion va debajo de la clase, no en otra pantalla: el
               docente corrige mientras escucha lo que la maquina entendio. */}

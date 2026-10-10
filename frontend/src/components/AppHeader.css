@@ -2,9 +2,9 @@
    aplicacion del contenido, que es lo que distingue una herramienta de un
    documento. */
 .cabecera {
-  background-color: var(--color-fondo);
-  border-bottom: 1px solid var(--color-borde);
-  box-shadow: var(--sombra-1);
+  background-color: var(--color-cabecera);
+  color: var(--color-cabecera-texto);
+  border-bottom: 1px solid var(--color-cabecera-borde);
 }
 
 /* El interior se alinea con el contenido, aunque la barra llegue al borde. */
@@ -22,19 +22,20 @@
   display: inline-flex;
   align-items: center;
   gap: var(--espacio-3);
-  color: var(--color-texto);
+  color: var(--color-cabecera-texto);
   text-decoration: none;
 }
 
-/* El simbolo da identidad sin necesitar un logotipo que no existe todavia. */
+/* El simbolo da identidad sin necesitar un logotipo que no existe todavia.
+   Sobre la cabecera oscura se invierte: fondo claro y simbolo oscuro. */
 .cabecera__simbolo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  background-color: var(--color-primario);
-  color: var(--color-primario-texto);
+  background-color: var(--color-cabecera-texto);
+  color: var(--color-cabecera);
   border-radius: var(--radio);
 }
 
@@ -50,7 +51,7 @@
   font-size: var(--texto-pequeno);
   font-weight: 400;
   letter-spacing: 0;
-  color: var(--color-texto-suave);
+  color: var(--color-cabecera-suave);
 }
 
 .cabecera__nav {
@@ -64,22 +65,22 @@
   min-height: var(--area-minima);
   padding: 0 var(--espacio-3);
   border-radius: var(--radio);
-  color: var(--color-texto);
+  color: var(--color-cabecera-texto);
   text-decoration: none;
   font-weight: 500;
 }
 
 .cabecera__nav a:hover {
-  background-color: var(--color-superficie);
+  background-color: var(--color-cabecera-borde);
 }
 
 /* La pagina activa se marca de tres formas: color, peso y una barra inferior
    gruesa. El color por si solo excluye a quien no lo distingue, y el peso por
    si solo se pierde entre dos o tres enlaces. */
 .cabecera__nav a[aria-current='page'] {
-  color: var(--color-primario);
+  color: var(--color-cabecera-acento);
   font-weight: 700;
-  box-shadow: inset 0 -3px 0 var(--color-primario);
+  box-shadow: inset 0 -3px 0 var(--color-cabecera-acento);
 }
 
 .cabecera__sesion {
@@ -98,7 +99,7 @@
 }
 
 .cabecera__rol {
-  color: var(--color-texto-suave);
+  color: var(--color-cabecera-suave);
   text-transform: capitalize;
 }
 
@@ -107,17 +108,15 @@
   align-items: center;
   gap: var(--espacio-2);
   padding: 0 var(--espacio-3);
-  background-color: var(--color-fondo);
-  color: var(--color-texto);
-  border: 1px solid var(--color-borde);
+  background: none;
+  color: var(--color-cabecera-texto);
+  border: 1px solid var(--color-cabecera-borde);
   border-radius: var(--radio);
   font-weight: 500;
 }
 
 .cabecera__salir:hover {
-  background-color: var(--color-superficie);
-  border-color: var(--color-primario);
-  color: var(--color-primario);
+  background-color: var(--color-cabecera-borde);
 }
 
 /* El lema es largo y en pantallas medianas se come el sitio de la navegacion.

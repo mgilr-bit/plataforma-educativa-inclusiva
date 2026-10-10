@@ -1,0 +1,54 @@
+.transcripcion__ayuda {
+  margin: 0 0 var(--espacio-4);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.transcripcion__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.transcripcion__linea {
+  border-bottom: 1px solid var(--color-borde);
+}
+
+/* El fragmento que suena se marca con fondo Y con una barra lateral gruesa.
+   Solo con fondo, quien no distingue bien los colores no lo ve. */
+.transcripcion__linea--activa {
+  background-color: var(--color-superficie);
+  box-shadow: inset 3px 0 0 var(--color-primario);
+}
+
+.transcripcion__salto {
+  display: flex;
+  gap: var(--espacio-3);
+  width: 100%;
+  min-height: var(--area-minima);
+  padding: var(--espacio-3);
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.transcripcion__salto:hover {
+  background-color: var(--color-superficie);
+}
+
+.transcripcion__tiempo {
+  flex-shrink: 0;
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.transcripcion__texto {
+  display: block;
+  padding: var(--espacio-3);
+}
+
+.transcripcion__salto .transcripcion__texto {
+  padding: 0;
+}

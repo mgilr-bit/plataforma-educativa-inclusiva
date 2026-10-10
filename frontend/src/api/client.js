@@ -86,6 +86,53 @@ export class ApiError extends Error {
   }
 }
 
+// Sube un formulario informando del avance.
+//
+// Va con XMLHttpRequest y no con fetch porque fetch no publica el progreso de
+// subida. Importa: una clase grabada pesa decenas de megabytes y la conexion
+// de un establecimiento rural no siempre acompaña. Sin barra de avance, el
+// docente no sabe si esta subiendo o si se colgo, y vuelve a intentarlo.
+function subirConAvance(path, formData, alAvanzar) {
+  return new Promise((resolver, rechazar) => {
+    const peticion = new XMLHttpRequest();
+    peticion.open('POST', `${BASE_URL}${path}`);
+
+    const token = readToken();
+    if (token) peticion.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    peticion.upload.addEventListener('progress', (evento) => {
+      if (evento.lengthComputable) {
+        alAvanzar(Math.round((evento.loaded / evento.total) * 100));
+      }
+    });
+
+    peticion.addEventListener('load', () => {
+      let datos = {};
+      try {
+        datos = JSON.parse(peticion.responseText);
+      } catch {
+        // Una respuesta que no es JSON ya es un error de por si.
+      }
+      if (peticion.status >= 200 && peticion.status < 300) {
+        resolver(datos);
+        return;
+      }
+      if (peticion.status === 401 && onUnauthorized) onUnauthorized();
+      rechazar(new ApiError(datos.mensaje || `La API respondió ${peticion.status}`, {
+        status: peticion.status,
+        details: datos.errores,
+      }));
+    });
+
+    peticion.addEventListener('error', () =>
+      rechazar(new ApiError('No se pudo conectar con el servidor', { status: 0 })));
+    peticion.addEventListener('abort', () =>
+      rechazar(new ApiError('La subida se canceló', { status: 0 })));
+
+    peticion.send(formData);
+  });
+}
+
 async function request(path, { method = 'GET', body, formData, authenticated = true } = {}) {
   const headers = {};
 
@@ -219,7 +266,7 @@ export const api = {
   // Con archivo adjunto la peticion viaja como multipart; sin el, como JSON.
   // El navegador fija por si mismo el limite del formulario, asi que no hay que
   // poner Content-Type a mano: hacerlo rompe la peticion.
-  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file }) => {
+  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file, onProgress }) => {
     if (file) {
       const datos = new FormData();
       datos.append('idCurso', String(courseId));
@@ -227,7 +274,10 @@ export const api = {
       datos.append('tipo', type);
       if (durationSeconds) datos.append('duracionSeg', String(durationSeconds));
       datos.append('archivo', file);
-      return request('/contents', { method: 'POST', formData: datos });
+      // Con callback de avance se usa XHR; sin el, el camino normal.
+      return onProgress
+        ? subirConAvance('/contents', datos, onProgress)
+        : request('/contents', { method: 'POST', formData: datos });
     }
 
     return request('/contents', {
@@ -243,6 +293,68 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // Progreso del estudiante en un material.
+  saveProgress: (contentId, porcentaje) =>
+    request(`/contents/${contentId}/progress`, { method: 'PUT', body: { porcentaje } }),
+
+  // Seguimiento del curso, para el docente.
+  tracking: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return request(`/courses/${courseId}/tracking${cola}`);
+  },
+
+  suggestion: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return request(`/courses/${courseId}/tracking/suggestion${cola}`, { method: 'POST' });
+  },
+
+  // La exportacion no pasa por request(): devuelve un archivo, no JSON.
+  //
+  // Y no puede ser un enlace normal. Un enlace lo sigue el navegador, y la
+  // navegacion no lleva la cabecera de autenticacion: el token vive en
+  // localStorage y solo lo pone este cliente. Un enlace devolvia "Falta el
+  // token de autenticacion".
+  //
+  // Pasarlo por la direccion lo resolveria, pero el token acabaria en los
+  // registros del servidor y en el historial del navegador. Aqui se manejan
+  // datos de menores: se descarga con la cabecera y se guarda desde memoria.
+  exportTracking: async (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+
+    const token = readToken();
+    const respuesta = await fetch(`${BASE_URL}/courses/${courseId}/tracking/export${cola}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    if (!respuesta.ok) {
+      if (respuesta.status === 401 && onUnauthorized) onUnauthorized();
+      let mensaje = `La API respondió ${respuesta.status}`;
+      try {
+        mensaje = (await respuesta.json()).mensaje || mensaje;
+      } catch {
+        // La respuesta de error tampoco era JSON.
+      }
+      throw new ApiError(mensaje, { status: respuesta.status });
+    }
+
+    // El nombre lo decide el servidor; si no viene, uno razonable.
+    const cabecera = respuesta.headers.get('Content-Disposition') || '';
+    const encontrado = /filename="?([^"]+)"?/.exec(cabecera);
+    return {
+      blob: await respuesta.blob(),
+      nombre: encontrado ? encontrado[1] : 'seguimiento.csv',
+    };
+  },
+
   // El resumen en lenguaje sencillo. Para el estudiante es la puerta de
   // entrada a la clase, mas que la transcripcion completa.
   summaries: (contentId) => request(`/contents/${contentId}/summaries`),

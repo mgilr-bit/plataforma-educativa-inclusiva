@@ -48,3 +48,53 @@
 .etiqueta-estado--pendiente { color: var(--color-texto-suave); }
 .etiqueta-estado--revisada  { color: var(--color-primario); }
 .etiqueta-estado--aprobada  { color: var(--color-exito); }
+
+/* La clase en dos columnas: el video a un lado, el material escrito al otro.
+   El video manda en el ancho —es lo que no se puede encoger sin perder
+   detalle— y el panel se queda cerca de la medida de lectura. */
+.clase {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--espacio-6);
+  align-items: start;
+  margin-bottom: var(--espacio-8);
+}
+
+.clase__panel {
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+  padding: var(--espacio-4);
+}
+
+.clase__panel:focus {
+  outline: none;
+}
+
+/* En dos columnas el video se queda fijo mientras se lee la transcripción.
+   Una clase de trece minutos son decenas de fragmentos: sin esto, el video se
+   va de la vista justo cuando se lee lo que describe, que es lo que las dos
+   columnas venían a evitar.
+   Se fija el video en vez de recortar el panel con su propio desplazamiento:
+   un área desplazable dentro de otra es incómoda con el dedo, y la plataforma
+   se va a usar en tableta. */
+@media (min-width: 64.0625rem) {
+  .clase__medio {
+    position: sticky;
+    /* Por debajo de la barra de accesibilidad, que también está fija arriba.
+       Su alto no cambia con la escala de texto: tiene tamaño propio, a
+       propósito, para no comerse la pantalla al agrandar la letra. */
+    top: calc(3.5rem + var(--espacio-4));
+    /* Por debajo de la barra (z-index 10) si llegaran a solaparse. */
+    z-index: 1;
+  }
+}
+
+/* Por debajo de 64rem las dos columnas no caben sin estrechar el texto por
+   debajo de lo legible, así que se apilan: primero el video, luego el panel.
+   Es también el orden en que se leen. */
+@media (max-width: 64rem) {
+  .clase {
+    grid-template-columns: 1fr;
+  }
+}

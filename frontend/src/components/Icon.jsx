@@ -8,6 +8,14 @@
 // llevan aria-hidden. Un icono sin texto necesitaria su propia etiqueta.
 
 const TRAZOS = {
+  correcto: <path d="M5 12.5l4.5 4.5L19 7.5" />,
+  subir: (
+    <>
+      <path d="M12 16V4" />
+      <path d="M7 9l5-5 5 5" />
+      <path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />
+    </>
+  ),
   alerta: (
     <>
       <circle cx="12" cy="12" r="9" />

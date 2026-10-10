@@ -1,13 +1,8 @@
-/* Va arriba de la clase y tiene que verse como lo principal, no como una nota
-   al margen: para muchos estudiantes es por donde van a entrar. */
+/* Sin marco propio: vive dentro del panel de pestañas, que ya pone el suyo.
+   Dos recuadros, uno dentro de otro, solo estrechan el texto y hacen que la
+   pantalla parezca mal armada. */
 .resumen {
   max-width: var(--medida-lectura);
-  margin-bottom: var(--espacio-6);
-  padding: var(--espacio-6);
-  background-color: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-left: 5px solid var(--color-primario);
-  border-radius: var(--radio-grande);
 }
 
 .resumen__error {
@@ -51,6 +46,18 @@
 .resumen__cuerpo {
   max-width: 58ch;
   line-height: 1.7;
+}
+
+/* El titulo de la seccion lo pone ya la pestaña; aqui solo hacen falta los
+   encabezados internos, que son los que el lector de pantalla usa para saltar
+   entre partes del resumen. */
+.resumen > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .resumen__cuerpo h3 {
