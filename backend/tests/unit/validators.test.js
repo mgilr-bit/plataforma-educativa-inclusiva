@@ -10,6 +10,8 @@ const {
 
 describe('isValidEmail', () => {
   test('acepta correos con formato valido', () => {
+    // Dominio de dos niveles a proposito: es el formato de un establecimiento
+    // guatemalteco, y es el unico caso que lo cubre. No cambiar por un .com.
     assert.ok(isValidEmail('milton@umg.edu.gt'));
     assert.ok(isValidEmail('  con.espacios@dominio.com  '));
   });

@@ -1,0 +1,87 @@
+.admin {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: var(--espacio-8);
+  align-items: start;
+}
+
+/* Un elemento de rejilla no se encoge por debajo del ancho mínimo de su
+   contenido salvo que se le diga. Sin esto, la tabla estiraba toda la página
+   en un teléfono. */
+.admin__barra,
+.admin__contenido {
+  min-width: 0;
+}
+
+.admin__barra ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin__barra li + li {
+  margin-top: var(--espacio-1);
+}
+
+.admin__enlace {
+  display: flex;
+  align-items: center;
+  min-height: var(--area-minima);
+  padding: 0 var(--espacio-4);
+  border-radius: var(--radio);
+  /* Barra izquierda transparente siempre dibujada: al activarse no desplaza
+     el texto. */
+  border-left: 4px solid transparent;
+  color: var(--color-texto);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.admin__enlace:hover {
+  background-color: var(--color-superficie);
+}
+
+/* La sección abierta se marca de tres formas: fondo, peso y barra lateral.
+   El color por sí solo deja fuera a quien no lo distingue. */
+.admin__enlace--activo {
+  background-color: var(--color-superficie);
+  border-left-color: var(--color-primario);
+  color: var(--color-primario);
+  font-weight: 700;
+}
+
+/* La barra se queda a la vista al desplazarse por una tabla larga. */
+@media (min-width: 60rem) {
+  .admin__barra {
+    position: sticky;
+    top: calc(3.5rem + var(--espacio-4));
+  }
+}
+
+/* En pantalla estrecha la barra pasa a ser una fila por encima del contenido:
+   una columna de 14 rem no deja sitio para una tabla. */
+@media (max-width: 60rem) {
+  .admin {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-4);
+  }
+
+  .admin__barra ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espacio-1);
+  }
+
+  .admin__barra li + li {
+    margin-top: 0;
+  }
+
+  .admin__enlace {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .admin__enlace--activo {
+    border-bottom-color: var(--color-primario);
+  }
+}

@@ -293,6 +293,9 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // Limites con los que opera la plataforma. Son de solo lectura.
+  settings: () => request('/settings'),
+
   // Progreso del estudiante en un material.
   saveProgress: (contentId, porcentaje) =>
     request(`/contents/${contentId}/progress`, { method: 'PUT', body: { porcentaje } }),

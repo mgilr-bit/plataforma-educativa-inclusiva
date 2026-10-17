@@ -46,6 +46,8 @@
 }
 
 .etiqueta-estado--pendiente { color: var(--color-texto-suave); }
+.etiqueta-estado--activo    { color: var(--color-exito); }
+.etiqueta-estado--inactivo  { color: var(--color-error); }
 .etiqueta-estado--revisada  { color: var(--color-primario); }
 .etiqueta-estado--aprobada  { color: var(--color-exito); }
 

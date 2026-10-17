@@ -54,8 +54,11 @@
   color: var(--color-cabecera-suave);
 }
 
+/* Envuelven en vez de empujar el ancho mínimo de la página: el administrador
+   tiene cuatro enlaces y en un teléfono no caben en una fila. */
 .cabecera__nav {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--espacio-1);
 }
 

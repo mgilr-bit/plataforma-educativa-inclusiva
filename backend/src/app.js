@@ -13,6 +13,7 @@ const transcriptionsRoutes = require('./routes/transcriptions');
 const tutorRoutes = require('./routes/tutor');
 const summariesRoutes = require('./routes/summaries');
 const progressRoutes = require('./routes/progress');
+const settingsRoutes = require('./routes/settings');
 const { notFound, errorHandler } = require('./middleware/errors');
 const { DIRECTORIO, RUTA_PUBLICA, asegurarDirectorio } = require('./config/storage');
 const { loginLimiter, apiLimiter } = require('./middleware/rateLimit');
@@ -90,6 +91,7 @@ app.use('/api', transcriptionsRoutes);
 app.use('/api', tutorRoutes);
 app.use('/api', summariesRoutes);
 app.use('/api', progressRoutes);
+app.use('/api', settingsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -1,6 +1,44 @@
-.login {
-  max-width: 32rem;
+/* Dos columnas: el formulario y, al lado, qué es esta plataforma. La pantalla
+   era un formulario solo en medio de una página en blanco.
+   El formulario va primero en el orden del documento y se coloca a la derecha
+   con "order": quien entra con teclado o lector de pantalla viene a iniciar
+   sesión, no a leer la presentación. */
+.entrada {
+  display: grid;
+  /* La presentación ocupa la columna ancha; el formulario, la medida en la
+     que un formulario se lee cómodo. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  gap: var(--espacio-8);
+  align-items: center;
+  max-width: var(--ancho-contenido);
   margin: var(--espacio-8) auto;
+}
+
+.entrada > .login {
+  order: 2;
+}
+
+.entrada > .presentacion {
+  order: 1;
+}
+
+/* Por debajo de 60rem la presentación se retira: en un teléfono, lo que hace
+   falta es el formulario, y empujarlo media pantalla hacia abajo con un
+   panel decorativo es estorbar. */
+@media (max-width: 60rem) {
+  .entrada {
+    grid-template-columns: 1fr;
+    max-width: 32rem;
+  }
+
+  .entrada > .presentacion {
+    display: none;
+  }
+}
+
+
+.login {
+  margin: 0;
   padding: var(--espacio-8);
   background-color: var(--color-fondo);
   border: 1px solid var(--color-borde);
@@ -56,5 +94,14 @@
   .login {
     padding: var(--espacio-4);
     margin-top: var(--espacio-4);
+  }
+}
+
+/* En pantalla ancha la marca ya está en el panel de al lado; repetirla dentro
+   del formulario la dice dos veces, también al lector de pantalla. Se queda
+   solo donde hace falta: cuando el panel se retira. */
+@media (min-width: 60.0625rem) {
+  .login__marca {
+    display: none;
   }
 }
