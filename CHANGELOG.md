@@ -2,6 +2,12 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.43.1] — 2026-10-17
+### Corregido
+- Cuando la cuenta del asistente se queda sin saldo, la API lo avisa con un 400 y un mensaje en inglés. Ese caso caía en la traducción genérica y acababa en «El asistente respondió con un error (400)», que no dice si hay que recargar, esperar o avisar a alguien. Ahora se reconoce y se traduce a un mensaje con la acción, y responde 503 en vez de 400: el servicio no está disponible, no es culpa de lo que pidió el usuario.
+- El arreglo va en el traductor compartido, así que cubre los tres usos del asistente: el tutor, los resúmenes y la sugerencia pedagógica. Ya se había resuelto lo mismo para Whisper y faltaba el equivalente para Claude.
+- Se cuida no disfrazar de falta de saldo cualquier otro 400: mandaría al docente a recargar saldo que ya tiene mientras el fallo real sigue ahí.
+
 ## [0.43.0] — 2026-10-17
 ### Agregado
 - Documento del modelo de datos en `docs/modelo/modelo-de-datos.md`, con el diagrama entidad-relación, las decisiones de diseño y lo declarado como trabajo futuro. Es el último pendiente de la fase 1.
