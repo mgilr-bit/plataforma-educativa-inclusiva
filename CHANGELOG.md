@@ -2,6 +2,16 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.44.0] — 2026-10-17
+### Agregado
+- Documentos para la prueba con usuarios en `docs/pruebas-con-usuarios/`: consentimiento informado del encargado, asentimiento del estudiante, consentimiento del docente y protocolo de la sesión. Sin ellos no se puede hacer la prueba con menores de edad, y sin esa prueba no hay capítulo de resultados.
+- Hacen falta dos documentos para el estudiante porque un menor no puede dar consentimiento —lo da su encargado— pero sí tiene que aceptar participar él mismo, en términos que entienda, y poder negarse aunque su encargado haya firmado.
+- El asentimiento está escrito con las mismas reglas que la plataforma le exige a su asistente educativo. Medido: **5.9 palabras por frase de media**, la más larga de 13 — por debajo del nivel «fácil de leer» que genera la propia plataforma, que da 6.3. Y advierte que si el estudiante usa lengua de señas hay que leerlo con intérprete: firmar algo que no se entendió no es asentimiento.
+- El protocolo recoge qué observar en cada tarea, qué no hacer —sobre todo, no ayudar hasta que lo pidan— y la indicación de convertir cada hallazgo en un *issue* con etiqueta `fase-4`, para que la corrección quede trazada contra la observación que la originó.
+
+### Nota
+- Los formatos son un borrador de trabajo, no un dictamen legal. Deben revisarse con el asesor de tesis y con la dirección del establecimiento antes de usarse.
+
 ## [0.43.1] — 2026-10-17
 ### Corregido
 - Cuando la cuenta del asistente se queda sin saldo, la API lo avisa con un 400 y un mensaje en inglés. Ese caso caía en la traducción genérica y acababa en «El asistente respondió con un error (400)», que no dice si hay que recargar, esperar o avisar a alguien. Ahora se reconoce y se traduce a un mensaje con la acción, y responde 503 en vez de 400: el servicio no está disponible, no es culpa de lo que pidió el usuario.
