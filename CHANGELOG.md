@@ -2,6 +2,23 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.43.1] — 2026-10-17
+### Corregido
+- Cuando la cuenta del asistente se queda sin saldo, la API lo avisa con un 400 y un mensaje en inglés. Ese caso caía en la traducción genérica y acababa en «El asistente respondió con un error (400)», que no dice si hay que recargar, esperar o avisar a alguien. Ahora se reconoce y se traduce a un mensaje con la acción, y responde 503 en vez de 400: el servicio no está disponible, no es culpa de lo que pidió el usuario.
+- El arreglo va en el traductor compartido, así que cubre los tres usos del asistente: el tutor, los resúmenes y la sugerencia pedagógica. Ya se había resuelto lo mismo para Whisper y faltaba el equivalente para Claude.
+- Se cuida no disfrazar de falta de saldo cualquier otro 400: mandaría al docente a recargar saldo que ya tiene mientras el fallo real sigue ahí.
+
+## [0.43.0] — 2026-10-17
+### Agregado
+- Documento del modelo de datos en `docs/modelo/modelo-de-datos.md`, con el diagrama entidad-relación, las decisiones de diseño y lo declarado como trabajo futuro. Es el último pendiente de la fase 1.
+- El diagrama separa a propósito las **diez tablas implementadas** de las **seis declaradas trabajo futuro**. Un diagrama que muestra tablas sin implementar describe un sistema más grande que el que existe, y en una defensa eso se convierte en una pregunta sin buena respuesta.
+- Los dos diagramas se exportan también como imagen (`er-implementado.png`, `er-trabajo-futuro.png`) para insertarlos en el documento de la tesis. La fuente sigue siendo el Mermaid del documento, de modo que no pueden desincronizarse sin que se note.
+
+### Verificación
+- El modelo se extrajo de la base de datos en funcionamiento —`information_schema` y `pg_constraint`—, no de los archivos de migración: las migraciones dicen lo que se pidió, la base dice lo que hay.
+- Contrastado campo por campo: **16 de 16 tablas**, todos los campos coincidiendo.
+- Los dos diagramas se renderizaron antes de darlos por buenos, para descartar errores de sintaxis.
+
 ## [0.42.0] — 2026-10-10
 ### Agregado
 - El inicio de sesión pasa a dos columnas: el formulario y, al lado, un panel que dice qué es esta plataforma y qué hace. Era un formulario solo en medio de una página en blanco, y es la primera —y a veces la única— pantalla que ve alguien que llega sin saber.

@@ -23,9 +23,29 @@ function obtenerCliente(crearError) {
   return clienteMemorizado;
 }
 
+// La API avisa de la falta de saldo con un 400 y un mensaje en ingles, no con
+// un codigo propio. Se reconoce por el texto porque es lo unico que da.
+function esFaltaDeSaldo(error) {
+  if (!(error instanceof Anthropic.APIError) || error.status !== 400) return false;
+  const mensaje = error.error?.error?.message || error.message || '';
+  return /credit balance/i.test(mensaje);
+}
+
 // Traduce los fallos del SDK a mensajes que un docente pueda entender y actuar
 // en consecuencia: no es lo mismo quedarse sin saldo que equivocarse de clave.
 function traducirError(error, crearError) {
+  // Va antes del resto: llega como un 400 cualquiera, y sin distinguirlo se
+  // le decia al docente "el asistente respondio con un error (400)", que no
+  // dice si hay que recargar, esperar o avisar a alguien.
+  if (esFaltaDeSaldo(error)) {
+    return crearError(
+      'El asistente educativo no tiene saldo disponible. Avise al administrador de la plataforma.',
+      // 503 y no 400: el servicio no esta disponible, no es culpa de lo que
+      // pidio el usuario.
+      { estado: 503, causa: error }
+    );
+  }
+
   if (error instanceof Anthropic.AuthenticationError) {
     return crearError('La clave del asistente educativo no es valida', { estado: 503, causa: error });
   }

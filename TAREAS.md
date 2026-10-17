@@ -13,7 +13,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Configurar Antigravity con Claude Code — 2026-08-25 — Issue #10
 
 ## Fase 1 — Base de datos
-- [ ] Revisar y ajustar el diagrama ER final
+- [x] Revisar y ajustar el diagrama ER final — 2026-10-17 — Issue #11
 - [x] Ejecutar DDL inicial en PostgreSQL (local) — 2026-08-24
 - [x] Crear migraciones versionadas — 2026-08-24
 - [x] Cargar datos semilla de prueba — 2026-08-24
