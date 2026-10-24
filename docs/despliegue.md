@@ -79,8 +79,9 @@ node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 
 ## Paso 2 — Volumen persistente en Railway
 
-En el servicio del backend: *Settings → Volumes → Add volume*, con punto de
-montaje **`/data`**.
+El volumen no se crea desde *Settings*, sino desde el lienzo del proyecto:
+clic derecho en un espacio vacío (o `⌘K`) → *Volume*. Railway pregunta a qué
+servicio conectarlo: el del backend. Punto de montaje: **`/data`**.
 
 Después, `UPLOADS_DIR=/data/uploads`. El servidor crea el subdirectorio solo la
 primera vez que alguien sube un archivo.
