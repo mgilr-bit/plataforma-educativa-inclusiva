@@ -2,6 +2,24 @@
 
 Todas las entregas relevantes del proyecto se documentan aquí, de la más reciente a la más antigua.
 
+## [0.45.0] — 2026-10-23
+### Agregado
+- `frontend/vercel.json`: reescribe cualquier ruta al `index.html` y cachea un año las tipografías y los recursos compilados.
+- Guía de despliegue en `docs/despliegue.md`, con los pasos para Railway y Vercel y los cuatro fallos que se descubren a mitad de una prueba con docentes.
+- La guía incluye cómo llevar el código a `main` antes de desplegar, que es la rama que publica Vercel por omisión, y cómo poner un dominio propio gratuito con el GitHub Student Developer Pack.
+
+### Decisiones
+- `DATABASE_SSL` va en `false` en Railway, como ya decían el README y `src/config/db.js`: la red privada no ofrece TLS y con `true` el backend no arranca.
+- La cuenta de administrador se crea entrando al contenedor con `railway ssh`, porque la base solo es alcanzable por la red privada. Así no hay que abrir el proxy público de PostgreSQL.
+
+### Corregido
+- Sin la regla de reescritura, abrir o recargar cualquier ruta que no fuera la raíz devolvía 404 en producción. Comprobado sirviendo la compilación como lo haría un host estático: `/login`, `/contenidos/12` y `/seguimiento` daban 404, y con la regla pasan a 200 sin que los archivos reales dejen de servirse.
+
+### Comprobado en el servicio en funcionamiento
+- Railway responde y la base está conectada; `TRUST_PROXY_HOPS` está bien puesta en 2.
+- **No existe ninguna cuenta en producción**: el esquema está migrado y los roles sembrados, pero no hay usuarios, así que tras desplegar no se podría entrar.
+- **`CORS_ORIGINS` está vacía**, de modo que el backend acepta peticiones de cualquier origen. La API devolvió la cabecera incluso para un dominio inventado. Vuelto a comprobar el 23 de octubre: sigue igual.
+
 ## [0.43.1] — 2026-10-17
 ### Corregido
 - Cuando la cuenta del asistente se queda sin saldo, la API lo avisa con un 400 y un mensaje en inglés. Ese caso caía en la traducción genérica y acababa en «El asistente respondió con un error (400)», que no dice si hay que recargar, esperar o avisar a alguien. Ahora se reconoce y se traduce a un mensaje con la acción, y responde 503 en vez de 400: el servicio no está disponible, no es culpa de lo que pidió el usuario.

@@ -6,6 +6,8 @@ Plataforma web de apoyo educativo para estudiantes con discapacidad auditiva en 
 
 **Modelo de datos:** [`docs/modelo/modelo-de-datos.md`](docs/modelo/modelo-de-datos.md) — diagrama entidad-relación, decisiones de diseño y lo declarado como trabajo futuro.
 
+**Despliegue:** [`docs/despliegue.md`](docs/despliegue.md) — pasos para Railway y Vercel, con los cuatro fallos que hacen perder una tarde.
+
 **Proyecto de graduación** — Ingeniería en Sistemas de Información y Ciencias de la Computación
 Universidad Mariano Gálvez de Guatemala, Sede San Juan Sacatepéquez
 Autor: Milton — Carné 3590-09-66
