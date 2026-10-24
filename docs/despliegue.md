@@ -5,7 +5,8 @@ Vercel.
 
 > **Qué está comprobado y qué no.** Lo que dice este documento sobre el estado
 > actual de Railway se verificó consultando el servicio en funcionamiento
-> (fecha de la comprobación: 17 de octubre de 2026). Los pasos de Vercel están
+> (fecha de la comprobación: 17 de octubre de 2026; la base y `CORS_ORIGINS`
+> se volvieron a comprobar el 23 de octubre). Los pasos de Vercel están
 > preparados pero no ejecutados: hacen falta las credenciales de la cuenta.
 
 ## Antes de empezar: cuatro cosas que hacen perder una tarde
@@ -43,15 +44,25 @@ que fijarla al dominio de Vercel.
 
 ---
 
+## Paso 0 — Llevar el código a `main`
+
+Vercel publica por omisión la rama principal del repositorio, `main`, y es
+también la que conviene que publique Railway. Lo que solo está en `develop` no
+llega a producción: ni las pantallas nuevas ni `frontend/vercel.json`.
+
+Antes de desplegar, abrir y fusionar el Pull Request de `develop` hacia
+`main`. Para confirmar qué rama publica Railway: servicio del backend →
+*Settings → Source*.
+
 ## Paso 1 — Variables del backend en Railway
 
 En el servicio del backend, sección *Variables*.
 
 | Variable | Valor | Por qué |
 |---|---|---|
-| `NODE_ENV` | `production` | Activa los límites de peticiones, que se desactivan en pruebas |
-| `DATABASE_URL` | *(la pone Railway)* | Conexión a PostgreSQL |
-| `DATABASE_SSL` | `true` | Railway exige TLS. Va aparte de `NODE_ENV` a propósito: en local se usa `production` sin TLS |
+| `NODE_ENV` | `production` | Cualquier valor salvo `test`: con `test` se apagan los límites de intentos |
+| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` | Referencia a la base; viaja por la red privada de Railway |
+| `DATABASE_SSL` | `false` | La red privada de Railway no ofrece TLS: con `true` el backend no arranca |
 | `JWT_SECRET` | *(cadena larga y aleatoria)* | Sin ella el servidor no arranca |
 | `JWT_EXPIRES_IN` | `8h` | Una jornada escolar |
 | `CORS_ORIGINS` | `https://<su-dominio>.vercel.app` | **Hoy está vacía y se acepta cualquier origen** |
@@ -98,15 +109,28 @@ efecto.
 
 ## Paso 4 — Crear la cuenta de administrador
 
-Sin esto no se puede entrar. Desde la consola de Railway, en el servicio del
-backend:
+Sin esto no se puede entrar. El guion tiene que ejecutarse dentro del
+contenedor del backend, porque la base solo es alcanzable por la red privada.
+Se entra con la CLI de Railway:
 
 ```bash
-node scripts/create-admin.js
+brew install railway
+railway login
+railway link          # elegir el proyecto y el servicio del backend
+railway ssh           # abre una terminal dentro del contenedor
 ```
 
-El guion pide nombre, correo y contraseña. **No use las credenciales de
-ejemplo**: son públicas, están en el README y en el repositorio.
+Ya dentro, en la carpeta de la aplicación:
+
+```bash
+node scripts/create-admin.js "Nombre Completo" correo@dominio.com "contraseña"
+```
+
+Recibe los tres datos como argumentos; no los pregunta. La contraseña debe
+tener al menos 8 caracteres. **No use las credenciales de ejemplo**: son
+públicas, están en el README y en el repositorio.
+
+La primera vez, `railway ssh` pide registrar una clave SSH local.
 
 ## Paso 5 — Frontend en Vercel
 
@@ -139,6 +163,11 @@ El archivo `frontend/vercel.json` ya está en el repositorio y hace dos cosas:
 Volver a Railway y poner en `CORS_ORIGINS` el dominio que Vercel acaba de
 asignar. Hasta ese momento el navegador bloqueará las llamadas.
 
+Se compara letra por letra con la cabecera `Origin` del navegador: con
+`https://` y **sin barra final**. `https://aula-todos.vercel.app` funciona;
+`https://aula-todos.vercel.app/` deja la página sin poder hablar con la API.
+Varios dominios van separados por comas.
+
 ## Paso 7 — Comprobar el recorrido completo
 
 Con la cuenta de administrador:
@@ -154,6 +183,50 @@ Con la cuenta de administrador:
    *(si ahora falla, el volumen del paso 2 no está montado)*
 
 El paso 6 es el que nadie hace y el que delata el problema más caro.
+
+## Opcional — Dominio propio
+
+Sin hacer nada más, la plataforma ya queda con dos direcciones gratuitas y sin
+vencimiento: `*.vercel.app` para la página y `*.up.railway.app` para la API.
+El nombre del subdominio de Vercel se puede cambiar en *Settings → Domains* si
+está libre.
+
+### Conseguirlo gratis
+
+El [GitHub Student Developer Pack](https://education.github.com/pack), que se
+pide con el correo institucional, incluye **un dominio gratis por un año**:
+un `.me` en Namecheap, un `.tech`, o una de las extensiones que acepta Name.com.
+La renovación del segundo año es de pago, así que conviene elegirlo pensando en
+que dure hasta la defensa.
+
+### Apuntarlo
+
+El ejemplo usa `aulatodos.me`; sustitúyalo por el dominio real.
+
+1. **Página**: en Vercel, *Settings → Domains → Add* con `aulatodos.me`.
+   Vercel muestra los registros DNS que hay que crear en el panel del
+   registrador; se copian tal cual.
+2. **API**: en Railway, servicio del backend → *Settings → Networking →
+   Custom Domain* con `api.aulatodos.me`. Railway muestra el registro `CNAME`
+   que hay que crear.
+3. Esperar a que ambos marquen el certificado como emitido. Suele tardar
+   minutos, a veces horas.
+
+### Después de apuntarlo
+
+| Dónde | Variable | Valor nuevo |
+|---|---|---|
+| Railway | `CORS_ORIGINS` | `https://aulatodos.me,https://aula-todos.vercel.app` |
+| Vercel | `VITE_API_URL` | `https://api.aulatodos.me/api` |
+
+- **Vercel hay que redesplegarlo** tras cambiar `VITE_API_URL`: el valor se
+  graba en la compilación, no se lee al abrir la página.
+- **Las clases ya subidas siguen funcionando.** La base guarda las rutas de los
+  archivos relativas al servidor de la API, sin el dominio, así que se
+  resuelven contra el que diga `VITE_API_URL`.
+- **Volver a medir `TRUST_PROXY_HOPS`** con `/api/health/red` en el dominio
+  nuevo. Si cambió el número de saltos, el fallo es silencioso: el límite de
+  intentos trataría a todos los usuarios como uno solo.
 
 ---
 
