@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <>
-      <h1>Plataforma Educativa Inclusiva</h1>
+      <h1>Aula Todos</h1>
       <p>
         Apoyo educativo con inteligencia artificial para estudiantes con
         discapacidad auditiva.

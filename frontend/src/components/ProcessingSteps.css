@@ -1,0 +1,96 @@
+.proceso {
+  padding: var(--espacio-6);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+.proceso h2 {
+  margin-top: 0;
+  font-size: var(--texto-grande);
+}
+
+.proceso__estado-vivo {
+  min-height: 1.5em;
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.proceso__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.proceso__paso {
+  display: flex;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) 0;
+}
+
+/* El circulo del paso. Vacio mientras espera, con icono al completarse o
+   fallar: el estado nunca depende solo del color. */
+.proceso__marca {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--color-borde);
+  border-radius: 50%;
+}
+
+.proceso__texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.proceso__titulo {
+  font-weight: 600;
+}
+
+.proceso__detalle {
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+.proceso__paso--hecho .proceso__marca {
+  border-color: var(--color-exito);
+  color: var(--color-exito);
+}
+
+.proceso__paso--hecho .proceso__detalle {
+  color: var(--color-exito);
+}
+
+.proceso__paso--proceso .proceso__marca {
+  border-color: var(--color-primario);
+  /* Media luna: se distingue del circulo vacio sin depender del color ni de
+     una animacion, que estorbaria a quien pidio menos movimiento. */
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.proceso__paso--proceso .proceso__titulo {
+  color: var(--color-primario);
+}
+
+.proceso__paso--error .proceso__marca {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.proceso__paso--error .proceso__detalle {
+  color: var(--color-error);
+}
+
+.proceso__estimacion {
+  margin: var(--espacio-4) 0 0;
+  padding: var(--espacio-3);
+  background-color: var(--color-superficie);
+  border-radius: var(--radio);
+  font-size: var(--texto-pequeno);
+}

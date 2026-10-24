@@ -6,7 +6,7 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const request = require('supertest');
-const { app, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
+const { servidor, cerrar, pool, sembrarEscenario, iniciarSesion } = require('../helpers/datos');
 
 describe('Manejo de errores', () => {
   let token;
@@ -16,12 +16,12 @@ describe('Manejo de errores', () => {
     token = await iniciarSesion('admin@prueba.gt');
   });
 
-  after(async () => { await pool.end(); });
+  after(async () => { await cerrar(); });
 
   const con = () => ({ Authorization: `Bearer ${token}` });
 
   test('un cuerpo JSON malformado responde 400, no 500', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .set('Content-Type', 'application/json')
       .send('{"correo": roto,,}');
@@ -31,7 +31,7 @@ describe('Manejo de errores', () => {
   });
 
   test('un cuerpo demasiado grande responde 413, no 500', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .set('Content-Type', 'application/json')
       .send(JSON.stringify({ correo: 'a'.repeat(200000) }));
@@ -42,7 +42,7 @@ describe('Manejo de errores', () => {
   test('un objeto donde se espera texto responde 400, no 500', async () => {
     // Forma tipica de sondeo automatizado. Con consultas parametrizadas no hay
     // inyeccion posible, pero el 500 delataba una ruta que revienta.
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: { $ne: null }, contrasena: { $ne: null } });
 
@@ -50,7 +50,7 @@ describe('Manejo de errores', () => {
   });
 
   test('una contrasena que no es texto responde 400', async () => {
-    const res = await request(app)
+    const res = await request(servidor)
       .post('/api/auth/login')
       .send({ correo: 'admin@prueba.gt', contrasena: 12345678 });
     assert.equal(res.status, 400);
@@ -69,7 +69,7 @@ describe('Manejo de errores', () => {
 
     for (const [ruta, descripcion] of casos) {
       test(`${descripcion} no revienta`, async () => {
-        const res = await request(app).get(ruta).set(con());
+        const res = await request(servidor).get(ruta).set(con());
         assert.notEqual(res.status, 500, `${ruta} devolvio 500`);
         assert.ok(res.status < 500);
       });
@@ -77,8 +77,8 @@ describe('Manejo de errores', () => {
   });
 
   test('una paginacion absurda no rompe ni agota la base', async () => {
-    const grande = await request(app).get('/api/users?limite=999999').set(con());
-    const negativa = await request(app).get('/api/users?pagina=-5&limite=-1').set(con());
+    const grande = await request(servidor).get('/api/users?limite=999999').set(con());
+    const negativa = await request(servidor).get('/api/users?pagina=-5&limite=-1').set(con());
 
     assert.equal(grande.status, 200);
     assert.ok(grande.body.paginacion.limite <= 100, 'el limite debe estar acotado');
@@ -87,21 +87,21 @@ describe('Manejo de errores', () => {
   });
 
   test('un identificador no numerico responde 400', async () => {
-    const res = await request(app).get('/api/users/abc').set(con());
+    const res = await request(servidor).get('/api/users/abc').set(con());
     assert.equal(res.status, 400);
   });
 
   test('una ruta inexistente responde 404 en json', async () => {
-    const res = await request(app).get('/api/no-existe');
+    const res = await request(servidor).get('/api/no-existe');
     assert.equal(res.status, 404);
     assert.equal(res.body.estado, 'error');
   });
 
   test('ningun error revela detalles internos del servidor', async () => {
     const respuestas = await Promise.all([
-      request(app).post('/api/auth/login').send({ correo: {}, contrasena: {} }),
-      request(app).get('/api/users/abc').set(con()),
-      request(app).get('/api/no-existe'),
+      request(servidor).post('/api/auth/login').send({ correo: {}, contrasena: {} }),
+      request(servidor).get('/api/users/abc').set(con()),
+      request(servidor).get('/api/no-existe'),
     ]);
 
     for (const res of respuestas) {

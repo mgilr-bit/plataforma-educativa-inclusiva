@@ -1,0 +1,24 @@
+.medio {
+  display: block;
+  width: 100%;
+  background-color: #000;
+  border-radius: var(--radio-grande);
+}
+
+/* El video se queda en 16:9 aunque tarde en cargar: sin alto reservado, la
+   pagina da un salto al aparecer y el estudiante pierde donde iba leyendo. */
+.medio--video {
+  aspect-ratio: 16 / 9;
+}
+
+.medio--audio {
+  border-radius: var(--radio);
+}
+
+.medio__aviso {
+  margin: 0;
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}

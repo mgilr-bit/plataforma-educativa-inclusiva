@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PreferencesProvider } from './context/PreferencesContext';
 import { AuthProvider } from './context/AuthContext';
 import AccessibilityBar from './components/AccessibilityBar';
+import AppHeader from './components/AppHeader';
 import ProtectedRoute from './components/ProtectedRoute';
 import RouteFocus from './components/RouteFocus';
 import Home from './pages/Home';
@@ -12,6 +13,9 @@ import RolePanel from './pages/RolePanel';
 import CourseDetail from './pages/CourseDetail';
 import ContentDetail from './pages/ContentDetail';
 import UsersAdmin from './pages/UsersAdmin';
+import NewContent from './pages/NewContent';
+import Tracking from './pages/Tracking';
+import Settings from './pages/Settings';
 import './styles/global.css';
 import './App.css';
 
@@ -30,6 +34,10 @@ export default function App() {
           </a>
 
           <AccessibilityBar />
+
+          {/* Fuera de <main>: el punto de referencia "banner" no puede quedar
+              anidado dentro del contenido. */}
+          <AppHeader />
 
           <main id="contenido" ref={mainRef} className="content" tabIndex={-1}>
             <Routes>
@@ -56,6 +64,30 @@ export default function App() {
                 element={(
                   <ProtectedRoute>
                     <ContentDetail />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/seguimiento"
+                element={(
+                  <ProtectedRoute roles={['docente', 'administrador']}>
+                    <Tracking />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/contenidos/nuevo"
+                element={(
+                  <ProtectedRoute roles={['docente', 'administrador']}>
+                    <NewContent />
+                  </ProtectedRoute>
+                )}
+              />
+              <Route
+                path="/configuracion"
+                element={(
+                  <ProtectedRoute roles={['administrador']}>
+                    <Settings />
                   </ProtectedRoute>
                 )}
               />

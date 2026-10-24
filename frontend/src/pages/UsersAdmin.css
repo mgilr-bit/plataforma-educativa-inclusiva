@@ -73,3 +73,135 @@
     overflow-x: auto;
   }
 }
+
+/* --- Barra superior: buscar y dar de alta ------------------------------- */
+
+.usuarios__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+}
+
+.usuarios__buscar {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
+.usuarios__alta {
+  min-height: var(--area-minima);
+  padding: 0 var(--espacio-4);
+  background-color: var(--color-primario);
+  color: var(--color-primario-texto);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio);
+  font-weight: 600;
+}
+
+.usuarios__alta:hover {
+  box-shadow: var(--sombra-2);
+}
+
+.usuarios__formulario {
+  margin-bottom: var(--espacio-6);
+  padding: var(--espacio-4);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+.usuarios__formulario:focus {
+  outline: none;
+}
+
+/* --- Tabla -------------------------------------------------------------- */
+
+.tabla-ancha {
+  overflow-x: auto;
+}
+
+.tabla-ancha:focus-visible {
+  outline: var(--borde-foco) solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+/* El "overflow: hidden" que redondea la tabla la convertía a ella en el área
+   desplazable, y sin acceso por teclado. */
+.tabla-ancha .tabla {
+  overflow: visible;
+  margin-bottom: 0;
+}
+
+.usuarios__nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+/* Inicial en un círculo: distingue las filas de un vistazo sin necesitar
+   fotografías, que de menores de edad no conviene guardar. */
+.usuarios__inicial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 50%;
+  font-size: var(--texto-pequeno);
+  font-weight: 700;
+}
+
+.usuarios__rol {
+  text-transform: capitalize;
+}
+
+/* --- Pie: cuántas se ven y de cuántas ----------------------------------- */
+
+.usuarios__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-4);
+}
+
+.usuarios__cuenta {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.paginacion button {
+  min-height: var(--area-minima);
+  padding: 0 var(--espacio-3);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.paginacion button:hover:not(:disabled) {
+  border-color: var(--color-primario);
+  color: var(--color-primario);
+}
+
+.paginacion__posicion {
+  font-size: var(--texto-pequeno);
+  font-variant-numeric: tabular-nums;
+}
+
+.usuarios__filtro {
+  flex: 0 1 10rem;
+  min-width: 0;
+}

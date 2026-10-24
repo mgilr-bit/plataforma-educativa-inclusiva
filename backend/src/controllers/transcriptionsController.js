@@ -8,6 +8,7 @@ const pool = require('../config/db');
 const { DIRECTORIO, RUTA_PUBLICA } = require('../config/storage');
 const { toPositiveInteger } = require('../utils/validators');
 const { transcribeAudio, WhisperError } = require('../services/whisperService');
+const { prepararParaTranscripcion, AudioError } = require('../services/audioService');
 
 const ROL_ADMINISTRADOR = 'administrador';
 const ESTADOS_REVISION = ['pendiente', 'revisada', 'aprobada'];
@@ -108,9 +109,31 @@ async function create(req, res, next) {
       });
     }
 
-    const resultado = await transcribeAudio(adjunto.buffer, adjunto.nombre, {
-      idioma: (req.body || {}).idioma,
-    });
+    // Una clase larga no cabe en una sola peticion a Whisper. Casi siempre
+    // vuelve una sola parte; cuando son varias, cada una trae el
+    // desplazamiento que situa sus tiempos dentro de la clase completa.
+    const partes = await prepararParaTranscripcion(adjunto.buffer, adjunto.nombre);
+
+    const resultado = { texto: '', segmentos: [], idioma: null, duracionSeg: 0 };
+    for (const parte of partes) {
+      const trozo = await transcribeAudio(parte.buffer, parte.nombre, {
+        idioma: (req.body || {}).idioma,
+      });
+
+      resultado.texto = resultado.texto
+        ? `${resultado.texto} ${trozo.texto}`.trim()
+        : trozo.texto;
+      resultado.idioma = resultado.idioma || trozo.idioma;
+      resultado.duracionSeg = parte.desplazamiento + (trozo.duracionSeg || 0);
+
+      for (const segmento of trozo.segmentos) {
+        resultado.segmentos.push({
+          ...segmento,
+          inicio: Number(segmento.inicio) + parte.desplazamiento,
+          fin: Number(segmento.fin) + parte.desplazamiento,
+        });
+      }
+    }
 
     if (!resultado.texto) {
       return res.status(422).json({
@@ -157,7 +180,7 @@ async function create(req, res, next) {
       cliente.release();
     }
   } catch (error) {
-    if (error instanceof WhisperError) {
+    if (error instanceof WhisperError || error instanceof AudioError) {
       return res.status(error.estado).json({ estado: 'error', mensaje: error.message });
     }
     next(error);
@@ -387,12 +410,42 @@ async function updateSubtitle(req, res, next) {
     }
 
     valores.push(id);
-    const resultado = await pool.query(
-      `UPDATE subtitulo SET ${asignaciones.join(', ')}
-       WHERE id_subtitulo = $${valores.length}
-       RETURNING id_subtitulo, id_transcripcion, segmento_texto, tiempo_inicio, tiempo_fin, editado_docente`,
-      valores
-    );
+
+    // El mismo contenido vive en dos sitios: el estudiante lee los segmentos y
+    // el asistente lee el texto completo. Si se corrige uno y no el otro, el
+    // docente arregla los subtitulos y el asistente sigue respondiendo con lo
+    // que Whisper oyo mal. Por eso se rehace el texto completo a partir de los
+    // segmentos, que pasan a ser la unica fuente.
+    const cliente = await pool.connect();
+    let resultado;
+    try {
+      await cliente.query('BEGIN');
+
+      resultado = await cliente.query(
+        `UPDATE subtitulo SET ${asignaciones.join(', ')}
+         WHERE id_subtitulo = $${valores.length}
+         RETURNING id_subtitulo, id_transcripcion, segmento_texto, tiempo_inicio, tiempo_fin, editado_docente`,
+        valores
+      );
+
+      if (segmentoTexto !== undefined) {
+        await cliente.query(
+          `UPDATE transcripcion SET texto_completo = (
+             SELECT string_agg(segmento_texto, ' ' ORDER BY tiempo_inicio, id_subtitulo)
+             FROM subtitulo WHERE id_transcripcion = $1
+           )
+           WHERE id_transcripcion = $1`,
+          [resultado.rows[0].id_transcripcion]
+        );
+      }
+
+      await cliente.query('COMMIT');
+    } catch (error) {
+      await cliente.query('ROLLBACK');
+      throw error;
+    } finally {
+      cliente.release();
+    }
 
     res.json({ estado: 'ok', subtitulo: resultado.rows[0] });
   } catch (error) {

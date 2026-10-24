@@ -176,4 +176,38 @@ async function list(req, res, next) {
   }
 }
 
-module.exports = { ask, list };
+// DELETE /api/tutor/consultations/:id
+//
+// El estudiante borra una consulta suya. El borrado es fisico y no una marca:
+// si fuera logico, el docente seguiria viendola y el estudiante creeria que la
+// elimino. Nada depende de esta fila, asi que borrarla no rompe nada.
+//
+// Solo puede borrar quien pregunto. Ni el docente ni el administrador: son
+// datos que genero el estudiante sobre sus propias dificultades.
+async function remove(req, res, next) {
+  const id = toPositiveInteger(req.params.id);
+  if (!id) {
+    return res.status(400).json({ estado: 'error', mensaje: 'El identificador no es valido' });
+  }
+
+  try {
+    const resultado = await pool.query(
+      `DELETE FROM consulta_tutor
+       WHERE id_consulta = $1 AND id_estudiante = $2
+       RETURNING id_consulta`,
+      [id, req.user.id]
+    );
+
+    if (resultado.rowCount === 0) {
+      // 404 tanto si no existe como si es de otro estudiante: no se revela
+      // la existencia de consultas ajenas.
+      return res.status(404).json({ estado: 'error', mensaje: 'Consulta no encontrada' });
+    }
+
+    res.json({ estado: 'ok', mensaje: 'La consulta se borro' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { ask, list, remove };

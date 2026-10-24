@@ -19,7 +19,7 @@ vi.mock('../src/api/client', async () => {
 describe('Aplicación', () => {
   test('se monta sin errores y muestra la portada', () => {
     render(<App />);
-    expect(screen.getByRole('heading', { name: /plataforma educativa inclusiva/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /aula todos/i })).toBeInTheDocument();
   });
 
   test('muestra el enlace para saltar al contenido', () => {

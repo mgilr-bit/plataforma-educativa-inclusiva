@@ -11,6 +11,9 @@ const contentsRoutes = require('./routes/contents');
 const coursesRoutes = require('./routes/courses');
 const transcriptionsRoutes = require('./routes/transcriptions');
 const tutorRoutes = require('./routes/tutor');
+const summariesRoutes = require('./routes/summaries');
+const progressRoutes = require('./routes/progress');
+const settingsRoutes = require('./routes/settings');
 const { notFound, errorHandler } = require('./middleware/errors');
 const { DIRECTORIO, RUTA_PUBLICA, asegurarDirectorio } = require('./config/storage');
 const { loginLimiter, apiLimiter } = require('./middleware/rateLimit');
@@ -48,6 +51,11 @@ app.use(cors({
     error.code = 'ORIGEN_NO_PERMITIDO';
     return callback(error);
   },
+  // Sin esto, el navegador oculta Content-Disposition en una peticion entre
+  // origenes distintos -la pagina vive en otro dominio que la API-, y la
+  // descarga del seguimiento se guardaba siempre como "seguimiento.csv". Con
+  // varios cursos, el docente acababa con archivos que no puede distinguir.
+  exposedHeaders: ['Content-Disposition'],
 }));
 
 app.use(express.json({ limit: LIMITE_CUERPO }));
@@ -81,6 +89,9 @@ app.use('/api', contentsRoutes);
 app.use('/api', coursesRoutes);
 app.use('/api', transcriptionsRoutes);
 app.use('/api', tutorRoutes);
+app.use('/api', summariesRoutes);
+app.use('/api', progressRoutes);
+app.use('/api', settingsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

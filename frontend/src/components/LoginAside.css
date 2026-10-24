@@ -1,0 +1,100 @@
+.presentacion {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: var(--espacio-12) var(--espacio-8);
+  background-color: var(--color-cabecera);
+  color: var(--color-cabecera-texto);
+  border-radius: var(--radio-grande);
+}
+
+/* Las figuras van detrás del texto y muy tenues: no deben competir con lo que
+   hay que leer. El contraste del texto se mide contra el fondo sólido, así
+   que un velo del 8 % no lo mueve de forma apreciable. */
+.presentacion__figuras {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--color-cabecera-texto);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.presentacion__contenido {
+  position: relative;
+  max-width: 34ch;
+}
+
+.presentacion__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-titulo);
+  font-weight: 700;
+  letter-spacing: var(--tracking-titulo);
+}
+
+.presentacion__simbolo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  background-color: var(--color-cabecera-texto);
+  color: var(--color-cabecera);
+  border-radius: var(--radio);
+}
+
+.presentacion__lema {
+  margin: 0 0 var(--espacio-8);
+  color: var(--color-cabecera-suave);
+}
+
+.presentacion__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.presentacion__lista li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-6);
+}
+
+.presentacion__lista li:last-child {
+  margin-bottom: 0;
+}
+
+.presentacion__icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--color-cabecera-borde);
+  border-radius: 50%;
+}
+
+.presentacion__detalle {
+  display: block;
+  margin-top: var(--espacio-1);
+  color: var(--color-cabecera-suave);
+  font-size: var(--texto-pequeno);
+}
+
+/* En alto contraste las figuras se apagan: sobre negro puro son ruido, y el
+   tema se gobierna con bordes nítidos, no con veladuras. */
+:root[data-contraste='alto'] .presentacion__figuras {
+  display: none;
+}
+
+:root[data-contraste='alto'] .presentacion {
+  border: 2px solid var(--color-cabecera-borde);
+}

@@ -18,6 +18,7 @@ router.patch('/courses/:id', authorize('administrador', 'docente'), update);
 
 // Inscripciones: las gestiona el administrador o el docente titular.
 router.get('/courses/:id/enrollments', authorize('administrador', 'docente'), inscripciones.list);
+router.get('/courses/:id/available-students', authorize('administrador', 'docente'), inscripciones.available);
 router.post('/courses/:id/enrollments', authorize('administrador', 'docente'), inscripciones.enroll);
 router.delete('/courses/:id/enrollments/:idEstudiante', authorize('administrador', 'docente'), inscripciones.unenroll);
 

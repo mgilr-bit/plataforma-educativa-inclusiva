@@ -16,7 +16,6 @@
   padding: var(--espacio-6);
   background-color: var(--color-fondo);
   border: 1px solid var(--color-borde);
-  border-left: 4px solid var(--color-primario);
   border-radius: var(--radio-grande);
   box-shadow: var(--sombra-1);
 }
@@ -24,7 +23,21 @@
 /* Al pasar el puntero cambian el borde y la sombra, nunca el tamano: un
    cambio de tamano desplaza las tarjetas vecinas y hace fallar el clic. */
 .tarjeta:hover {
+  border-color: var(--color-primario);
   box-shadow: var(--sombra-2);
+}
+
+/* Toda la tarjeta responde al clic del enlace de su titulo, no solo las dos
+   palabras del titulo: un objetivo de 18rem de ancho se acierta sin puntería,
+   que es lo que hace falta en una tableta. */
+.tarjeta__titulo a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.tarjeta {
+  position: relative;
 }
 
 .tarjeta__titulo {
@@ -57,7 +70,10 @@
    largo. */
 .tarjeta__detalle:last-child {
   margin-top: auto;
-  padding-top: var(--espacio-3);
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-borde);
+  color: var(--color-texto);
+  font-weight: 600;
 }
 
 .estado-error {

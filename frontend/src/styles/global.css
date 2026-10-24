@@ -1,4 +1,5 @@
 /* Estilos base de la plataforma. Se apoyan por completo en los tokens. */
+@import './tipografia.css';
 @import './tokens.css';
 
 *,
@@ -25,13 +26,14 @@ h1, h2, h3 {
   line-height: var(--interlineado-titulo);
   margin: 0 0 var(--espacio-4);
   /* Los titulos grandes respiran mejor con el interletrado algo cerrado. */
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-titulo);
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--texto-titulo-mayor);
   font-weight: 700;
+  letter-spacing: var(--tracking-titulo-mayor);
 }
 
 /* El espacio por encima de un h2 es lo que separa una seccion de la anterior.
@@ -74,18 +76,23 @@ p { margin: 0 0 var(--espacio-4); }
 .skip-link {
   position: absolute;
   left: var(--espacio-4);
-  top: calc(-1 * var(--espacio-12));
+  top: var(--espacio-4);
   z-index: 100;
   padding: var(--espacio-3) var(--espacio-4);
   background-color: var(--color-primario);
   color: var(--color-primario-texto);
   border-radius: var(--radio);
   text-decoration: none;
-  transition: top 0.15s ease;
+  /* Se esconde con translateY y no con un "top" negativo fijo. Un desplazamiento
+     en rem tiene que adivinar cuanto mide el enlace, y el enlace crece con la
+     escala de texto: con la letra en "muy grande" asomaba por arriba. El 100%
+     de translateY es su propia altura, sea cual sea. */
+  transform: translateY(calc(-100% - var(--espacio-4) - var(--borde-foco)));
+  transition: transform 0.15s ease;
 }
 
 .skip-link:focus {
-  top: var(--espacio-4);
+  transform: translateY(0);
 }
 
 /* Contenido visible solo para lectores de pantalla. */

@@ -7,6 +7,20 @@ const pool = require('../../src/config/db');
 const app = require('../../src/app');
 const request = require('supertest');
 
+// Un solo servidor escuchando por archivo de pruebas.
+//
+// Sin esto, supertest levanta y cierra un servidor efimero en cada peticion.
+// Con decenas de peticiones seguidas eso falla de vez en cuando con
+// ECONNRESET, y si quien se cae es un inicio de sesion el token queda vacio y
+// todo lo que sigue responde 401. Era la causa de los fallos intermitentes.
+const servidor = app.listen(0);
+
+// Cierra el servidor y el pool. Cada archivo lo llama en su after().
+async function cerrar() {
+  await new Promise((resolver) => servidor.close(resolver));
+  await pool.end();
+}
+
 const CONTRASENA = 'Prueba12345';
 
 // Se vacian las tablas en orden inverso a sus dependencias. RESTART IDENTITY
@@ -30,7 +44,7 @@ async function crearUsuario({ nombre, correo, idRol, estado = true }) {
 }
 
 async function iniciarSesion(correo) {
-  const respuesta = await request(app)
+  const respuesta = await request(servidor)
     .post('/api/auth/login')
     .send({ correo, contrasena: CONTRASENA });
   return respuesta.body.token;
@@ -80,6 +94,8 @@ async function sembrarEscenario() {
 }
 
 module.exports = {
+  servidor,
+  cerrar,
   CONTRASENA,
   limpiarBase,
   crearUsuario,

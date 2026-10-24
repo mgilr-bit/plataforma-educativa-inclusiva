@@ -1,0 +1,167 @@
+.seguimiento__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espacio-4);
+  margin-bottom: var(--espacio-6);
+}
+
+.seguimiento__filtros .form-field {
+  margin-bottom: 0;
+  min-width: 12rem;
+}
+
+.seguimiento__exportar {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--area-minima);
+  margin-left: auto;
+  padding: 0 var(--espacio-4);
+  background-color: var(--color-fondo);
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.seguimiento__exportar:hover {
+  background-color: var(--color-superficie);
+  text-decoration: underline;
+}
+
+.seguimiento {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--espacio-6);
+  align-items: start;
+  margin-bottom: var(--espacio-8);
+}
+
+.seguimiento__tabla,
+.seguimiento__temas {
+  /* Un elemento de rejilla no se encoge por debajo del ancho mínimo de su
+     contenido salvo que se le diga. Sin esto, la tabla de cuatro columnas
+     estiraba toda la página en un teléfono y el desplazamiento de la tabla
+     nunca llegaba a activarse. */
+  min-width: 0;
+  padding: var(--espacio-4);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+.seguimiento__temas h2 {
+  margin-top: 0;
+  font-size: var(--texto-grande);
+}
+
+.seguimiento__nota {
+  margin: var(--espacio-4) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+/* La barra acompaña al número, nunca lo sustituye: quien no distingue bien el
+   relleno del fondo lee igual el porcentaje al lado. */
+.barra {
+  display: inline-block;
+  width: 5rem;
+  height: 0.6rem;
+  margin-right: var(--espacio-2);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.barra__relleno {
+  display: block;
+  height: 100%;
+  background-color: var(--color-primario);
+}
+
+.barra__valor {
+  font-variant-numeric: tabular-nums;
+}
+
+.temas {
+  margin: 0;
+}
+
+.temas__fila {
+  padding: var(--espacio-2) 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.temas__fila dt {
+  font-weight: 600;
+}
+
+.temas__fila dd {
+  display: flex;
+  align-items: center;
+  margin: var(--espacio-1) 0 0;
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+.temas__fila .barra {
+  width: 100%;
+  max-width: 10rem;
+}
+
+.sugerencia {
+  padding: var(--espacio-6);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-left: 5px solid var(--color-primario);
+  border-radius: var(--radio-grande);
+}
+
+.sugerencia h2 {
+  margin-top: 0;
+  font-size: var(--texto-grande);
+}
+
+.sugerencia__estado-vivo {
+  min-height: 1.5em;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+.sugerencia__texto {
+  max-width: var(--medida-lectura);
+  margin: 0;
+  line-height: 1.7;
+}
+
+@media (max-width: 64rem) {
+  .seguimiento {
+    grid-template-columns: 1fr;
+  }
+
+  .seguimiento__exportar {
+    margin-left: 0;
+  }
+}
+
+/* La tabla se desplaza dentro de su caja en pantalla estrecha. */
+.tabla-ancha {
+  overflow-x: auto;
+}
+
+/* El "overflow: hidden" que redondea las esquinas de la tabla la convertía a
+   ella en el área desplazable, y sin acceso por teclado. El desplazamiento lo
+   lleva el contenedor, que sí es enfocable. */
+.tabla-ancha .tabla {
+  overflow: visible;
+  margin-bottom: 0;
+}
+
+.tabla-ancha:focus-visible {
+  outline: var(--borde-foco) solid var(--color-foco);
+  outline-offset: 2px;
+}

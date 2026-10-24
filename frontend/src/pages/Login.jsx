@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 import { useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FormField from '../components/FormField';
+import Icon from '../components/Icon';
+import LoginAside from '../components/LoginAside';
 import './Login.css';
 import usePageTitle from '../hooks/usePageTitle';
 
@@ -45,7 +47,7 @@ export default function Login() {
     if (!email.trim()) {
       errors.email = 'Escriba su correo electrónico.';
     } else if (!email.includes('@')) {
-      errors.email = 'El correo debe incluir una arroba, por ejemplo: nombre@umg.edu.gt';
+      errors.email = 'El correo debe incluir una arroba, por ejemplo: nombre@gmail.com';
     }
     if (!password) {
       errors.password = 'Escriba su contraseña.';
@@ -85,26 +87,43 @@ export default function Login() {
   }
 
   return (
-    <div className="login">
-      <h1>Iniciar sesión</h1>
-      <p>Ingrese con el correo que le proporcionó su establecimiento.</p>
+    // Dos columnas: a un lado que es esta plataforma, al otro el formulario.
+    // El formulario va PRIMERO en el orden del documento, aunque se vea a la
+    // derecha: quien entra con teclado o lector de pantalla viene a iniciar
+    // sesion, no a leer la presentacion.
+    <div className="entrada">
+      <div className="login">
+        {/* La marca va tambien aqui porque en pantalla estrecha la
+            presentacion se retira y el formulario quedaria sin identidad. */}
+        <p className="login__marca">
+          <span className="login__simbolo" aria-hidden="true">
+            <Icon nombre="libro" tamano={24} />
+          </span>
+          <span>
+            Aula Todos
+            <span className="login__lema">Clases accesibles para estudiantes con menor capacidad auditiva</span>
+          </span>
+        </p>
 
-      {/* role="alert" hace que el lector de pantalla lo anuncie al aparecer.
+        <h1>Iniciar sesión</h1>
+        <p>Ingrese con el correo que le proporcionó su establecimiento.</p>
+
+        {/* role="alert" hace que el lector de pantalla lo anuncie al aparecer.
           tabIndex -1 permite enfocarlo por codigo sin meterlo en el recorrido
           normal del tabulador. */}
-      {sesionVencida && !formError && (
+        {sesionVencida && !formError && (
         <p className="mensaje-aviso" role="status">
           Su sesión terminó por seguridad. Vuelva a entrar para continuar.
         </p>
-      )}
+        )}
 
-      {formError && (
+        {formError && (
         <div className="alerta-error" role="alert" tabIndex={-1} ref={errorRef}>
           {formError}
         </div>
-      )}
+        )}
 
-      <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleSubmit} noValidate>
         <FormField
           id="correo"
           label="Correo electrónico"
@@ -138,7 +157,10 @@ export default function Login() {
         <p className="sr-only" aria-live="polite">
           {submitting ? 'Comprobando sus datos, espere.' : ''}
         </p>
-      </form>
+        </form>
+      </div>
+
+      <LoginAside />
     </div>
   );
 }

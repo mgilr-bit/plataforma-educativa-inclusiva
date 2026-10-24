@@ -9,6 +9,7 @@ export default function EnrolledStudents({ courseId }) {
   const [selected, setSelected] = useState('');
   const [aviso, setAviso] = useState(null);
   const [working, setWorking] = useState(false);
+  const [errorLista, setErrorLista] = useState(null);
 
   const avisoRef = useRef(null);
 
@@ -23,13 +24,16 @@ export default function EnrolledStudents({ courseId }) {
 
   // Los estudiantes disponibles se ofrecen en una lista: pedir el
   // identificador obligaria al docente a buscarlo por su cuenta.
-  useEffect(() => {
-    let active = true;
-    api.users({ role: 'estudiante', active: 'true' })
-      .then((data) => { if (active) setStudents(data.usuarios); })
-      .catch(() => { if (active) setStudents([]); });
-    return () => { active = false; };
-  }, []);
+  const cargarDisponibles = useCallback(() => {
+    api.availableStudents(courseId)
+      .then((data) => setStudents(data.estudiantes))
+      .catch((error) => {
+        setStudents([]);
+        setErrorLista(error.message);
+      });
+  }, [courseId]);
+
+  useEffect(cargarDisponibles, [cargarDisponibles]);
 
   async function inscribir(event) {
     event.preventDefault();
@@ -42,6 +46,7 @@ export default function EnrolledStudents({ courseId }) {
       setAviso(`Se inscribió a ${alumno ? alumno.nombre_completo : 'el estudiante'}.`);
       setSelected('');
       load();
+      cargarDisponibles();
     } catch (error) {
       setAviso(error.message);
       window.requestAnimationFrame(() => avisoRef.current?.focus());
@@ -57,6 +62,7 @@ export default function EnrolledStudents({ courseId }) {
       await api.unenroll(courseId, estudiante.id_usuario);
       setAviso(`Se dio de baja a ${estudiante.nombre_completo}.`);
       load();
+      cargarDisponibles();
     } catch (error) {
       setAviso(error.message);
       window.requestAnimationFrame(() => avisoRef.current?.focus());
@@ -65,9 +71,8 @@ export default function EnrolledStudents({ courseId }) {
     }
   }
 
-  // No tiene sentido ofrecer a quien ya esta inscrito.
-  const inscritosIds = new Set((state.enrolled || []).map((e) => e.id_usuario));
-  const disponibles = students.filter((e) => !inscritosIds.has(e.id_usuario));
+  // El endpoint ya excluye a quien esta inscrito.
+  const disponibles = students;
 
   return (
     <section aria-labelledby="titulo-inscritos">
@@ -131,6 +136,17 @@ export default function EnrolledStudents({ courseId }) {
             ))}
           </select>
         </div>
+
+        {errorLista && (
+          <p className="form-field__error">{errorLista}</p>
+        )}
+
+        {!errorLista && disponibles.length === 0 && (
+          <p className="form-field__help">
+            No hay estudiantes disponibles: o ya están todos inscritos, o el
+            administrador todavía no ha creado sus cuentas.
+          </p>
+        )}
 
         <button type="submit" disabled={working || !selected}>
           {working ? 'Guardando…' : 'Inscribir'}

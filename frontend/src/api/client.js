@@ -7,6 +7,31 @@
 // que viajan a la API van en espanol porque asi esta definido su contrato.
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+
+/**
+ * Resuelve la direccion de un archivo subido.
+ *
+ * En la base se guarda una ruta relativa al servidor de la API
+ * ("/archivos/..."), no a la pagina. Son cosas distintas: en desarrollo la
+ * pagina vive en el 5173 y la API en el 4000, y en produccion la pagina esta
+ * en Vercel y la API en Railway. Usar la ruta tal cual hace que el navegador
+ * pida el archivo al servidor de la pagina, que responde con el index.html de
+ * la aplicacion; el reproductor recibe HTML en vez de video y avisa de que no
+ * se pudo reproducir.
+ *
+ * Resolver con URL cubre los dos casos de una vez: una ruta que empieza por
+ * "/" cuelga del origen de la API, y una direccion completa de otro sitio se
+ * devuelve intacta.
+ */
+export function urlDeArchivo(ruta) {
+  if (!ruta) return null;
+  try {
+    return new URL(ruta, BASE_URL).href;
+  } catch {
+    // BASE_URL relativo: la API y la pagina las sirve el mismo servidor.
+    return new URL(ruta, window.location.origin).href;
+  }
+}
 const TOKEN_KEY = 'plataforma.token';
 
 // El token se guarda en localStorage para que la sesion sobreviva a recargar la
@@ -59,6 +84,53 @@ export class ApiError extends Error {
     this.details = details || [];
     this.cause = cause;
   }
+}
+
+// Sube un formulario informando del avance.
+//
+// Va con XMLHttpRequest y no con fetch porque fetch no publica el progreso de
+// subida. Importa: una clase grabada pesa decenas de megabytes y la conexion
+// de un establecimiento rural no siempre acompaña. Sin barra de avance, el
+// docente no sabe si esta subiendo o si se colgo, y vuelve a intentarlo.
+function subirConAvance(path, formData, alAvanzar) {
+  return new Promise((resolver, rechazar) => {
+    const peticion = new XMLHttpRequest();
+    peticion.open('POST', `${BASE_URL}${path}`);
+
+    const token = readToken();
+    if (token) peticion.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    peticion.upload.addEventListener('progress', (evento) => {
+      if (evento.lengthComputable) {
+        alAvanzar(Math.round((evento.loaded / evento.total) * 100));
+      }
+    });
+
+    peticion.addEventListener('load', () => {
+      let datos = {};
+      try {
+        datos = JSON.parse(peticion.responseText);
+      } catch {
+        // Una respuesta que no es JSON ya es un error de por si.
+      }
+      if (peticion.status >= 200 && peticion.status < 300) {
+        resolver(datos);
+        return;
+      }
+      if (peticion.status === 401 && onUnauthorized) onUnauthorized();
+      rechazar(new ApiError(datos.mensaje || `La API respondió ${peticion.status}`, {
+        status: peticion.status,
+        details: datos.errores,
+      }));
+    });
+
+    peticion.addEventListener('error', () =>
+      rechazar(new ApiError('No se pudo conectar con el servidor', { status: 0 })));
+    peticion.addEventListener('abort', () =>
+      rechazar(new ApiError('La subida se canceló', { status: 0 })));
+
+    peticion.send(formData);
+  });
 }
 
 async function request(path, { method = 'GET', body, formData, authenticated = true } = {}) {
@@ -169,6 +241,10 @@ export const api = {
       body: { nombre: name, grado: grade, cicloEscolar: Number(schoolYear), idDocente: Number(teacherId) },
     }),
 
+  // Los estudiantes que el docente puede inscribir en ese curso. Endpoint
+  // propio: el docente no tiene acceso al listado general de usuarios.
+  availableStudents: (courseId) => request(`/courses/${courseId}/available-students`),
+
   enroll: (courseId, studentId) =>
     request(`/courses/${courseId}/enrollments`, {
       method: 'POST',
@@ -190,7 +266,7 @@ export const api = {
   // Con archivo adjunto la peticion viaja como multipart; sin el, como JSON.
   // El navegador fija por si mismo el limite del formulario, asi que no hay que
   // poner Content-Type a mano: hacerlo rompe la peticion.
-  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file }) => {
+  createContent: ({ courseId, title, type, fileUrl, durationSeconds, file, onProgress }) => {
     if (file) {
       const datos = new FormData();
       datos.append('idCurso', String(courseId));
@@ -198,7 +274,10 @@ export const api = {
       datos.append('tipo', type);
       if (durationSeconds) datos.append('duracionSeg', String(durationSeconds));
       datos.append('archivo', file);
-      return request('/contents', { method: 'POST', formData: datos });
+      // Con callback de avance se usa XHR; sin el, el camino normal.
+      return onProgress
+        ? subirConAvance('/contents', datos, onProgress)
+        : request('/contents', { method: 'POST', formData: datos });
     }
 
     return request('/contents', {
@@ -214,10 +293,119 @@ export const api = {
   },
 
   // Sin archivo, la API transcribe el que ya esta guardado con el material.
+  // Limites con los que opera la plataforma. Son de solo lectura.
+  settings: () => request('/settings'),
+
+  // Progreso del estudiante en un material.
+  saveProgress: (contentId, porcentaje) =>
+    request(`/contents/${contentId}/progress`, { method: 'PUT', body: { porcentaje } }),
+
+  // Seguimiento del curso, para el docente.
+  tracking: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return request(`/courses/${courseId}/tracking${cola}`);
+  },
+
+  suggestion: (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+    return request(`/courses/${courseId}/tracking/suggestion${cola}`, { method: 'POST' });
+  },
+
+  // La exportacion no pasa por request(): devuelve un archivo, no JSON.
+  //
+  // Y no puede ser un enlace normal. Un enlace lo sigue el navegador, y la
+  // navegacion no lleva la cabecera de autenticacion: el token vive en
+  // localStorage y solo lo pone este cliente. Un enlace devolvia "Falta el
+  // token de autenticacion".
+  //
+  // Pasarlo por la direccion lo resolveria, pero el token acabaria en los
+  // registros del servidor y en el historial del navegador. Aqui se manejan
+  // datos de menores: se descarga con la cabecera y se guarda desde memoria.
+  exportTracking: async (courseId, { desde, hasta } = {}) => {
+    const q = new URLSearchParams();
+    if (desde) q.set('desde', desde);
+    if (hasta) q.set('hasta', hasta);
+    const cola = q.toString() ? `?${q}` : '';
+
+    const token = readToken();
+    const respuesta = await fetch(`${BASE_URL}/courses/${courseId}/tracking/export${cola}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    if (!respuesta.ok) {
+      if (respuesta.status === 401 && onUnauthorized) onUnauthorized();
+      let mensaje = `La API respondió ${respuesta.status}`;
+      try {
+        mensaje = (await respuesta.json()).mensaje || mensaje;
+      } catch {
+        // La respuesta de error tampoco era JSON.
+      }
+      throw new ApiError(mensaje, { status: respuesta.status });
+    }
+
+    // El nombre lo decide el servidor; si no viene, uno razonable.
+    const cabecera = respuesta.headers.get('Content-Disposition') || '';
+    const encontrado = /filename="?([^"]+)"?/.exec(cabecera);
+    return {
+      blob: await respuesta.blob(),
+      nombre: encontrado ? encontrado[1] : 'seguimiento.csv',
+    };
+  },
+
+  // El resumen en lenguaje sencillo. Para el estudiante es la puerta de
+  // entrada a la clase, mas que la transcripcion completa.
+  summaries: (contentId) => request(`/contents/${contentId}/summaries`),
+
+  createSummary: (contentId, nivel) =>
+    request(`/contents/${contentId}/summary`, { method: 'POST', body: { nivel } }),
+
+  updateSummary: (id, textoResumen) =>
+    request(`/summaries/${id}`, { method: 'PATCH', body: { textoResumen } }),
+
+  deleteSummary: (id) => request(`/summaries/${id}`, { method: 'DELETE' }),
+
+  // Si va archivo, la peticion es multipart; el servidor admite el estado
+  // como texto en ese caso.
+  updateContent: (id, { title, type, state, file } = {}) => {
+    if (file) {
+      const datos = new FormData();
+      if (title !== undefined) datos.append('titulo', title);
+      if (type !== undefined) datos.append('tipo', type);
+      if (state !== undefined) datos.append('estado', String(state));
+      datos.append('archivo', file);
+      return request(`/contents/${id}`, { method: 'PATCH', formData: datos });
+    }
+
+    const body = {};
+    if (title !== undefined) body.titulo = title;
+    if (type !== undefined) body.tipo = type;
+    if (state !== undefined) body.estado = state;
+    return request(`/contents/${id}`, { method: 'PATCH', body });
+  },
+
+  // Retirar es una baja logica: el estudiante deja de verlo y el docente puede
+  // reponerlo. Un borrado real se llevaria por delante su progreso.
+  deactivateContent: (id) => request(`/contents/${id}`, { method: 'DELETE' }),
+
   transcribe: (contentId) =>
     request(`/contents/${contentId}/transcription`, { method: 'POST' }),
 
   transcription: (contentId) => request(`/contents/${contentId}/transcription`),
+
+  // Corregir un segmento rehace tambien el texto completo en el servidor: el
+  // estudiante lee los segmentos y el asistente lee el texto, y si se separan
+  // el asistente contesta con lo que Whisper oyo mal.
+  updateSubtitle: (id, datos) =>
+    request(`/subtitles/${id}`, { method: 'PATCH', body: datos }),
+
+  updateTranscription: (id, datos) =>
+    request(`/transcriptions/${id}`, { method: 'PATCH', body: datos }),
   enrollments: (courseId) => request(`/courses/${courseId}/enrollments`),
 
   // Asistente educativo. idContenido es opcional: si se envia, la respuesta se
@@ -227,6 +415,10 @@ export const api = {
       method: 'POST',
       body: { pregunta: question, idContenido: contentId ?? null },
     }),
+
+  // Solo puede borrar quien pregunto, y el borrado es real: el docente deja
+  // de verla.
+  deleteConsultation: (id) => request(`/tutor/consultations/${id}`, { method: 'DELETE' }),
 
   consultations: ({ contentId } = {}) => {
     const query = contentId ? `?contenido=${contentId}` : '';

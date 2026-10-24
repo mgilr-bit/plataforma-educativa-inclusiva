@@ -5,7 +5,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api/client';
-import Layout from '../components/Layout';
 import { LoadingState, ErrorState, EmptyState } from '../components/EstadoCarga';
 import EnrolledStudents from '../components/EnrolledStudents';
 import NewContentForm from '../components/NewContentForm';
@@ -45,7 +44,7 @@ export default function CourseDetail() {
   usePageTitle(state.loading ? 'Curso' : (state.course?.nombre || 'Curso'));
 
   return (
-    <Layout>
+    <>
       {/* Migas de pan: dan una salida clara sin depender del boton "atras". */}
       <nav aria-label="Ruta de navegación" className="migas">
         <Link to="/panel">Mis cursos</Link>
@@ -105,6 +104,6 @@ export default function CourseDetail() {
           )}
         </>
       )}
-    </Layout>
+    </>
   );
 }

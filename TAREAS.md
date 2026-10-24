@@ -13,7 +13,7 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Configurar Antigravity con Claude Code — 2026-08-25 — Issue #10
 
 ## Fase 1 — Base de datos
-- [ ] Revisar y ajustar el diagrama ER final
+- [x] Revisar y ajustar el diagrama ER final — 2026-10-17 — Issue #11
 - [x] Ejecutar DDL inicial en PostgreSQL (local) — 2026-08-24
 - [x] Crear migraciones versionadas — 2026-08-24
 - [x] Cargar datos semilla de prueba — 2026-08-24
@@ -46,6 +46,17 @@ Cada tarea tiene su Issue correspondiente en GitHub, etiquetado por fase (`fase-
 - [x] Gestión de usuarios desde la interfaz — 2026-09-08 — Issue #69
 - [x] Gestión de cursos e inscripciones desde la interfaz — 2026-09-08 — Issue #70
 - [x] Datos de ejemplo y arranque con un solo comando — 2026-09-08 — Issue #72
+- [x] Privacidad de las consultas al asistente: aviso y borrado por el estudiante — 2026-09-26 — Issue #82
+- [x] Generar la transcripción desde la interfaz del docente — 2026-10-03 — Issue #84
+- [x] Transcribir clases largas: comprimir y partir el audio — 2026-10-03 — Issue #86
+- [x] Corrección de la transcripción por el docente — 2026-10-03 — Issue #87
+- [x] Corregir y retirar materiales desde la interfaz — 2026-10-03 — Issue #89
+- [x] Resumen de la clase en lenguaje sencillo — 2026-10-03 — Issue #90
+- [x] Diseño: tipografía, marco de la aplicación y jerarquía — 2026-10-09 — Issue #93
+- [x] Vista del estudiante: dos columnas y pestañas — 2026-10-10 — Issue #97
+- [x] Vista del docente: carga con procesamiento automático — 2026-10-10 — Issue #99
+- [x] Panel de seguimiento por estudiante — 2026-10-10 — Issue #100
+- [x] Panel de administración: barra lateral, búsqueda y paginación — 2026-10-10 — Issue #102
 - [ ] Despliegue en Vercel
 
 ## Fase 4 — Integración y pruebas

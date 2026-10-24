@@ -1,0 +1,51 @@
+.soltar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-6);
+  text-align: center;
+  background-color: var(--color-fondo);
+  border: 2px dashed var(--color-borde);
+  border-radius: var(--radio-grande);
+}
+
+/* Al arrastrar encima cambia el borde y el fondo; nada cambia de tamaño, que
+   movería la zona justo cuando se va a soltar. */
+.soltar--encima {
+  border-color: var(--color-primario);
+  background-color: var(--color-superficie);
+}
+
+.soltar__titulo {
+  margin: 0;
+  font-weight: 600;
+}
+
+.soltar__etiqueta {
+  color: var(--color-primario);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.soltar__ayuda {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-pequeno);
+}
+
+/* El campo no se esconde: se deja a la vista y accesible. Esconderlo tras la
+   etiqueta es la causa habitual de que no se pueda elegir archivo con
+   teclado. */
+/* El campo de archivo nativo trae un ancho mínimo grande —el botón más
+   «Sin archivos seleccionados»— que empujaba el ancho mínimo de toda la
+   página y forzaba desplazamiento horizontal en un teléfono. */
+.soltar__entrada {
+  width: 100%;
+  min-width: 0;
+}
+
+.soltar__elegido {
+  margin: var(--espacio-2) 0 0;
+  font-size: var(--texto-pequeno);
+}

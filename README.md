@@ -1,6 +1,12 @@
-# Plataforma Educativa Inclusiva con IA
+# Aula Todos
 
-Plataforma web de apoyo educativo para estudiantes con discapacidad auditiva en San Juan Sacatepéquez, Guatemala.
+> Clases accesibles para estudiantes con menor capacidad auditiva.
+
+Plataforma web de apoyo educativo para estudiantes con discapacidad auditiva en San Juan Sacatepéquez, Guatemala. Proyecto de graduación de Ingeniería en Sistemas, Universidad Mariano Gálvez.
+
+**Modelo de datos:** [`docs/modelo/modelo-de-datos.md`](docs/modelo/modelo-de-datos.md) — diagrama entidad-relación, decisiones de diseño y lo declarado como trabajo futuro.
+
+**Despliegue:** [`docs/despliegue.md`](docs/despliegue.md) — pasos para Railway y Vercel, con los cuatro fallos que hacen perder una tarde.
 
 **Proyecto de graduación** — Ingeniería en Sistemas de Información y Ciencias de la Computación
 Universidad Mariano Gálvez de Guatemala, Sede San Juan Sacatepéquez
@@ -91,12 +97,12 @@ Deja un escenario coherente: un establecimiento, tres docentes, ocho estudiantes
 
 | Rol | Correo | Contraseña |
 |---|---|---|
-| Administrador | `admin@umg.edu.gt` | `Admin12345` |
-| Docente | `ana@umg.edu.gt` | `Docente12345` |
-| Docente | `luis@umg.edu.gt` | `Docente12345` |
-| Estudiante | `pedro@umg.edu.gt` | `Estudiante12345` |
-| Estudiante | `sofia@umg.edu.gt` | `Estudiante12345` |
-| Cuenta desactivada | `elena@umg.edu.gt` | `Estudiante12345` |
+| Administrador | `admin@gmail.com` | `Admin12345` |
+| Docente | `ana@gmail.com` | `Docente12345` |
+| Docente | `luis@gmail.com` | `Docente12345` |
+| Estudiante | `pedro@gmail.com` | `Estudiante12345` |
+| Estudiante | `sofia@gmail.com` | `Estudiante12345` |
+| Cuenta desactivada | `elena@gmail.com` | `Estudiante12345` |
 
 Son credenciales de desarrollo, escritas en el repositorio a propósito. **Nunca deben usarse en un despliegue real.**
 
@@ -133,6 +139,7 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | POST | `/api/courses` | Administrador |
 | PATCH | `/api/courses/:id` | Administrador o docente titular |
 | GET | `/api/courses/:id/enrollments` | Administrador o docente titular |
+| GET | `/api/courses/:id/available-students` | Administrador o docente titular |
 | POST | `/api/courses/:id/enrollments` | Administrador o docente titular |
 | DELETE | `/api/courses/:id/enrollments/:idEstudiante` | Administrador o docente titular |
 | POST | `/api/contents/:id/transcription` | Administrador o docente titular |
@@ -140,7 +147,19 @@ A partir de ahí, ese administrador puede registrar docentes y estudiantes media
 | PATCH | `/api/transcriptions/:id` | Administrador o docente titular |
 | PATCH | `/api/subtitles/:id` | Administrador o docente titular |
 | POST | `/api/tutor/ask` | Estudiante |
+| GET | `/api/settings` | Administrador |
+| PUT | `/api/contents/:id/progress` | Estudiante inscrito |
+| GET | `/api/courses/:id/tracking` | Docente titular o administrador |
+| GET | `/api/courses/:id/tracking/export` | Docente titular o administrador |
+| POST | `/api/courses/:id/tracking/suggestion` | Docente titular o administrador |
+| POST | `/api/contents/:id/summary` | Docente titular o administrador |
+| GET | `/api/contents/:id/summaries` | Autenticado |
+| PATCH | `/api/summaries/:id` | Docente titular o administrador |
+| DELETE | `/api/summaries/:id` | Docente titular o administrador |
+| PATCH | `/api/transcriptions/:id` | Docente titular o administrador |
+| PATCH | `/api/subtitles/:id` | Docente titular o administrador |
 | GET | `/api/tutor/consultations` | Autenticado (filtrado por rol) |
+| DELETE | `/api/tutor/consultations/:id` | Estudiante (solo las suyas) |
 
 El listado admite paginación y filtros: `?pagina=1&limite=20&rol=docente&estado=true&buscar=texto`.
 
